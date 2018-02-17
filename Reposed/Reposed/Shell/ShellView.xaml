@@ -1,0 +1,17 @@
+﻿<Window x:Class="Reposed.Shell.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Reposed.Shell"
+        xmlns:menuBar="clr-namespace:Reposed.Menu"
+        mc:Ignorable="d"
+        Title="ShellView" d:DesignHeight="450" d:DesignWidth="600">
+    <Grid Background="{DynamicResource WindowBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <menuBar:MenuView DataContext="{Binding MenuViewModel}"/>
+    </Grid>
+</Window>
