@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Reposed.WPF")]
+[assembly: AssemblyTitle("Reposed.Models")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Reposed.WPF")]
+[assembly: AssemblyProduct("Reposed.Models")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("464879b6-3f58-4476-bfbe-37e7b256e1be")]
+[assembly: Guid("a4cf8c11-251a-4e83-80bf-6c9855467ef8")]
 
 // Version information for an assembly consists of the following four values:
 //

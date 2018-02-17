@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reposed.Dtos
+namespace Reposed.Models
 {
     public class Preferences
     {
