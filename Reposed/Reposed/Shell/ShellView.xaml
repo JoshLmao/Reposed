@@ -5,13 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reposed.Shell"
         xmlns:menuBar="clr-namespace:Reposed.Menu"
+        xmlns:outputLog="clr-namespace:Reposed.OutputLog"
         mc:Ignorable="d"
-        Title="ShellView" d:DesignHeight="450" d:DesignWidth="600">
+        d:DesignHeight="400" d:DesignWidth="600">
     <Grid Background="{DynamicResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition />
         </Grid.RowDefinitions>
         <menuBar:MenuView DataContext="{Binding MenuViewModel}"/>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+
+            <outputLog:OutputLogView Grid.Row="1" DataContext="{Binding OutputLogViewModel}"/>
+        </Grid>
     </Grid>
 </Window>

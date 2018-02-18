@@ -80,6 +80,10 @@
     <Compile Include="Menu\MenuViewModel.cs" />
     <Compile Include="MVVM\IViewModel.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="OutputLog\OutputLogView.xaml.cs">
+      <DependentUpon>OutputLogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OutputLog\OutputLogViewModel.cs" />
     <Compile Include="Preferences\PreferencesView.xaml.cs">
       <DependentUpon>PreferencesView.xaml</DependentUpon>
     </Compile>
@@ -93,6 +97,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Menu\MenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OutputLog\OutputLogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -141,6 +149,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Reposed.Core\Reposed.Core.csproj">
+      <Project>{68dfc7a5-3248-440a-9b1d-f10fe3bfc39c}</Project>
+      <Name>Reposed.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reposed.Models\Reposed.Models.csproj">
+      <Project>{a4cf8c11-251a-4e83-80bf-6c9855467ef8}</Project>
+      <Name>Reposed.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

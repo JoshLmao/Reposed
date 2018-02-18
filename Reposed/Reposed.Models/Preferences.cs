@@ -8,6 +8,9 @@ namespace Reposed.Models
 {
     public class Preferences
     {
-        public string GitPath { get; set; }
+        public string LocalGitPath { get; set; }
+
+        public BitBucketPrefs BitbucketPrefs { get; set; }
+        public GithubPrefs GithubPrefs { get; set; }
     }
 }

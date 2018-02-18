@@ -11,7 +11,7 @@ namespace Reposed.Shell
 {
     public class ShellViewModel : Conductor<IViewModel>
     {
-        public override string DisplayName { get { return "Reposed"; } }
+        public override string DisplayName { get { return "Reposed"; } set { } }
 
         public MenuViewModel MenuViewModel { get; set; }
 

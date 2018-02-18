@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Reposed.Models
 {
-    public class Preferences
+    public interface IBackupCredentials
     {
-        public string GitPath { get; set; }
+        string Username { get; set; }
+        string Password { get; set; }
+
+        string PublicKey { get; set; }
     }
 }

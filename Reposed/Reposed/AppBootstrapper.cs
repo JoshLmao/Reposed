@@ -1,5 +1,8 @@
 ﻿using Caliburn.Micro;
 using NLog;
+using Reposed.Core;
+using Reposed.Core.Services.Bitbucket;
+using Reposed.Core.Services.Github;
 using Reposed.Shell;
 using System;
 using System.Collections.Generic;
@@ -64,9 +67,15 @@ namespace Reposed
             m_iocContainer.Singleton<IWindowManager, WindowManager>();
             m_iocContainer.Singleton<IEventAggregator, EventAggregator>();
 
+            //ViewModels
             m_iocContainer.PerRequest<ShellViewModel>();
             m_iocContainer.Singleton<Menu.MenuViewModel>();
             m_iocContainer.Singleton<Preferences.PreferencesViewModel>();
+            m_iocContainer.Singleton<OutputLog.OutputLogViewModel>();
+
+            //Services
+            m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
+            m_iocContainer.Singleton<IBackupService, GithubBackupService>();
 
             //Should be done in setup
             m_iocContainer.GetInstance<Preferences.PreferencesViewModel>().LoadPreferences();
