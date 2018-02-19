@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Reposed.OutputLog
+namespace Reposed.Accounts
 {
     /// <summary>
-    /// Interaction logic for OutputLogView.xaml
+    /// Interaction logic for AccountsView.xaml
     /// </summary>
-    public partial class OutputLogView : UserControl
+    public partial class AccountsView : UserControl
     {
-        public OutputLogView()
+        public AccountsView()
         {
             InitializeComponent();
         }

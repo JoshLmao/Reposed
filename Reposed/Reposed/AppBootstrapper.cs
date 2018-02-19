@@ -71,7 +71,8 @@ namespace Reposed
             m_iocContainer.PerRequest<ShellViewModel>();
             m_iocContainer.Singleton<Menu.MenuViewModel>();
             m_iocContainer.Singleton<Preferences.PreferencesViewModel>();
-            m_iocContainer.Singleton<OutputLog.OutputLogViewModel>();
+            m_iocContainer.Singleton<BackupController.BackupControllerViewModel>();
+            m_iocContainer.Singleton<Accounts.AccountsViewModel>();
 
             //Services
             m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();

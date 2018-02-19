@@ -16,14 +16,14 @@ namespace Reposed.Core.Services.Bitbucket
 
         public override bool SetCredentials(IBackupCredentials credentials)
         {
-            if (credentials is GithubPrefs prefs)
+            IsValid = credentials is GithubPrefs prefs;
+            if (IsValid)
             {
-                
                 return true;
             }
             else
             {
-                LOGGER.Info($"Unable to");
+                LOGGER.Info($"Not correct type");
                 return false;
             }
         }

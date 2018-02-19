@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace Reposed.Core.Services
 {
-    public class BackupServiceBase :  IBackupService
+    public class BackupServiceBase : IBackupService
     {
+        public bool IsValid { get; protected set; } = true;
+
         protected readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
 
         public BackupServiceBase()

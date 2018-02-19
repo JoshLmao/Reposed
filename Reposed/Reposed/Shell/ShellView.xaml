@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reposed.Shell"
         xmlns:menuBar="clr-namespace:Reposed.Menu"
-        xmlns:outputLog="clr-namespace:Reposed.OutputLog"
+        xmlns:accounts="clr-namespace:Reposed.Accounts"
+        xmlns:backupController="clr-namespace:Reposed.BackupController"
         mc:Ignorable="d"
         d:DesignHeight="400" d:DesignWidth="600">
     <Grid Background="{DynamicResource WindowBackgroundBrush}">
@@ -18,10 +19,18 @@
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-
-            <outputLog:OutputLogView Grid.Row="1" DataContext="{Binding OutputLogViewModel}"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="75"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            
+            <!--UI with valid accounts that can be backed up-->
+            <accounts:AccountsView DataContext="{Binding AccountsViewModel}" Grid.RowSpan="2"/>
+            
+            <!--Main UI that controls backup of selected accounts & repos-->
+            <backupController:BackupControllerView DataContext="{Binding BackupControllerViewModel}" Grid.Column="1" Grid.Row="1"/>
         </Grid>
     </Grid>
 </Window>

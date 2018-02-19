@@ -73,17 +73,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Accounts\AccountsView.xaml.cs">
+      <DependentUpon>AccountsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Accounts\AccountsViewModel.cs" />
+    <Compile Include="Accounts\ServiceToIconConverter.cs" />
     <Compile Include="AppBootstrapper.cs" />
+    <Compile Include="BackupController\BackupControllerView.xaml.cs">
+      <DependentUpon>BackupControllerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BackupController\BackupControllerViewModel.cs" />
     <Compile Include="Menu\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Menu\MenuViewModel.cs" />
     <Compile Include="MVVM\IViewModel.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
-    <Compile Include="OutputLog\OutputLogView.xaml.cs">
-      <DependentUpon>OutputLogView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="OutputLog\OutputLogViewModel.cs" />
     <Compile Include="Preferences\PreferencesView.xaml.cs">
       <DependentUpon>PreferencesView.xaml</DependentUpon>
     </Compile>
@@ -96,15 +101,23 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Accounts\AccountsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BackupController\BackupControllerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Menu\MenuView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="OutputLog\OutputLogView.xaml">
+    <Page Include="Preferences\PreferencesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Preferences\PreferencesView.xaml">
+    <Page Include="Resources\VectorIcons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -151,6 +164,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Events\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
