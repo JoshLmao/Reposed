@@ -77,12 +77,13 @@
       <DependentUpon>AccountsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Accounts\AccountsViewModel.cs" />
-    <Compile Include="Accounts\ServiceToIconConverter.cs" />
+    <Compile Include="Converters\ServiceToIconConverter.cs" />
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="BackupController\BackupControllerView.xaml.cs">
       <DependentUpon>BackupControllerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BackupController\BackupControllerViewModel.cs" />
+    <Compile Include="Events\PreferencesUpdated.cs" />
     <Compile Include="Menu\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
     </Compile>
@@ -164,7 +165,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Events\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>

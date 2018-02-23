@@ -23,6 +23,17 @@ namespace Reposed.Accounts
             }
         }
 
+        IBackupService m_selectedAccount;
+        public IBackupService SelectedAccount
+        {
+            get { return m_selectedAccount; }
+            set
+            {
+                m_selectedAccount = value;
+                NotifyOfPropertyChange(() => SelectedAccount);
+            }
+        }
+
         public AccountsViewModel()
         {
 
@@ -45,6 +56,9 @@ namespace Reposed.Accounts
                     BackupAccounts.Add(service);
                 }
             }
+
+            if (SelectedAccount == null)
+                SelectedAccount = BackupAccounts.FirstOrDefault();
 
             NotifyOfPropertyChange(() => BackupAccounts);
         }

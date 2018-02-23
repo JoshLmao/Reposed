@@ -6,8 +6,12 @@
              xmlns:local="clr-namespace:Reposed.Menu"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="25" d:DesignWidth="1000">
+             d:DesignWidth="1000">
     <Menu>
+        <MenuItem Header="File">
+            <Separator />
+            <MenuItem Header="Close" cal:Message.Attach="[Event Click] = [Action OnCloseApplication()]"/>
+        </MenuItem>
         <MenuItem Header="Tools">
             <MenuItem Header="Preferences" cal:Message.Attach="[Event Click] = [Action OnOpenPreferences()]">
             </MenuItem>   

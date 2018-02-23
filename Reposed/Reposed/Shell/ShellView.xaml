@@ -11,7 +11,7 @@
         d:DesignHeight="400" d:DesignWidth="600">
     <Grid Background="{DynamicResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
         <menuBar:MenuView DataContext="{Binding MenuViewModel}"/>

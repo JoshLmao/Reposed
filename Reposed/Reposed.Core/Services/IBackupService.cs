@@ -6,7 +6,8 @@ namespace Reposed.Core
     {
         bool IsValid { get; }
 
-        bool Backup();
+        bool Backup(string rootBackupDir);
         bool SetCredentials(IBackupCredentials credentials);
+        void Init(string gitFilePath);
     }
 }
