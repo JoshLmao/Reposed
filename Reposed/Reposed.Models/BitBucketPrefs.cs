@@ -12,5 +12,6 @@ namespace Reposed.Models
         public string Password { get; set; }
 
         public string PublicKey { get; set; }
+        public string PrivateKey { get; set; }
     }
 }
