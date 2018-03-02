@@ -10,6 +10,10 @@ namespace Reposed.Core.Services.Github
 {
     public class GithubBackupService : BackupServiceBase
     {
+        public static string SERVICE_ID = "GITHUB";
+
+        public override string ServiceId { get { return SERVICE_ID; } }
+
         public GithubBackupService() : base()
         {
 

@@ -9,14 +9,14 @@
              d:DesignHeight="100" d:DesignWidth="500">
     <ContentControl cal:View.Model="{Binding BackupControllerViewModel}">
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="150"/>
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <Button cal:Message.Attach="[Event Click] = [Action OnStartBackups()]" Margin="10" Background="{DynamicResource PrimaryButtonBrush}">
                 <TextBlock Text="Backup Repos" Foreground="{DynamicResource PrimaryTextBrush}"/>
             </Button>
-            <Grid Grid.Column="1">
+            <Grid Grid.Row="1">
                 <DockPanel VerticalAlignment="Top">
                     <TextBlock Text="Local Path:"/>
                     <TextBox Text="{Binding BackupPath, Mode=OneWay}" IsReadOnly="True"/>

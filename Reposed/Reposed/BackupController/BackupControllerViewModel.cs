@@ -44,9 +44,6 @@ namespace Reposed.BackupController
         {
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
-
-            BackupPath = IoC.Get<Preferences.PreferencesViewModel>().GetPreferences().LocalBackupPath;
-            NotifyOfPropertyChange(() => BackupPath);
         }
 
         public void OnViewLoaded(ActionExecutionContext e)
@@ -76,7 +73,10 @@ namespace Reposed.BackupController
                 return;
             }
 
-            SelectedBackupService.Backup(m_rootBackupFolder);
+            if (SelectedBackupService.IsValid)
+                SelectedBackupService.Backup(m_rootBackupFolder);
+            else
+                LOGGER.Error($"Unable to backup service. Isn't valid");
         }
 
         public void Handle(PreferencesUpdated message)

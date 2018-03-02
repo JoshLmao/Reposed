@@ -1,15 +1,13 @@
 ﻿using Caliburn.Micro;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Reposed.Core;
 using Reposed.Events;
 using Reposed.MVVM;
 using Reposed.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reposed.Preferences
 {
@@ -96,6 +94,8 @@ namespace Reposed.Preferences
                     }
                     else
                         LOGGER.Info("No Bitbucket Preferences found");
+
+                    SetServiceCredentials();
                 }
             }
             else
@@ -146,6 +146,8 @@ namespace Reposed.Preferences
                 PrivateKey = BB_OAuthPrivateKey,
             };
 
+            SetServiceCredentials();
+
             EVENT_AGGREGATOR.PublishOnCurrentThread(new PreferencesUpdated(m_prefs));
 
             SaveToFile(m_prefs);
@@ -180,6 +182,26 @@ namespace Reposed.Preferences
         public Models.Preferences GetPreferences()
         {
             return m_prefs;
+        }
+
+        /// <summary>
+        /// Gets all IBackupService's and sets their credentials
+        /// </summary>
+        void SetServiceCredentials()
+        {
+            IEnumerable<IBackupService> backups = IoC.GetAll<IBackupService>();
+            foreach (IBackupService service in backups)
+            {
+                Models.IBackupCredentials creds = null;
+                if(service.ServiceId == Core.Services.Bitbucket.BitbucketBackupService.SERVICE_ID)
+                    creds = m_prefs.BitbucketPrefs;
+                else if(service.ServiceId == Core.Services.Github.GithubBackupService.SERVICE_ID)
+                    creds = m_prefs.GithubPrefs;
+                else
+                    throw new NotImplementedException();
+
+                service.SetCredentials(creds);
+            }
         }
     }
 }

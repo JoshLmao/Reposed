@@ -10,33 +10,45 @@ namespace Reposed.Core.Services.Bitbucket
 {
     public class BitbucketBackupService : BackupServiceBase
     {
-        readonly BitbucketAPIService BITBUCKET_API = null;
+        public static string SERVICE_ID = "BITBUCKET";
+
+        public override string ServiceId { get { return SERVICE_ID; } }
+
+        BitbucketAPIService m_bitbucketAPI = null;
 
         public BitbucketBackupService() : base()
         {
-            BITBUCKET_API = new BitbucketAPIService(null, null);
         }
 
         public override bool SetCredentials(IBackupCredentials credentials)
         {
-            IsValid = credentials is GithubPrefs prefs;
-            if (IsValid)
+            if (credentials is BitBucketPrefs)
             {
+                BitBucketPrefs prefs = credentials as BitBucketPrefs;
+                m_bitbucketAPI = new BitbucketAPIService(prefs.Username, prefs.PublicKey, prefs.PrivateKey);
+                IsAuthorized = true;
+
                 return true;
             }
             else
             {
-                LOGGER.Info($"Not correct type");
+                LOGGER.Info($"Not correct credentials type");
                 return false;
             }
         }
 
         public override bool Backup(string rootBackupDir)
         {
+            if (!IsAuthorized)
+            {
+                LOGGER.Error("Unable to backup Bitbucket API. m_bitbucketAPI is null");
+                return false;
+            }
+
             string currentRepoName = null;
             try
             {
-                List<Repository> repos = BITBUCKET_API.GetAllRepos(null);
+                List<Repository> repos = m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username);
                 foreach(Repository repo in repos)
                 {
                     currentRepoName = repo.name;
@@ -70,7 +82,7 @@ namespace Reposed.Core.Services.Bitbucket
         {
             string command = "";
             string gitCommand = "";
-            string repoUrl = BITBUCKET_API.GetRepoUrl(repo.name, true);
+            string repoUrl = m_bitbucketAPI.GetRepoUrl(repo.name, true);
 
             //Check if we have credentials for ssh, else use https
             bool dirExists = System.IO.Directory.Exists(folderPath);

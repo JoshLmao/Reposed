@@ -77,9 +77,6 @@ namespace Reposed
             //Services
             m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
             m_iocContainer.Singleton<IBackupService, GithubBackupService>();
-
-            //Should be done in setup
-            m_iocContainer.GetInstance<Preferences.PreferencesViewModel>().LoadPreferences();
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
@@ -88,6 +85,9 @@ namespace Reposed
 
             //Display Shell
             DisplayRootViewFor<ShellViewModel>();
+
+            //Load prefs after IoC init
+            m_iocContainer.GetInstance<Preferences.PreferencesViewModel>().LoadPreferences();
         }
 
         protected override object GetInstance(Type service, string key)

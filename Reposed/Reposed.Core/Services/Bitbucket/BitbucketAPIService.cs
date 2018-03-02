@@ -11,13 +11,16 @@ namespace Reposed.Core.Services.Bitbucket
 {
     public class BitbucketAPIService
     {
+        public string Username { get; private set; }
+
         string m_teamName;
-        string m_username;
 
         SharpBucketV2 m_sharpBucket2 = null;
 
-        public BitbucketAPIService(string publicKey, string secretKey)
+        public BitbucketAPIService(string username, string publicKey, string secretKey)
         {
+            Username = username;
+            
             m_sharpBucket2 = new SharpBucketV2();
             m_sharpBucket2.OAuth2LeggedAuthentication(publicKey, secretKey);
         }
