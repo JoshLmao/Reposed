@@ -51,7 +51,7 @@ namespace Reposed.Accounts
             List<IBackupService> services = IoC.GetAll<IBackupService>().ToList();
             foreach (IBackupService service in services)
             {
-                if (service.IsValid)
+                if (service.IsAuthorized)
                 {
                     BackupAccounts.Add(service);
                 }

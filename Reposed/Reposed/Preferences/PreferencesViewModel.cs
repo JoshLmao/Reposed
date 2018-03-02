@@ -36,6 +36,17 @@ namespace Reposed.Preferences
         }
 
         #region BitbucketProperties
+        string m_bb_username;
+        public string BB_Username
+        {
+            get { return m_bb_username; }
+            set
+            {
+                m_bb_username = value;
+                NotifyOfPropertyChange(() => BB_Username);
+            }
+        }
+
         string m_bb_OAuthPublicKey;
         public string BB_OAuthPublicKey
         {
@@ -91,6 +102,7 @@ namespace Reposed.Preferences
                     {
                         BB_OAuthPublicKey = bbPrefs.PublicKey;
                         BB_OAuthPrivateKey = bbPrefs.PrivateKey;
+                        BB_Username = bbPrefs.Username;
                     }
                     else
                         LOGGER.Info("No Bitbucket Preferences found");
@@ -142,6 +154,7 @@ namespace Reposed.Preferences
 
             m_prefs.BitbucketPrefs = new Models.BitBucketPrefs()
             {
+                Username = BB_Username,
                 PublicKey = BB_OAuthPublicKey,
                 PrivateKey = BB_OAuthPrivateKey,
             };

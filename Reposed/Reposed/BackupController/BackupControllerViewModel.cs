@@ -36,8 +36,6 @@ namespace Reposed.BackupController
 
         public string BackupPath { get; set; }
 
-        protected string m_rootBackupFolder;
-
         readonly IEventAggregator EVENT_AGGREGATOR = null;
 
         public BackupControllerViewModel(IEventAggregator eventAggregator)
@@ -53,16 +51,21 @@ namespace Reposed.BackupController
 
         void UpdateServices()
         {
+            if (BackupServices == null)
+                BackupServices = new List<IBackupService>();
+
             BackupServices.Clear();
 
             List<IBackupService> services = IoC.GetAll<IBackupService>().ToList();
             foreach (IBackupService service in services)
             {
-                if (service.IsValid)
+                if (service.IsAuthorized)
                 {
                     BackupServices.Add(service);
                 }
             }
+
+            SelectedBackupService = BackupServices.FirstOrDefault();
         }
 
         public void OnStartBackups()
@@ -73,8 +76,8 @@ namespace Reposed.BackupController
                 return;
             }
 
-            if (SelectedBackupService.IsValid)
-                SelectedBackupService.Backup(m_rootBackupFolder);
+            if (SelectedBackupService.IsAuthorized)
+                SelectedBackupService.Backup(BackupPath);
             else
                 LOGGER.Error($"Unable to backup service. Isn't valid");
         }

@@ -35,6 +35,11 @@
             </TabItem>
             <TabItem Header="Bitbucket Settings">
                 <StackPanel>
+
+                    <DockPanel Margin="5,3">
+                        <TextBlock Text="Username:" Margin="5,0"/>
+                        <TextBox Text="{Binding BB_Username, Mode=TwoWay}"/>
+                    </DockPanel>
                     <TextBlock Text="OAuth Keys" Margin="10,5" FontWeight="Bold" ToolTip="OAuth keys created for the bitbuckey account to backup from (Bitbucket > Settings > OAuth)"/>
                     <StackPanel>
                         <DockPanel Margin="5,3">
