@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:Reposed.ServiceComponents.Bitbucket"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1000"
-             cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]">
+             d:DesignHeight="300" d:DesignWidth="300"
+            cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />

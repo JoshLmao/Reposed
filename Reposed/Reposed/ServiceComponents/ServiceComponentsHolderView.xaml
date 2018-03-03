@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Reposed.ServiceComponents"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="600">
-    <ContentControl x:Name="ActiveItem" Content="{Binding ActiveItem}"/>
+             d:DesignHeight="300" d:DesignWidth="600"
+             cal:Bind.AtDesignTime="True">
+    <ContentControl cal:View.Model="{Binding ActiveItem}"/>
 </UserControl>

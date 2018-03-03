@@ -3,6 +3,7 @@ using NLog;
 using Reposed.Core;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Core.Services.Github;
+using Reposed.ServiceComponents.Bitbucket;
 using Reposed.Shell;
 using System;
 using System.Collections.Generic;
@@ -114,16 +115,5 @@ namespace Reposed
             base.BuildUp(instance);
             m_iocContainer.BuildUp(instance);
         }
-
-        protected override IEnumerable<Assembly> SelectAssemblies()
-        {
-            return new List<Assembly>
-            {
-                Assembly.GetExecutingAssembly(),
-                Assembly.Load("Reposed.Core"),
-                Assembly.Load("Reposed.Models"),
-            };
-        }
     }
-
 }

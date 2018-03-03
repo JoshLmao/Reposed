@@ -1,4 +1,6 @@
-﻿using Reposed.MVVM;
+﻿using Caliburn.Micro;
+using Reposed.Events;
+using Reposed.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,14 +46,29 @@ namespace Reposed.ServiceComponents.Bitbucket
             }
         }
 
-        public BitbucketBackupComponentViewModel()
+        public BitbucketBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
         {
-            Username = "TestName";
         }
 
         public void OnViewLoaded()
         {
+            Models.Preferences prefs = IoC.Get<Preferences.PreferencesViewModel>().GetPreferences();
+            SetPrefsUI(prefs);
+        }
 
+        public override void Handle(PreferencesUpdated message)
+        {
+            SetPrefsUI(message.Prefs);
+        }
+
+        void SetPrefsUI(Models.Preferences prefs)
+        {
+            if (prefs != null && prefs.BitbucketPrefs != null)
+            {
+                Username = prefs.BitbucketPrefs.Username;
+                OAuthPublic = prefs.BitbucketPrefs.PublicKey;
+                OAuthPrivate = prefs.BitbucketPrefs.PrivateKey;
+            }
         }
     }
 }

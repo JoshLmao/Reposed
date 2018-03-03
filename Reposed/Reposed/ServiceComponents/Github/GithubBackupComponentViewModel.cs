@@ -1,4 +1,5 @@
-﻿using Reposed.MVVM;
+﻿using Caliburn.Micro;
+using Reposed.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,8 @@ namespace Reposed.ServiceComponents.Github
 {
     public class GithubBackupComponentViewModel : ServiceComponentsBase
     {
+        public GithubBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
+        {
+        }
     }
 }
