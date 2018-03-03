@@ -107,7 +107,7 @@ namespace Reposed.Preferences
                     else
                         LOGGER.Info("No Bitbucket Preferences found");
 
-                    SetServiceCredentials();
+                    SetServiceData();
                 }
             }
             else
@@ -159,7 +159,7 @@ namespace Reposed.Preferences
                 PrivateKey = BB_OAuthPrivateKey,
             };
 
-            SetServiceCredentials();
+            SetServiceData();
 
             EVENT_AGGREGATOR.PublishOnCurrentThread(new PreferencesUpdated(m_prefs));
 
@@ -198,13 +198,15 @@ namespace Reposed.Preferences
         }
 
         /// <summary>
-        /// Gets all IBackupService's and sets their credentials
+        /// Gets all IBackupService's and sets all needed data from prefs
         /// </summary>
-        void SetServiceCredentials()
+        void SetServiceData()
         {
             IEnumerable<IBackupService> backups = IoC.GetAll<IBackupService>();
             foreach (IBackupService service in backups)
             {
+                service.SetGitPath(m_prefs.LocalGitPath);
+
                 Models.IBackupCredentials creds = null;
                 if(service.ServiceId == Core.Services.Bitbucket.BitbucketBackupService.SERVICE_ID)
                     creds = m_prefs.BitbucketPrefs;

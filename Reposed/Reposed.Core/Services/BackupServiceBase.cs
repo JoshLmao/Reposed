@@ -35,6 +35,17 @@ namespace Reposed.Core.Services
             return false;
         }
 
+        public bool SetGitPath(string gitPath)
+        {
+            if (File.Exists(gitPath))
+            {
+                //ToDo: Do more validation to check it's actually the git exe
+                m_gitFilePath = gitPath;
+                return true;
+            }
+            return false;
+        }
+
         public void Init(string gitFilePath)
         {
             m_gitFilePath = gitFilePath;
@@ -72,8 +83,12 @@ namespace Reposed.Core.Services
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {
                 Arguments = command,
-                UseShellExecute = false,
                 FileName = m_gitFilePath,
+
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
             };
             gitProc.StartInfo = startInfo;
             gitProc.Start();

@@ -24,7 +24,12 @@ namespace Reposed.Core
         /// <param name="rootBackupDir"></param>
         /// <returns></returns>
         bool Backup(string rootBackupDir);
-
+        /// <summary>
+        /// Set the service specific credentials with the settings from the prefs
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
         bool SetCredentials(IBackupCredentials credentials);
+        bool SetGitPath(string gitPath);
     }
 }

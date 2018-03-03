@@ -24,10 +24,10 @@ namespace Reposed.Core.Services.Bitbucket
         {
             if (credentials is BitBucketPrefs)
             {
-                BitBucketPrefs prefs = credentials as BitBucketPrefs;
-                m_bitbucketAPI = new BitbucketAPIService(prefs.Username, prefs.PublicKey, prefs.PrivateKey);
+                BitBucketPrefs bbPrefs = credentials as BitBucketPrefs;
+                m_bitbucketAPI = new BitbucketAPIService(bbPrefs.Username, bbPrefs.PublicKey, bbPrefs.PrivateKey);
                 IsAuthorized = true;
-
+                
                 return true;
             }
             else
@@ -73,16 +73,16 @@ namespace Reposed.Core.Services.Bitbucket
 
             bool cmdSuccess = ExecuteGitCommand(command);
             if (!cmdSuccess)
-                LOGGER.Error($"Error updating repository '{repo.name}'");
+                LOGGER.Error($"Error executing Git command on repository '{repo.name}'");
 
-            return true;
+            return cmdSuccess;
         }
 
         string GetGitCommand(Repository repo, string folderPath)
         {
             string command = "";
             string gitCommand = "";
-            string repoUrl = m_bitbucketAPI.GetRepoUrl(repo.name, true);
+            string repoUrl = m_bitbucketAPI.GetRepoUrl(repo.name, false);
 
             //Check if we have credentials for ssh, else use https
             bool dirExists = System.IO.Directory.Exists(folderPath);

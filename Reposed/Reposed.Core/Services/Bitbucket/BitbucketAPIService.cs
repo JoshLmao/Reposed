@@ -40,7 +40,7 @@ namespace Reposed.Core.Services.Bitbucket
         public string GetRepoUrl(string repo, bool isSSH)
         {
             RepositoriesEndPoint reposEndPoint = m_sharpBucket2.RepositoriesEndPoint();
-            var repos = reposEndPoint.ListRepositories(m_teamName);
+            var repos = reposEndPoint.ListRepositories(Username);
             var foundRepo = repos.FirstOrDefault(x => x.name == repo);
             if (foundRepo != null)
                 if (isSSH)
