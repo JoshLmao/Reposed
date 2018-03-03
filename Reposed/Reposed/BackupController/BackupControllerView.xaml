@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="500"
              cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded($executionContext)]">
-    <ContentControl cal:View.Model="{Binding BackupControllerViewModel}">
+    <ContentControl>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition />

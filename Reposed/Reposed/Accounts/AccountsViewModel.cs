@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using Reposed.Core;
+using Reposed.Events;
 using Reposed.MVVM;
 using System;
 using System.Collections.Generic;
@@ -31,17 +32,23 @@ namespace Reposed.Accounts
             {
                 m_selectedAccount = value;
                 NotifyOfPropertyChange(() => SelectedAccount);
+
+                EVENT_AGGREGATOR.PublishOnCurrentThread(new OnAccountSelected(SelectedAccount));
             }
         }
 
-        public AccountsViewModel()
-        {
+        readonly IEventAggregator EVENT_AGGREGATOR = null;
 
+        public AccountsViewModel(IEventAggregator eventAggregator)
+        {
+            EVENT_AGGREGATOR = eventAggregator;
         }
 
         public override void OnViewLoaded(ActionExecutionContext e)
         {
             UpdateAccounts();
+
+            SelectedAccount = BackupAccounts.FirstOrDefault();
         }
 
         void UpdateAccounts()

@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <converters:ServiceToIconConverter x:Key="s2ic"/>
     </UserControl.Resources>
-    <ContentControl cal:View.Model="{Binding AccountsViewModel}">
+    <ContentControl>
         <ListView ItemsSource="{Binding BackupAccounts}" SelectedItem="{Binding SelectedAccount}" Background="Transparent" BorderThickness="0">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>

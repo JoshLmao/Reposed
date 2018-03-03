@@ -6,6 +6,7 @@ using Reposed.Core.Services.Github;
 using Reposed.Shell;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -73,6 +74,10 @@ namespace Reposed
             m_iocContainer.Singleton<Preferences.PreferencesViewModel>();
             m_iocContainer.Singleton<BackupController.BackupControllerViewModel>();
             m_iocContainer.Singleton<Accounts.AccountsViewModel>();
+            m_iocContainer.Singleton<ServiceComponents.ServiceComponentsHolderViewModel>();
+
+            m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Bitbucket.BitbucketBackupComponentViewModel>(BitbucketBackupService.SERVICE_ID);
+            m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Github.GithubBackupComponentViewModel>(GithubBackupService.SERVICE_ID);
 
             //Services
             m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
@@ -108,6 +113,16 @@ namespace Reposed
         {
             base.BuildUp(instance);
             m_iocContainer.BuildUp(instance);
+        }
+
+        protected override IEnumerable<Assembly> SelectAssemblies()
+        {
+            return new List<Assembly>
+            {
+                Assembly.GetExecutingAssembly(),
+                Assembly.Load("Reposed.Core"),
+                Assembly.Load("Reposed.Models"),
+            };
         }
     }
 

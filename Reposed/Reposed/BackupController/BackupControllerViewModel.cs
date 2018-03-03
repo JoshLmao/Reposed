@@ -44,7 +44,7 @@ namespace Reposed.BackupController
             EVENT_AGGREGATOR.Subscribe(this);
         }
 
-        public void OnViewLoaded(ActionExecutionContext e)
+        public override void OnViewLoaded(ActionExecutionContext e)
         {
             UpdateServices();
         }

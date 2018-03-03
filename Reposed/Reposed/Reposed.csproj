@@ -83,6 +83,7 @@
       <DependentUpon>BackupControllerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BackupController\BackupControllerViewModel.cs" />
+    <Compile Include="Events\OnAccountSelected.cs" />
     <Compile Include="Events\PreferencesUpdated.cs" />
     <Compile Include="Menu\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
@@ -94,6 +95,20 @@
       <DependentUpon>PreferencesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Preferences\PreferencesViewModel.cs" />
+    <Compile Include="ServiceComponents\Bitbucket\BitbucketBackupComponentView.xaml.cs">
+      <DependentUpon>BitbucketBackupComponentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceComponents\Bitbucket\BitbucketBackupComponentViewModel.cs" />
+    <Compile Include="ServiceComponents\Github\GithubBackupComponentView.xaml.cs">
+      <DependentUpon>GithubBackupComponentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceComponents\Github\GithubBackupComponentViewModel.cs" />
+    <Compile Include="ServiceComponents\IServiceComponent.cs" />
+    <Compile Include="ServiceComponents\ServiceComponentsBase.cs" />
+    <Compile Include="ServiceComponents\ServiceComponentsHolderViewModel.cs" />
+    <Compile Include="ServiceComponents\ServiceComponentsHolderView.xaml.cs">
+      <DependentUpon>ServiceComponentsHolderView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
@@ -120,6 +135,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\VectorIcons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ServiceComponents\Bitbucket\BitbucketBackupComponentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ServiceComponents\Github\GithubBackupComponentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ServiceComponents\ServiceComponentsHolderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

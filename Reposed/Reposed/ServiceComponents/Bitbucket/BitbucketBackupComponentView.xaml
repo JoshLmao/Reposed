@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="Reposed.ServiceComponents.Bitbucket.BitbucketBackupComponentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Reposed.ServiceComponents.Bitbucket"
+             xmlns:cal="http://www.caliburnproject.org"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000"
+             cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,3">
+                    <TextBlock Text="Username:" Margin="5,3"/>
+                    <TextBlock Text="{Binding Username}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,3">
+                    <TextBlock Text="OAuth Public:" Margin="5,3"/>
+                    <TextBlock Text="{Binding OAuthPublic}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,3">
+                    <TextBlock Text="OAuth Private:" Margin="5,3" />
+                    <TextBlock Text="{Binding OAuthPrivate}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+        </Grid>
+    </Grid>
+</UserControl>
