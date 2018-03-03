@@ -5,40 +5,28 @@
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                 xmlns:local="clr-namespace:Reposed.Accounts"
                 xmlns:coreServices="clr-namespace:Reposed.Core.Services;assembly=Reposed.Core"
+                xmlns:converters="clr-namespace:Reposed.Converters"
                 xmlns:cal="http://www.caliburnproject.org"
                 mc:Ignorable="d" 
                 d:DesignHeight="300" d:DesignWidth="100"
                 cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded($executionContext)]">
     <UserControl.Resources>
-        <local:ServiceToIconConverter x:Key="s2ic"/>
+        <converters:ServiceToIconConverter x:Key="s2ic"/>
     </UserControl.Resources>
-    <!--Final BB icon-->
-    <!--<Grid>
-        <Path Data="{StaticResource BitBucketIcon}">
-            <Path.Fill>
-                <LinearGradientBrush StartPoint="0,1.5" EndPoint="0,0">
-                    <GradientStop Color="#FFFFFFFF" Offset="0"/>
-                    <GradientStop Color="#FFFFFFFF" Offset="0.667"/>
-                    <GradientStop Color="#00FFFFFF" Offset="1"/>
-                </LinearGradientBrush>
-            </Path.Fill>
-        </Path>
-        <Path Data="M 3.844 4 a 0.563 0.563 0 0 0 -0.563 0.651 L 5.67 19.12 a 0.763 0.763 0 0 0 0.748 0.637 l 4.433 -5.3 h -0.622 l -0.976 -5.16 h 10.811 l 0.76 -4.64 A 0.56 0.56 0 0 0 20.269 4 H 3.844 Z" Fill="White"/>
-    </Grid>-->
-    <ContentControl cal:View.Model="{Binding AccountsViewModel}">
-        <ItemsControl ItemsSource="{Binding BackupAccounts}">
-            <ItemsControl.ItemsPanel>
+    <ContentControl>
+        <ListView ItemsSource="{Binding BackupAccounts}" SelectedItem="{Binding SelectedAccount}" Background="Transparent" BorderThickness="0">
+            <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical"/>
                 </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type coreServices:BackupServiceBase}">
                     <Grid Margin="10">
                         <Path Fill="White" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill"/>
                     </Grid>
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            </ListView.ItemTemplate>
+        </ListView>
     </ContentControl>
 </UserControl>

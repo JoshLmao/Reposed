@@ -4,9 +4,63 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reposed.Preferences"
+        xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
         Title="PreferencesView" Height="300" Width="300">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="Backup Settings">
+                <Grid>
+                    <StackPanel>
+                        <DockPanel HorizontalAlignment="Stretch">
+                            <TextBlock Text="Git Path" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="5,3"/>
+                            <Button DockPanel.Dock="Right" cal:Message.Attach="[Event Click] = [Action OnSelectGitPath()]" Margin="5,3">
+                                <TextBlock Text="..." Padding="5,0"/>
+                            </Button>
+                            <TextBox Text="{Binding GitPath}" VerticalAlignment="Center" Margin="5,3" IsReadOnly="True"/>
+                        </DockPanel>
+                        <DockPanel HorizontalAlignment="Stretch">
+                            <TextBlock Text="Backup Path" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="5,3"/>
+                            <Button DockPanel.Dock="Right" cal:Message.Attach="[Event Click] = [Action OnSelectedBackupPath()]" Margin="5,3">
+                                <TextBlock Text="..." Padding="5,0"/>
+                            </Button>
+                            <TextBox Text="{Binding LocalBackupPath}" VerticalAlignment="Center" Margin="5,3" IsReadOnly="True"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Bitbucket Settings">
+                <StackPanel>
+
+                    <DockPanel Margin="5,3">
+                        <TextBlock Text="Username:" Margin="5,0"/>
+                        <TextBox Text="{Binding BB_Username, Mode=TwoWay}"/>
+                    </DockPanel>
+                    <TextBlock Text="OAuth Keys" Margin="10,5" FontWeight="Bold" ToolTip="OAuth keys created for the bitbuckey account to backup from (Bitbucket > Settings > OAuth)"/>
+                    <StackPanel>
+                        <DockPanel Margin="5,3">
+                            <TextBlock Text="Public Key:" Margin="5,0"/>
+                            <TextBox Text="{Binding BB_OAuthPublicKey, Mode=TwoWay}"/>
+                        </DockPanel>
+                        <DockPanel Margin="5,3">
+                            <TextBlock Text="Private Key:" Margin="5,0"/>
+                            <TextBox Text="{Binding BB_OAuthPrivateKey, Mode=TwoWay}"/>
+                        </DockPanel>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+            <Button Margin="5,3" cal:Message.Attach="[Event Click] = [Action OnApply()]">
+                <TextBlock Text="Apply" Padding="20,3"/>
+            </Button>
+            <Button Margin="5,3" cal:Message.Attach="[Event Click] = [Action OnCancel()]">
+                <TextBlock Text="Cancel" Padding="20,3"/>
+            </Button>
+        </StackPanel>
     </Grid>
 </Window>

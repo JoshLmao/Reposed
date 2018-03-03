@@ -1,4 +1,6 @@
 ﻿using Reposed.Core;
+using Reposed.Core.Services.Bitbucket;
+using Reposed.Core.Services.Github;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Reposed.Accounts
+namespace Reposed.Converters
 {
     internal class ServiceToIconConverter : IValueConverter
     {
@@ -16,7 +18,12 @@ namespace Reposed.Accounts
         {
             if (value is IBackupService service)
             {
-                return Application.Current.FindResource("GitHubIcon");
+                if (value is BitbucketBackupService)
+                    return Application.Current.FindResource("BitbucketIcon");
+                else if (value is GithubBackupService)
+                    return Application.Current.FindResource("GitHubIcon");
+                else
+                    throw new NotImplementedException("Add icon!!");
             }
 
             return null;

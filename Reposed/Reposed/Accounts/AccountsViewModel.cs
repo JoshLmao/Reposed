@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using Reposed.Core;
+using Reposed.Events;
 using Reposed.MVVM;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,31 @@ namespace Reposed.Accounts
             }
         }
 
-        public AccountsViewModel()
+        IBackupService m_selectedAccount;
+        public IBackupService SelectedAccount
         {
+            get { return m_selectedAccount; }
+            set
+            {
+                m_selectedAccount = value;
+                NotifyOfPropertyChange(() => SelectedAccount);
 
+                EVENT_AGGREGATOR.PublishOnCurrentThread(new OnAccountSelected(SelectedAccount));
+            }
+        }
+
+        readonly IEventAggregator EVENT_AGGREGATOR = null;
+
+        public AccountsViewModel(IEventAggregator eventAggregator)
+        {
+            EVENT_AGGREGATOR = eventAggregator;
         }
 
         public override void OnViewLoaded(ActionExecutionContext e)
         {
             UpdateAccounts();
+
+            SelectedAccount = BackupAccounts.FirstOrDefault();
         }
 
         void UpdateAccounts()
@@ -40,11 +58,14 @@ namespace Reposed.Accounts
             List<IBackupService> services = IoC.GetAll<IBackupService>().ToList();
             foreach (IBackupService service in services)
             {
-                if (service.IsValid)
+                if (service.IsAuthorized)
                 {
                     BackupAccounts.Add(service);
                 }
             }
+
+            if (SelectedAccount == null)
+                SelectedAccount = BackupAccounts.FirstOrDefault();
 
             NotifyOfPropertyChange(() => BackupAccounts);
         }

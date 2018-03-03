@@ -16,5 +16,10 @@ namespace Reposed.Menu
         {
             WINDOW_MANAGER.ShowDialog(IoC.Get<Preferences.PreferencesViewModel>());
         }
+
+        public void OnCloseApplication()
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
     }
 }

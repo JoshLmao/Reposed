@@ -11,18 +11,21 @@ namespace Reposed.Core.Services.Bitbucket
 {
     public class BitbucketAPIService
     {
+        public string Username { get; private set; }
+
         string m_teamName;
-        string m_username;
 
         SharpBucketV2 m_sharpBucket2 = null;
 
-        public BitbucketAPIService(string publicKey, string secretKey)
+        public BitbucketAPIService(string username, string publicKey, string secretKey)
         {
+            Username = username;
+            
             m_sharpBucket2 = new SharpBucketV2();
             m_sharpBucket2.OAuth2LeggedAuthentication(publicKey, secretKey);
         }
 
-        public void GetAllRepos(string usernameOrTeamName)
+        public List<Repository> GetAllRepos(string usernameOrTeamName)
         {
             RepositoriesEndPoint repoEndPoint = m_sharpBucket2.RepositoriesEndPoint();
             List<Repository> allRepos = null;
@@ -31,7 +34,21 @@ namespace Reposed.Core.Services.Bitbucket
                 allRepos = repoEndPoint.ListRepositories(usernameOrTeamName);
             }
 
-            return;
+            return allRepos;
+        }
+
+        public string GetRepoUrl(string repo, bool isSSH)
+        {
+            RepositoriesEndPoint reposEndPoint = m_sharpBucket2.RepositoriesEndPoint();
+            var repos = reposEndPoint.ListRepositories(Username);
+            var foundRepo = repos.FirstOrDefault(x => x.name == repo);
+            if (foundRepo != null)
+                if (isSSH)
+                    return foundRepo.links.clone[1].href;
+                else
+                    return foundRepo.links.clone[0].href;
+            else
+                return null;
         }
     }
 }
