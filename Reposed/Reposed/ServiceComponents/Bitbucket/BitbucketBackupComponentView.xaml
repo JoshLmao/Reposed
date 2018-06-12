@@ -6,15 +6,19 @@
              xmlns:local="clr-namespace:Reposed.ServiceComponents.Bitbucket"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300" d:DesignWidth="600"
             cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="150"/>
+        </Grid.ColumnDefinitions>
         <Grid>
-            <StackPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel >
                 <StackPanel Orientation="Horizontal" Margin="5,3">
                     <TextBlock Text="Username:" Margin="5,3"/>
                     <TextBlock Text="{Binding Username}"/>
@@ -29,8 +33,24 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-
-        <Grid Grid.Row="1">
+        <!--Repos-->
+        <Grid Grid.Column="1" Grid.RowSpan="2">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Repositories}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <ItemContainerTemplate>
+                            <Grid>
+                                <TextBlock Text="{Binding Name}"/>
+                            </Grid>
+                    </ItemContainerTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </UserControl>

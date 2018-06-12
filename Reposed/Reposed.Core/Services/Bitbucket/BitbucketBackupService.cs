@@ -14,6 +14,8 @@ namespace Reposed.Core.Services.Bitbucket
 
         public override string ServiceId { get { return SERVICE_ID; } }
 
+        public BitbucketAPIService APIService { get { return m_bitbucketAPI; } }
+
         BitbucketAPIService m_bitbucketAPI = null;
 
         public BitbucketBackupService() : base()
@@ -26,13 +28,14 @@ namespace Reposed.Core.Services.Bitbucket
             {
                 BitBucketPrefs bbPrefs = credentials as BitBucketPrefs;
                 m_bitbucketAPI = new BitbucketAPIService(bbPrefs.Username, bbPrefs.PublicKey, bbPrefs.PrivateKey);
-                IsAuthorized = true;
-                
+                IsAuthorized = CanBackup = true;
+
                 return true;
             }
             else
             {
                 LOGGER.Info($"Not correct credentials type");
+                IsAuthorized = CanBackup = false;
                 return false;
             }
         }
@@ -45,6 +48,7 @@ namespace Reposed.Core.Services.Bitbucket
                 return false;
             }
 
+            CanBackup = false;
             string currentRepoName = null;
             try
             {
@@ -62,11 +66,15 @@ namespace Reposed.Core.Services.Bitbucket
                 LOGGER.Fatal($"Unable to backup repository {currentRepoName}");
             }
 
+            CanBackup = false;
             return true;
         }
 
         bool BackupRepo(string rootBackupDir, Repository repo)
         {
+            System.Threading.Thread.Sleep(1000);
+            return true;
+
             string currentRepoDir = $"{rootBackupDir}\\{repo.name}";
             string command = GetGitCommand(repo, currentRepoDir);
             PrepareRepoDirectory(currentRepoDir);
@@ -107,6 +115,11 @@ namespace Reposed.Core.Services.Bitbucket
             }
 
             return command;
+        }
+
+        public List<Repository> GetAllRepositories()
+        {
+            return m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username);
         }
     }
 }

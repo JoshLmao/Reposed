@@ -11,13 +11,22 @@
     <ContentControl>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Button cal:Message.Attach="[Event Click] = [Action OnStartBackups()]" Margin="10" Background="{DynamicResource PrimaryButtonBrush}">
+            <StackPanel>
+                
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding SelectedItems}">
+                
+            </ItemsControl>
+
+            <Button cal:Message.Attach="[Event Click] = [Action OnStartBackups()]" Margin="10" Background="{DynamicResource PrimaryButtonBrush}"
+                    Grid.Row="1" HorizontalAlignment="Left" IsEnabled="{Binding CanBackup, UpdateSourceTrigger=PropertyChanged}">
                 <TextBlock Text="Backup Repos" Foreground="{DynamicResource PrimaryTextBrush}"/>
             </Button>
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="2">
                 <DockPanel VerticalAlignment="Top">
                     <TextBlock Text="Local Path:"/>
                     <TextBox Text="{Binding BackupPath, Mode=OneWay}" IsReadOnly="True"/>

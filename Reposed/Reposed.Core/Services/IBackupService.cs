@@ -12,6 +12,13 @@ namespace Reposed.Core
         /// Does the service have valid credentials to perform it's tasks
         /// </summary>
         bool IsAuthorized { get; }
+        /// <summary>
+        /// Can this service run a backup?
+        /// </summary>
+        bool CanBackup { get; }
+
+        event System.Action<bool> OnCanBackupChanged;
+        event System.Action<bool> OnIsAuthorizedChanged;
 
         /// <summary>
         /// Configures the service with the necessary params

@@ -14,9 +14,32 @@ namespace Reposed.Core.Services
     {
         public abstract string ServiceId { get; }
 
-        public bool IsAuthorized { get; protected set; } = true;
+        bool m_isAuthorized;
+        public bool IsAuthorized
+        {
+            get { return m_isAuthorized; }
+            protected set
+            {
+                m_isAuthorized = value;
+                OnIsAuthorizedChanged?.Invoke(IsAuthorized);
+            }
+        }
 
-        protected readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
+        bool m_canBackup = false;
+        public bool CanBackup
+        {
+            get { return m_canBackup; }
+            protected set
+            {
+                m_canBackup = value;
+                OnCanBackupChanged?.Invoke(CanBackup);
+            }
+        }
+
+        public event Action<bool> OnIsAuthorizedChanged;
+        public event Action<bool> OnCanBackupChanged;
+
+        protected readonly Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         string m_gitFilePath = null;
 

@@ -33,7 +33,8 @@ namespace Reposed.Accounts
                 m_selectedAccount = value;
                 NotifyOfPropertyChange(() => SelectedAccount);
 
-                EVENT_AGGREGATOR.PublishOnCurrentThread(new OnAccountSelected(SelectedAccount));
+                if(SelectedAccount != null)
+                    EVENT_AGGREGATOR.PublishOnCurrentThread(new OnAccountSelected(SelectedAccount));
             }
         }
 
@@ -58,10 +59,7 @@ namespace Reposed.Accounts
             List<IBackupService> services = IoC.GetAll<IBackupService>().ToList();
             foreach (IBackupService service in services)
             {
-                if (service.IsAuthorized)
-                {
-                    BackupAccounts.Add(service);
-                }
+                BackupAccounts.Add(service);
             }
 
             if (SelectedAccount == null)

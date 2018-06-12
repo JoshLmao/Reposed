@@ -13,4 +13,8 @@
             <StreamGeometry>M 3.844 4 a 0.563 0.563 0 0 0 -0.563 0.651 L 5.67 19.12 a 0.763 0.763 0 0 0 0.748 0.637 l 4.433 -5.3 h -0.622 l -0.976 -5.16 h 10.811 l 0.76 -4.64 A 0.56 0.56 0 0 0 20.269 4 H 3.844 Z</StreamGeometry>
         </CombinedGeometry.Geometry2>
     </CombinedGeometry>
+    
+    <!--UI-->
+    <!--Check Icon-->
+    <StreamGeometry x:Key="CheckIconPath">F1 M 23.7501,33.25L 34.8334,44.3333L 52.2499,22.1668L 56.9999,26.9168L 34.8334,53.8333L 19.0001,38L 23.7501,33.25 Z</StreamGeometry>
 </ResourceDictionary>

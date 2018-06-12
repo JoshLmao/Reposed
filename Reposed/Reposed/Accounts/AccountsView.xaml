@@ -12,6 +12,7 @@
                 cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded($executionContext)]">
     <UserControl.Resources>
         <converters:ServiceToIconConverter x:Key="s2ic"/>
+        <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
     </UserControl.Resources>
     <ContentControl>
         <ListView ItemsSource="{Binding BackupAccounts}" SelectedItem="{Binding SelectedAccount}" Background="Transparent" BorderThickness="0">
@@ -22,9 +23,11 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type coreServices:BackupServiceBase}">
-                    <Grid Margin="10">
+                    <DockPanel Margin="10">
                         <Path Fill="White" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill"/>
-                    </Grid>
+                        <Path Fill="White" Data="{StaticResource CheckIconPath}" Visibility="{Binding CanBackup, Converter={StaticResource b2vc}}"
+                              Height="10" DockPanel.Dock="Right" Stretch="Uniform" Margin="5,0,0,0"/>
+                    </DockPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
