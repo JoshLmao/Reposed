@@ -33,20 +33,28 @@ namespace Reposed.BackupController
                 if(SelectedBackupService != null)
                 {
                     SelectedBackupService.OnCanBackupChanged -= OnCanBackupChanged;
+                    SelectedBackupService.OnRepoBackedUp -= OnRepoBackedUp;
                     //SelectedBackupService.OnIsAuthorizedChanged -= OnIsAuthorizedChanged;
                 }
 
                 m_selectedBackupService = value;
                 NotifyOfPropertyChange(() => SelectedBackupService);
 
-                if (SelectedBackupService != null)
-                {
-                    SelectedBackupService.OnCanBackupChanged += OnCanBackupChanged;
-                    //SelectedBackupService.OnIsAuthorizedChanged += OnIsAuthorizedChanged;
-                }
-
-                NotifyOfPropertyChange(() => CanBackup);
+                OnSelectedBackupServiceChanged();
             }
+        }
+
+        private void OnSelectedBackupServiceChanged()
+        {
+            if (SelectedBackupService != null)
+            {
+                SelectedBackupService.OnCanBackupChanged += OnCanBackupChanged;
+                SelectedBackupService.OnRepoBackedUp += OnRepoBackedUp;
+                //SelectedBackupService.OnIsAuthorizedChanged += OnIsAuthorizedChanged;
+            }
+
+            NotifyOfPropertyChange(() => CanBackup);
+            OnRepoBackedUp();
         }
 
         public bool CanBackup
@@ -55,6 +63,11 @@ namespace Reposed.BackupController
         }
 
         public string BackupPath { get; set; }
+
+        public string ProgressText
+        {
+            get { return $"Progress: Completed = {SelectedBackupService?.CompletedReposCount}, Succeeded = {SelectedBackupService?.SucceededReposCount}, TotalRepos = {SelectedBackupService?.TotalReposCount}"; }
+        }
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
 
@@ -136,6 +149,11 @@ namespace Reposed.BackupController
         private void OnCanBackupChanged(bool canBackup)
         {
             NotifyOfPropertyChange(() => CanBackup);
+        }
+
+        private void OnRepoBackedUp()
+        {
+            NotifyOfPropertyChange(() => ProgressText);
         }
     }
 }

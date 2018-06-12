@@ -12,6 +12,8 @@ namespace Reposed.Core.Services.Bitbucket
     {
         public static string SERVICE_ID = "BITBUCKET";
 
+        public override event Action OnRepoBackedUp;
+
         public override string ServiceId { get { return SERVICE_ID; } }
 
         public BitbucketAPIService APIService { get { return m_bitbucketAPI; } }
@@ -28,8 +30,8 @@ namespace Reposed.Core.Services.Bitbucket
             {
                 BitBucketPrefs bbPrefs = credentials as BitBucketPrefs;
                 m_bitbucketAPI = new BitbucketAPIService(bbPrefs.Username, bbPrefs.PublicKey, bbPrefs.PrivateKey);
-                IsAuthorized = CanBackup = true;
 
+                InitializeWithCredential();
                 return true;
             }
             else
@@ -53,12 +55,21 @@ namespace Reposed.Core.Services.Bitbucket
             try
             {
                 List<Repository> repos = m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username);
-                foreach(Repository repo in repos)
+                foreach (Repository repo in repos)
                 {
                     currentRepoName = repo.name;
 
-                    if (!BackupRepo(rootBackupDir, repo))
+                    if (BackupRepo(rootBackupDir, repo))
+                    {
+                        SucceededReposCount++;
+                    }
+                    else
+                    {
                         LOGGER.Error($"Unable to backup {repo.name}");
+                    }
+
+                    CompletedReposCount++;
+                    OnRepoBackedUp?.Invoke();
                 }
             }
             catch (Exception e)
@@ -66,7 +77,7 @@ namespace Reposed.Core.Services.Bitbucket
                 LOGGER.Fatal($"Unable to backup repository {currentRepoName}");
             }
 
-            CanBackup = false;
+            CanBackup = true;
             return true;
         }
 
@@ -120,6 +131,14 @@ namespace Reposed.Core.Services.Bitbucket
         public List<Repository> GetAllRepositories()
         {
             return m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username);
+        }
+
+        void InitializeWithCredential()
+        {
+            IsAuthorized = CanBackup = true;
+
+            TotalReposCount = m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username).Count;
+            CompletedReposCount = SucceededReposCount = 0;
         }
     }
 }

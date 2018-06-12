@@ -14,6 +14,8 @@ namespace Reposed.Core.Services.Github
 
         public override string ServiceId { get { return SERVICE_ID; } }
 
+        public override event Action OnRepoBackedUp;
+
         public GithubBackupService() : base()
         {
 

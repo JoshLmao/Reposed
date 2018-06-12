@@ -36,8 +36,13 @@ namespace Reposed.Core.Services
             }
         }
 
+        public int CompletedReposCount { get; protected set; }
+        public int SucceededReposCount { get; protected set; }
+        public int TotalReposCount { get; protected set; }
+
         public event Action<bool> OnIsAuthorizedChanged;
         public event Action<bool> OnCanBackupChanged;
+        public abstract event Action OnRepoBackedUp;
 
         protected readonly Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 

@@ -17,8 +17,14 @@ namespace Reposed.Core
         /// </summary>
         bool CanBackup { get; }
 
+        int CompletedReposCount { get; }
+        int SucceededReposCount { get; }
+        int TotalReposCount { get; }
+
         event System.Action<bool> OnCanBackupChanged;
         event System.Action<bool> OnIsAuthorizedChanged;
+
+        event System.Action OnRepoBackedUp;
 
         /// <summary>
         /// Configures the service with the necessary params
