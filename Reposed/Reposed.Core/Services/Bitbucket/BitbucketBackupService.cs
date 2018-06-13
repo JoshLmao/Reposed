@@ -18,6 +18,11 @@ namespace Reposed.Core.Services.Bitbucket
 
         public BitbucketAPIService APIService { get { return m_bitbucketAPI; } }
 
+        //Authentification
+        public string Username { get; private set; }
+        public string PublicKey { get;private set; }
+        public string PrivateKey { get; private set; }
+
         BitbucketAPIService m_bitbucketAPI = null;
 
         public BitbucketBackupService() : base()
@@ -29,7 +34,11 @@ namespace Reposed.Core.Services.Bitbucket
             if (credentials is BitBucketPrefs)
             {
                 BitBucketPrefs bbPrefs = credentials as BitBucketPrefs;
-                m_bitbucketAPI = new BitbucketAPIService(bbPrefs.Username, bbPrefs.PublicKey, bbPrefs.PrivateKey);
+                Username = bbPrefs.Username;
+                PublicKey = bbPrefs.PublicKey;
+                PrivateKey = bbPrefs.PrivateKey;
+
+                m_bitbucketAPI = new BitbucketAPIService(Username, PublicKey, PrivateKey);
 
                 InitializeWithCredential();
                 return true;
@@ -130,7 +139,7 @@ namespace Reposed.Core.Services.Bitbucket
 
         public List<Repository> GetAllRepositories()
         {
-            return m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username);
+            return m_bitbucketAPI?.GetAllRepos(m_bitbucketAPI.Username);
         }
 
         void InitializeWithCredential()

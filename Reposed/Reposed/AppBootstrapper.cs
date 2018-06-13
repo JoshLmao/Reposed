@@ -69,6 +69,10 @@ namespace Reposed
             m_iocContainer.Singleton<IWindowManager, WindowManager>();
             m_iocContainer.Singleton<IEventAggregator, EventAggregator>();
 
+            //Services
+            m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
+            m_iocContainer.Singleton<IBackupService, GithubBackupService>();
+
             //ViewModels
             m_iocContainer.PerRequest<ShellViewModel>();
             m_iocContainer.Singleton<Menu.MenuViewModel>();
@@ -79,10 +83,6 @@ namespace Reposed
 
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Bitbucket.BitbucketBackupComponentViewModel>(BitbucketBackupService.SERVICE_ID);
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Github.GithubBackupComponentViewModel>(GithubBackupService.SERVICE_ID);
-
-            //Services
-            m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
-            m_iocContainer.Singleton<IBackupService, GithubBackupService>();
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)

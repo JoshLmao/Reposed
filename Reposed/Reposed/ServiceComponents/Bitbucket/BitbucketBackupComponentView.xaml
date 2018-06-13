@@ -7,7 +7,7 @@
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600"
-            cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]">
+            cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]" TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -35,22 +35,31 @@
         </Grid>
         <!--Repos-->
         <Grid Grid.Column="1" Grid.RowSpan="2">
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Repositories}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <ItemContainerTemplate>
-                            <Grid>
-                                <TextBlock Text="{Binding Name}"/>
-                            </Grid>
-                    </ItemContainerTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Text="Repositories:" Margin="5,3"/>
+                
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Repositories}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <ItemContainerTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding }" Padding="5,3"/>
+                                </Grid>
+                            </ItemContainerTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

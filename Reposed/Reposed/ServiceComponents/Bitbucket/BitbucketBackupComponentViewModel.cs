@@ -1,9 +1,11 @@
 ﻿using Caliburn.Micro;
+using Reposed.Core;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Events;
 using Reposed.MVVM;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,8 +49,8 @@ namespace Reposed.ServiceComponents.Bitbucket
             }
         }
 
-        List<string> m_repositories = null;
-        public List<string> Repositories
+        ObservableCollection<string> m_repositories = null;
+        public ObservableCollection<string> Repositories
         {
             get { return m_repositories; }
             set
@@ -64,14 +66,15 @@ namespace Reposed.ServiceComponents.Bitbucket
 
         public BitbucketBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
         {
+            m_service = IoC.GetAll<IBackupService>().FirstOrDefault(x => x is BitbucketBackupService);
+            BitbucketService.OnIsAuthorizedChanged += OnBitbucketAuthorizationChanged;
         }
 
         public void OnViewLoaded()
         {
             if(!m_hasInit)
             {
-                Models.Preferences prefs = IoC.Get<Preferences.PreferencesViewModel>().GetPreferences();
-                UpdateUI(prefs);
+                UpdateUI();
 
                 m_hasInit = false;
             }
@@ -79,27 +82,32 @@ namespace Reposed.ServiceComponents.Bitbucket
 
         public override void Handle(PreferencesUpdated message)
         {
-            UpdateUI(message.Prefs);
+            UpdateUI();
         }
 
-        void UpdateUI(Models.Preferences prefs)
+        void UpdateUI()
         {
-            if (prefs != null && prefs.BitbucketPrefs != null)
+            if (BitbucketService != null)
             {
-                Username = prefs.BitbucketPrefs.Username;
-                OAuthPublic = prefs.BitbucketPrefs.PublicKey;
-                OAuthPrivate = prefs.BitbucketPrefs.PrivateKey;
-            }
+                Username = BitbucketService.Username;
+                OAuthPublic = BitbucketService.PublicKey;
+                OAuthPrivate = BitbucketService.PrivateKey;
 
-            if(BitbucketService != null)
-            {
-                Repositories = new List<string>();
+                Repositories = new ObservableCollection<string>();
                 var repos = BitbucketService.GetAllRepositories();
-                foreach(var repo in repos)
+                if(repos != null)
                 {
-                    Repositories.Add(repo.name);
+                    foreach (var repo in repos)
+                    {
+                        Repositories.Add(repo.name);
+                    }
                 }
             }
+        }
+
+        private void OnBitbucketAuthorizationChanged(bool isAuthorized)
+        {
+            UpdateUI();
         }
     }
 }
