@@ -76,7 +76,7 @@ namespace Reposed.ServiceComponents.Bitbucket
             {
                 UpdateUI();
 
-                m_hasInit = false;
+                m_hasInit = true;
             }
         }
 

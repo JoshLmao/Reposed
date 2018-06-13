@@ -70,6 +70,19 @@ namespace Reposed.Preferences
         }
         #endregion
 
+        #region GitHubProperties
+        string m_gh_username;
+        public string GH_Username
+        {
+            get { return m_gh_username; }
+            set
+            {
+                m_gh_username = value;
+                NotifyOfPropertyChange(() => GH_Username);
+            }
+        }
+        #endregion
+
         readonly IEventAggregator EVENT_AGGREGATOR = null;
 
         Models.Preferences m_prefs = null;
@@ -157,6 +170,11 @@ namespace Reposed.Preferences
                 Username = BB_Username,
                 PublicKey = BB_OAuthPublicKey,
                 PrivateKey = BB_OAuthPrivateKey,
+            };
+
+            m_prefs.GithubPrefs = new Models.GithubPrefs()
+            {
+                Username = GH_Username,
             };
 
             SetServiceData();

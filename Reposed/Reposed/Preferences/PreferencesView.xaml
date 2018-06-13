@@ -33,9 +33,8 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Bitbucket Settings">
+            <TabItem >
                 <StackPanel>
-
                     <DockPanel Margin="5,3">
                         <TextBlock Text="Username:" Margin="5,0"/>
                         <TextBox Text="{Binding BB_Username, Mode=TwoWay}"/>
@@ -51,6 +50,14 @@
                             <TextBox Text="{Binding BB_OAuthPrivateKey, Mode=TwoWay}"/>
                         </DockPanel>
                     </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="GitHub Settings">
+                <StackPanel>
+                    <DockPanel Margin="5,3">
+                        <TextBlock Text="Username:" Margin="5,0"/>
+                        <TextBox Text="{Binding GH_Username, Mode=TwoWay}"/>
+                    </DockPanel>
                 </StackPanel>
             </TabItem>
         </TabControl>

@@ -16,6 +16,8 @@ namespace Reposed.Core.Services.Github
 
         public override event Action OnRepoBackedUp;
 
+        GithubAPIService m_githubApiService = null;
+
         public GithubBackupService() : base()
         {
 
@@ -25,13 +27,22 @@ namespace Reposed.Core.Services.Github
         {
             if (credentials is GithubPrefs prefs)
             {
+                Username = prefs.Username;
+
+                m_githubApiService = new GithubAPIService(prefs.Username);
+
                 return true;
             }
             else
             {
-                LOGGER.Info($"Unable to");
+                LOGGER.Info($"Unable to set GitHub credentials");
                 return false;
             }
+        }
+
+        public List<Octokit.Repository> GetAllRepositories()
+        {
+            return m_githubApiService.GetAllRepositories();
         }
     }
 }

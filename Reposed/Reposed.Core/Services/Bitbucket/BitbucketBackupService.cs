@@ -19,8 +19,7 @@ namespace Reposed.Core.Services.Bitbucket
         public BitbucketAPIService APIService { get { return m_bitbucketAPI; } }
 
         //Authentification
-        public string Username { get; private set; }
-        public string PublicKey { get;private set; }
+        public string PublicKey { get; private set; }
         public string PrivateKey { get; private set; }
 
         BitbucketAPIService m_bitbucketAPI = null;
