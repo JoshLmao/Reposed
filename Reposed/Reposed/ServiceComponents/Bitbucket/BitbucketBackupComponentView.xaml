@@ -41,7 +41,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Text="Repositories:" Margin="5,3"/>
+                <TextBlock Text="Repositories:" Margin="5,3" FontWeight="Bold"/>
                 
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
                     <ItemsControl ItemsSource="{Binding Repositories}">

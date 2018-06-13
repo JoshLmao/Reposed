@@ -5,9 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reposed.BackupController"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:converters="clr-namespace:Reposed.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="500"
              cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded($executionContext)]">
+    <UserControl.Resources>
+        <converters:ServiceToIconConverter x:Key="s2ic"/>
+    </UserControl.Resources>
     <ContentControl>
         <Grid>
             <Grid.RowDefinitions>
@@ -15,12 +19,24 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel>
-                
-            </StackPanel>
-            <ItemsControl ItemsSource="{Binding SelectedItems}" Height="20">
-
-            </ItemsControl>
+            <!--<ItemsControl ItemsSource="{Binding SelectedBackupService}" Height="20">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <ItemContainerTemplate>
+                        <Path Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" Fill="White"/>
+                    </ItemContainerTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>-->
+            <ContentControl DataContext="{Binding SelectedBackupService}" Height="20">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="SelectedBackupService:" Padding="5,0" FontWeight="Bold"/>
+                    <Path Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" Fill="White" Width="20"/>
+                </StackPanel>
+            </ContentControl>
 
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -37,7 +53,7 @@
             
             <Grid Grid.Row="2">
                 <DockPanel VerticalAlignment="Top">
-                    <TextBlock Text="Local Path:"/>
+                    <TextBlock Text="Local Path:" FontWeight="Bold" Padding="5,0"/>
                     <TextBox Text="{Binding BackupPath, Mode=OneWay}" IsReadOnly="True"/>
                 </DockPanel>
             </Grid>
