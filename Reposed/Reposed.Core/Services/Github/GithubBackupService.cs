@@ -11,8 +11,9 @@ namespace Reposed.Core.Services.Github
     public class GithubBackupService : BackupServiceBase
     {
         public static string SERVICE_ID = "GITHUB";
-
         public override string ServiceId { get { return SERVICE_ID; } }
+
+        public string Token { get; private set; }
 
         public override event Action OnRepoBackedUp;
 
@@ -28,8 +29,9 @@ namespace Reposed.Core.Services.Github
             if (credentials is GithubPrefs prefs)
             {
                 Username = prefs.Username;
+                Token = prefs.PublicKey;
 
-                m_githubApiService = new GithubAPIService(prefs.Username);
+                m_githubApiService = new GithubAPIService(prefs.Username, prefs.PublicKey);
 
                 return true;
             }
@@ -42,7 +44,7 @@ namespace Reposed.Core.Services.Github
 
         public List<Octokit.Repository> GetAllRepositories()
         {
-            return m_githubApiService.GetAllRepositories();
+            return m_githubApiService?.GetAllRepositories();
         }
     }
 }

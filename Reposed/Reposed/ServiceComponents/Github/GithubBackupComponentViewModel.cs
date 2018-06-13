@@ -24,6 +24,17 @@ namespace Reposed.ServiceComponents.Github
             }
         }
 
+        string m_tokenKey;
+        public string TokenKey
+        {
+            get { return m_tokenKey; }
+            set
+            {
+                m_tokenKey = value;
+                NotifyOfPropertyChange(() => TokenKey);
+            }
+        }
+
         ObservableCollection<string> m_repositories;
         public ObservableCollection<string> Repositories
         {
@@ -37,8 +48,6 @@ namespace Reposed.ServiceComponents.Github
 
         GithubBackupService GithubService { get { return m_service as GithubBackupService; } }
 
-        bool m_hasInit = false;
-
         public GithubBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
         {
             m_service = IoC.GetAll<IBackupService>().FirstOrDefault(x => x is GithubBackupService);
@@ -46,12 +55,12 @@ namespace Reposed.ServiceComponents.Github
 
         public void OnViewLoaded()
         {
-            if (!m_hasInit)
-            {
+            //if (!m_hasInit)
+            //{
                 UpdateUI();
 
-                m_hasInit = true;
-            }
+            //    m_hasInit = true;
+            //}
         }
 
         void UpdateUI()
@@ -59,8 +68,7 @@ namespace Reposed.ServiceComponents.Github
             if (GithubService != null)
             {
                 Username = GithubService.Username;
-                //OAuthPublic = BitbucketService.PublicKey;
-                //OAuthPrivate = BitbucketService.PrivateKey;
+                TokenKey = GithubService.Token;
 
                 Repositories = new ObservableCollection<string>();
                 var repos = GithubService.GetAllRepositories();

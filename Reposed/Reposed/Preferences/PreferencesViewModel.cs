@@ -81,6 +81,17 @@ namespace Reposed.Preferences
                 NotifyOfPropertyChange(() => GH_Username);
             }
         }
+
+        string m_gh_OAuthTokenKey;
+        public string GH_OAuthTokenKey 
+        {
+            get { return m_gh_OAuthTokenKey; }
+            set
+            {
+                m_gh_OAuthTokenKey = value;
+                NotifyOfPropertyChange(() => GH_OAuthTokenKey);
+            }
+        }
         #endregion
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
@@ -118,7 +129,20 @@ namespace Reposed.Preferences
                         BB_Username = bbPrefs.Username;
                     }
                     else
+                    {
                         LOGGER.Info("No Bitbucket Preferences found");
+                    }
+
+                    Models.GithubPrefs ghPrefs = m_prefs.GithubPrefs;
+                    if(ghPrefs != null)
+                    {
+                        GH_Username = ghPrefs.Username;
+                        GH_OAuthTokenKey = ghPrefs.PublicKey;
+                    }
+                    else
+                    {
+                        LOGGER.Info("No Github Preferences found");
+                    }
 
                     SetServiceData();
                 }
@@ -175,6 +199,7 @@ namespace Reposed.Preferences
             m_prefs.GithubPrefs = new Models.GithubPrefs()
             {
                 Username = GH_Username,
+                PublicKey = GH_OAuthTokenKey,
             };
 
             SetServiceData();
