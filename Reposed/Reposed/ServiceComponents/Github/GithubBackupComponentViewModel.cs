@@ -2,6 +2,7 @@
 using Reposed.Core;
 using Reposed.Core.Services.Github;
 using Reposed.MVVM;
+using Reposed.ServiceComponents.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,8 +36,8 @@ namespace Reposed.ServiceComponents.Github
             }
         }
 
-        ObservableCollection<string> m_repositories;
-        public ObservableCollection<string> Repositories
+        ObservableCollection<RepositoriesViewDto> m_repositories;
+        public ObservableCollection<RepositoriesViewDto> Repositories
         {
             get { return m_repositories; }
             set
@@ -70,13 +71,13 @@ namespace Reposed.ServiceComponents.Github
                 Username = GithubService.Username;
                 TokenKey = GithubService.Token;
 
-                Repositories = new ObservableCollection<string>();
+                Repositories = new ObservableCollection<RepositoriesViewDto>();
                 var repos = GithubService.GetAllRepositories();
                 if (repos != null)
                 {
-                    foreach (var repo in repos)
+                    foreach (Octokit.Repository repo in repos)
                     {
-                        Repositories.Add(repo.Name);
+                        Repositories.Add(new RepositoriesViewDto() { RepoName = repo.Name });
                     }
                 }
             }

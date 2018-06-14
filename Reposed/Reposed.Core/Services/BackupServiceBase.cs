@@ -128,5 +128,13 @@ namespace Reposed.Core.Services
             
             return gitProc.ExitCode == 0;
         }
+
+        protected void InitWithCredentials(int repoCount)
+        {
+            IsAuthorized = CanBackup = true;
+
+            TotalReposCount = repoCount;
+            CompletedReposCount = SucceededReposCount = 0;
+        }
     }
 }

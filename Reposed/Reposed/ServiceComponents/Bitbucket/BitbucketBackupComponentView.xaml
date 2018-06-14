@@ -53,7 +53,9 @@
                         <ItemsControl.ItemTemplate>
                             <ItemContainerTemplate>
                                 <Grid>
-                                    <TextBlock Text="{Binding }" Padding="5,3"/>
+                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,3">
+                                        <TextBlock Text="{Binding RepoName}" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                    </CheckBox>
                                 </Grid>
                             </ItemContainerTemplate>
                         </ItemsControl.ItemTemplate>

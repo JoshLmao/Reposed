@@ -33,6 +33,7 @@ namespace Reposed.Core.Services.Github
 
                 m_githubApiService = new GithubAPIService(prefs.Username, prefs.PublicKey);
 
+                InitWithCredentials(m_githubApiService.GetAllRepositories().Count);
                 return true;
             }
             else

@@ -39,7 +39,7 @@ namespace Reposed.Core.Services.Bitbucket
 
                 m_bitbucketAPI = new BitbucketAPIService(Username, PublicKey, PrivateKey);
 
-                InitializeWithCredential();
+                InitWithCredentials(m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username).Count);
                 return true;
             }
             else
@@ -139,14 +139,6 @@ namespace Reposed.Core.Services.Bitbucket
         public List<Repository> GetAllRepositories()
         {
             return m_bitbucketAPI?.GetAllRepos(m_bitbucketAPI.Username);
-        }
-
-        void InitializeWithCredential()
-        {
-            IsAuthorized = CanBackup = true;
-
-            TotalReposCount = m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username).Count;
-            CompletedReposCount = SucceededReposCount = 0;
         }
     }
 }

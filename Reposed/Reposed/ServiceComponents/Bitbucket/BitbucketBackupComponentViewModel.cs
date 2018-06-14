@@ -3,6 +3,7 @@ using Reposed.Core;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Events;
 using Reposed.MVVM;
+using Reposed.ServiceComponents.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,8 +50,8 @@ namespace Reposed.ServiceComponents.Bitbucket
             }
         }
 
-        ObservableCollection<string> m_repositories = null;
-        public ObservableCollection<string> Repositories
+        ObservableCollection<RepositoriesViewDto> m_repositories = null;
+        public ObservableCollection<RepositoriesViewDto> Repositories
         {
             get { return m_repositories; }
             set
@@ -72,12 +73,12 @@ namespace Reposed.ServiceComponents.Bitbucket
 
         public void OnViewLoaded()
         {
-            if(!m_hasInit)
-            {
+            //if(!m_hasInit)
+            //{
                 UpdateUI();
 
-                m_hasInit = true;
-            }
+            //    m_hasInit = true;
+            //}
         }
 
         public override void Handle(PreferencesUpdated message)
@@ -93,13 +94,13 @@ namespace Reposed.ServiceComponents.Bitbucket
                 OAuthPublic = BitbucketService.PublicKey;
                 OAuthPrivate = BitbucketService.PrivateKey;
 
-                Repositories = new ObservableCollection<string>();
+                Repositories = new ObservableCollection<RepositoriesViewDto>();
                 var repos = BitbucketService.GetAllRepositories();
                 if(repos != null)
                 {
-                    foreach (var repo in repos)
+                    foreach (SharpBucket.V2.Pocos.Repository repo in repos)
                     {
-                        Repositories.Add(repo.name);
+                        Repositories.Add(new RepositoriesViewDto() { RepoName = repo.name });
                     }
                 }
             }

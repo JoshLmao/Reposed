@@ -62,6 +62,9 @@
                     <StackPanel>
                         <DockPanel Margin="5,3">
                             <TextBlock Text="Token:" Margin="5,0"/>
+                            <TextBlock Margin="5,0" HorizontalAlignment="Center" DockPanel.Dock="Right">
+                                <Hyperlink NavigateUri="https://github.com/settings/tokens">Get Token</Hyperlink>
+                            </TextBlock>
                             <TextBox Text="{Binding GH_OAuthTokenKey, Mode=TwoWay}"/>
                         </DockPanel>
                     </StackPanel>

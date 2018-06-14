@@ -119,6 +119,7 @@
     <Compile Include="ServiceComponents\ServiceComponentsHolderView.xaml.cs">
       <DependentUpon>ServiceComponentsHolderView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ServiceComponents\Shared\Models\RepositoriesViewDto.cs" />
     <Compile Include="Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
