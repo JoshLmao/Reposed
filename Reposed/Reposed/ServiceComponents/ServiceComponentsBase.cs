@@ -68,7 +68,7 @@ namespace Reposed.ServiceComponents
 
         List<Models.BackupReposDto> ConvertUi()
         {
-            return Repositories.Select(x => new Models.BackupReposDto()
+            return Repositories?.Select(x => new Models.BackupReposDto()
             {
                 RepositoryName = x.RepoName,
                 ShouldBackup = x.ShouldBackup,
@@ -84,6 +84,8 @@ namespace Reposed.ServiceComponents
         {
             m_service = IoC.GetAll<IBackupService>().FirstOrDefault(x => x is T);
             m_service.OnIsAuthorizedChanged += OnServiceAuthorizationChanged;
+
+            m_service.SetBackupRepos(ConvertUi());
         }
     }
 }

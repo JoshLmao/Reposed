@@ -67,7 +67,7 @@ namespace Reposed.Core.Services.Bitbucket
                 List<Repository> repos = m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username);
                 foreach (Repository repo in repos)
                 {
-                    BackupReposDto backupRepoConfig = m_backupRepos.FirstOrDefault(x => x.RepositoryName == repo.name);
+                    BackupReposDto backupRepoConfig = m_backupRepos?.FirstOrDefault(x => x.RepositoryName == repo.name);
                     if (backupRepoConfig != null && !backupRepoConfig.ShouldBackup)
                     {
                         continue;

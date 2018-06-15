@@ -1,7 +1,9 @@
 ﻿using Caliburn.Micro;
 using Reposed.Core;
+using Reposed.Core.Events;
 using Reposed.Events;
 using Reposed.MVVM;
+using Reposed.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Reposed.BackupController
 {
-    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>
+    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>
     {
         List<IBackupService> m_backupServices;
         public List<IBackupService> BackupServices
@@ -39,31 +41,65 @@ namespace Reposed.BackupController
             }
         }
 
-        DateTime m_backupStartTime;
-        public DateTime BackupStartTime
+        DateTime m_lastBackupStartTime;
+        public DateTime LastBackupStartTime
         {
-            get { return m_backupEndTime; }
+            get { return m_lastBackupStartTime; }
             set
             {
-                m_backupEndTime = value;
-                NotifyOfPropertyChange(() => BackupStartTime);
+                m_lastBackupStartTime = value;
+                NotifyOfPropertyChange(() => LastBackupStartTime);
+                NotifyOfPropertyChange(() => TotalTimeToBackup);
             }
         }
 
-        DateTime m_backupEndTime;
-        public DateTime BackupEndTime
+        DateTime m_lastBackupEndTime;
+        public DateTime LastBackupEndTime
         {
-            get { return m_backupEndTime; }
+            get { return m_lastBackupEndTime; }
             set
             {
-                m_backupEndTime = value;
-                NotifyOfPropertyChange(() => BackupEndTime);
+                m_lastBackupEndTime = value;
+                NotifyOfPropertyChange(() => LastBackupEndTime);
+                NotifyOfPropertyChange(() => TotalTimeToBackup);
             }
         }
+
+        int m_backupProgressPercentageValue;
+        public int BackupProgressPercentageValue
+        {
+            get { return m_backupProgressPercentageValue; }
+            set
+            {
+                m_backupProgressPercentageValue = value;
+                NotifyOfPropertyChange(() => BackupProgressPercentageValue);
+            }
+        }
+
+        DateTime m_nextScheduledBackupTime;
+        public DateTime NextScheduledBackupTime
+        {
+            get { return m_nextScheduledBackupTime; }
+            set
+            {
+                m_nextScheduledBackupTime = value;
+                NotifyOfPropertyChange(() => NextScheduledBackupTime);
+            }
+        }
+
+        public string TotalTimeToBackup { get { return LastBackupEndTime != DateTime.MinValue && LastBackupStartTime != DateTime.MinValue ? (LastBackupEndTime - LastBackupStartTime).ToString() : "?"; } }
+        public bool IsScheduledEnabled { get { return m_scheduledBackupService.IsEnabled; } }
 
         public bool CanBackup
         {
-            get { return SelectedBackupService != null ? SelectedBackupService.CanBackup : false; }
+            get
+            {
+                if (m_scheduledBackupService.IsEnabled)
+                    return false;
+                if (SelectedBackupService != null)
+                    return SelectedBackupService.CanBackup;
+                return false;
+            }
         }
 
         public string BackupPath { get; set; }
@@ -76,16 +112,20 @@ namespace Reposed.BackupController
         readonly IEventAggregator EVENT_AGGREGATOR = null;
 
         private Thread m_backupThread = null;
+        private ScheduledBackupService m_scheduledBackupService = null;
 
-        public BackupControllerViewModel(IEventAggregator eventAggregator)
+        public BackupControllerViewModel(IEventAggregator eventAggregator, ScheduledBackupService scheduledBackupService)
         {
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
+
+            m_scheduledBackupService = scheduledBackupService;
         }
 
         public override void OnViewLoaded(ActionExecutionContext e)
         {
             UpdateServices();
+            NotifyOfPropertyChange(() => IsScheduledEnabled);
         }
 
         void UpdateServices()
@@ -104,7 +144,7 @@ namespace Reposed.BackupController
             SelectedBackupService = BackupServices.FirstOrDefault();
         }
 
-        public void OnStartBackups()
+        public void OnBackupNow()
         {
             if (SelectedBackupService == null)
             {
@@ -117,6 +157,7 @@ namespace Reposed.BackupController
                 LOGGER.Info("Backup in progress.");
                 return;
             }
+
             if (SelectedBackupService.IsAuthorized)
             {
                 ThreadStart start = new ThreadStart(StartBackup);
@@ -136,9 +177,14 @@ namespace Reposed.BackupController
 
         void StartBackup()
         {
-            BackupStartTime = DateTime.Now;
+            LastBackupStartTime = DateTime.Now;
             SelectedBackupService.Backup(BackupPath);
-            BackupEndTime = DateTime.Now;
+            LastBackupEndTime = DateTime.Now;
+
+            if (m_scheduledBackupService.IsEnabled)
+            {
+                m_scheduledBackupService.Resume();
+            }
         }
 
         public void Handle(PreferencesUpdated message)
@@ -183,6 +229,25 @@ namespace Reposed.BackupController
         private void OnRepoBackedUp()
         {
             NotifyOfPropertyChange(() => ProgressText);
+        }
+
+        public void OnConfigureAutoBackup()
+        {
+            IoC.Get<IWindowManager>().ShowDialog(IoC.Get<Dialogs.ScheduledBackup.ScheduledBackupViewModel>());
+
+            NextScheduledBackupTime = m_scheduledBackupService.NextScheduledBackupTime;
+            NotifyOfPropertyChange(() => IsScheduledEnabled);
+            NotifyOfPropertyChange(() => CanBackup);
+        }
+
+        public void Handle(RunScheduledBackup message)
+        {
+            OnBackupNow();
+        }
+
+        public void OnCancelScheduleBackup()
+        {
+            m_scheduledBackupService.Disable();
         }
     }
 }

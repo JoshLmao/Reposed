@@ -87,12 +87,18 @@
     </Compile>
     <Compile Include="Accounts\AccountsViewModel.cs" />
     <Compile Include="Converters\BooleanConverters.cs" />
+    <Compile Include="Converters\DateTimeToFormatConverter.cs" />
     <Compile Include="Converters\ServiceToIconConverter.cs" />
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="BackupController\BackupControllerView.xaml.cs">
       <DependentUpon>BackupControllerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BackupController\BackupControllerViewModel.cs" />
+    <Compile Include="Dialogs\ScheduledBackup\BackupPeriodConverter.cs" />
+    <Compile Include="Dialogs\ScheduledBackup\ScheduledBackupView.xaml.cs">
+      <DependentUpon>ScheduledBackupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ScheduledBackup\ScheduledBackupViewModel.cs" />
     <Compile Include="Events\OnAccountSelected.cs" />
     <Compile Include="Events\PreferencesUpdated.cs" />
     <Compile Include="Menu\MenuView.xaml.cs">
@@ -120,6 +126,7 @@
       <DependentUpon>ServiceComponentsHolderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ServiceComponents\Shared\Models\RepositoriesViewDto.cs" />
+    <Compile Include="Services\ScheduledBackupService.cs" />
     <Compile Include="Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
@@ -134,6 +141,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BackupController\BackupControllerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ScheduledBackup\ScheduledBackupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -203,9 +214,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Reposed.Core\Reposed.Core.csproj">
       <Project>{68dfc7a5-3248-440a-9b1d-f10fe3bfc39c}</Project>

@@ -107,8 +107,8 @@ namespace Reposed.Core.Services
         protected virtual bool BackupSingleRepository(string rootBackupDir, string repoName, object repository)
         {
             //For testing
-            //System.Threading.Thread.Sleep(1000);
-            //return true;
+            System.Threading.Thread.Sleep(1000);
+            return true;
 
             string currentRepoDir = $"{rootBackupDir}\\{repoName}";
             string command = GetGitCommand(repository, currentRepoDir);

@@ -6,56 +6,73 @@
              xmlns:local="clr-namespace:Reposed.BackupController"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:converters="clr-namespace:Reposed.Converters"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="500"
-             cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded($executionContext)]">
+             d:DesignHeight="75" d:DesignWidth="1000"
+             cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded($executionContext)]" 
+             TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
     <UserControl.Resources>
         <converters:ServiceToIconConverter x:Key="s2ic"/>
+        <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
+        <sys:Double x:Key="MinBackupButtonWidth">75</sys:Double>
+        <converters:DateTimeToFormatConverter x:Key="dt2fc"/>
     </UserControl.Resources>
     <ContentControl>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
                 <RowDefinition />
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <!--<ItemsControl ItemsSource="{Binding SelectedBackupService}" Height="20">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <ItemContainerTemplate>
-                        <Path Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" Fill="White"/>
-                    </ItemContainerTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>-->
-            <ContentControl DataContext="{Binding SelectedBackupService}" Height="20">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="SelectedBackupService:" Padding="5,0" FontWeight="Bold"/>
-                    <Path Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" Fill="White" Width="20"/>
-                </StackPanel>
-            </ContentControl>
 
-            <Grid Grid.Row="1">
+            <Grid Margin="5,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <Button cal:Message.Attach="[Event Click] = [Action OnStartBackups()]" Margin="10" Background="{DynamicResource PrimaryButtonBrush}"
-                    Grid.Row="1" HorizontalAlignment="Left" IsEnabled="{Binding CanBackup, UpdateSourceTrigger=PropertyChanged}">
-                    <TextBlock Text="Backup Repos" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                </Button>
+                <StackPanel Margin="5,0">
+                    <TextBlock Grid.Column="1" Text="{Binding ProgressText, FallbackValue=Progress, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Last Backup Start Time:"/>
+                        <TextBlock Text="{Binding LastBackupStartTime, Converter={StaticResource dt2fc}}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Last Backup End Time:"/>
+                        <TextBlock Text="{Binding LastBackupEndTime, Converter={StaticResource dt2fc}}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Total Time to Backup:"/>
+                        <TextBlock Text="{Binding TotalTimeToBackup}"/>
+                    </StackPanel>
+                </StackPanel>
 
-                <TextBlock Grid.Column="1" Text="{Binding ProgressText, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Visibility="{Binding IsScheduledEnabled, Converter={StaticResource b2vc}}" Grid.Column="1">
+                    <TextBlock Text="Next Scheduled Backup:"/>
+                    <TextBlock Text="{Binding NextScheduledBackupTime}"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Padding="5,3" Margin="5,3" MinWidth="{StaticResource MinBackupButtonWidth}" IsEnabled="{Binding CanBackup, UpdateSourceTrigger=PropertyChanged}"
+                            cal:Message.Attach="[Event Click] = [Action OnBackupNow()]">
+                        <TextBlock Text="Backup Now"/>
+                    </Button>
+                    <Button Padding="5,3" MinWidth="{StaticResource MinBackupButtonWidth}" Margin="5,3"
+                            cal:Message.Attach="[Event Click] = [Action OnConfigureAutoBackup()]">
+                        <TextBlock Text="Configure Auto Backup"/>
+                    </Button>
+                </StackPanel>
             </Grid>
             
-            <Grid Grid.Row="2">
-                <DockPanel VerticalAlignment="Top">
-                    <TextBlock Text="Local Path:" FontWeight="Bold" Padding="5,0"/>
-                    <TextBox Text="{Binding BackupPath, Mode=OneWay}" IsReadOnly="True"/>
+            <Grid Grid.Row="1" Margin="5,3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <DockPanel>
+                    <TextBlock Text="Current Objective..." Margin="5,0" DockPanel.Dock="Left"/>
+                    <TextBlock Text="{Binding BackupPath, Mode=OneWay, FallbackValue=FallbackBackupPath}" Opacity="0.5" FontSize="10" VerticalAlignment="Bottom"/>
                 </DockPanel>
+                <ProgressBar Height="10" Grid.Row="1" Value="{Binding BackupProgressPercentageValue}" Maximum="100"/>
             </Grid>
         </Grid>
     </ContentControl>

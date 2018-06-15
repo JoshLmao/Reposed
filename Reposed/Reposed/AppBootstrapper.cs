@@ -3,11 +3,10 @@ using NLog;
 using Reposed.Core;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Core.Services.Github;
-using Reposed.ServiceComponents.Bitbucket;
+using Reposed.Services;
 using Reposed.Shell;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -72,6 +71,7 @@ namespace Reposed
             //Services
             m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
             m_iocContainer.Singleton<IBackupService, GithubBackupService>();
+            m_iocContainer.Singleton<ScheduledBackupService>();
 
             //ViewModels
             m_iocContainer.PerRequest<ShellViewModel>();
@@ -80,6 +80,7 @@ namespace Reposed
             m_iocContainer.Singleton<BackupController.BackupControllerViewModel>();
             m_iocContainer.Singleton<Accounts.AccountsViewModel>();
             m_iocContainer.Singleton<ServiceComponents.ServiceComponentsHolderViewModel>();
+            m_iocContainer.Singleton<Dialogs.ScheduledBackup.ScheduledBackupViewModel>();
 
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Bitbucket.BitbucketBackupComponentViewModel>(BitbucketBackupService.SERVICE_ID);
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Github.GithubBackupComponentViewModel>(GithubBackupService.SERVICE_ID);

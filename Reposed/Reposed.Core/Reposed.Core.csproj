@@ -55,6 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\BackupPeriod.cs" />
+    <Compile Include="Events\ScheduledBackupEvents.cs" />
     <Compile Include="Services\BackupServiceBase.cs" />
     <Compile Include="Services\Bitbucket\BitbucketAPIService.cs" />
     <Compile Include="Services\Bitbucket\BitbucketBackupService.cs" />
