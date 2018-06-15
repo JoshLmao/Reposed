@@ -50,17 +50,6 @@ namespace Reposed.ServiceComponents.Bitbucket
             }
         }
 
-        ObservableCollection<RepositoriesViewDto> m_repositories = null;
-        public ObservableCollection<RepositoriesViewDto> Repositories
-        {
-            get { return m_repositories; }
-            set
-            {
-                m_repositories = value;
-                NotifyOfPropertyChange(() => Repositories);
-            }
-        }
-
         BitbucketBackupService BitbucketService { get { return m_service as BitbucketBackupService; } }
 
         bool m_hasInit = false;
@@ -73,12 +62,12 @@ namespace Reposed.ServiceComponents.Bitbucket
 
         public void OnViewLoaded()
         {
-            //if(!m_hasInit)
-            //{
+            if (!m_hasInit)
+            {
                 UpdateUI();
 
-            //    m_hasInit = true;
-            //}
+                m_hasInit = true;
+            }
         }
 
         public override void Handle(PreferencesUpdated message)

@@ -46,6 +46,8 @@ namespace Reposed.Core.Services
         public event Action<bool> OnCanBackupChanged;
         public abstract event Action OnRepoBackedUp;
 
+        protected List<BackupReposDto> m_backupRepos = null;
+
         protected readonly Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         string m_gitFilePath = null;
@@ -135,6 +137,11 @@ namespace Reposed.Core.Services
 
             TotalReposCount = repoCount;
             CompletedReposCount = SucceededReposCount = 0;
+        }
+
+        public virtual void SetBackupRepos(List<BackupReposDto> backupRepos)
+        {
+            m_backupRepos = backupRepos;
         }
     }
 }

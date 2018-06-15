@@ -53,7 +53,7 @@
                         <ItemsControl.ItemTemplate>
                             <ItemContainerTemplate>
                                 <Grid>
-                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,3">
+                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,3" cal:Message.Attach="[Event Checked] = [Action OnRepoCheckedChanged($executionContext)]; [Event Unchecked] = [Action OnRepoUncheckedChanged($executionContext)]">
                                         <TextBlock Text="{Binding RepoName}" Foreground="{DynamicResource PrimaryTextBrush}"/>
                                     </CheckBox>
                                 </Grid>

@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackupReposDto.cs" />
     <Compile Include="BitBucketPrefs.cs" />
     <Compile Include="GithubPrefs.cs" />
     <Compile Include="IBackupCredentials.cs" />

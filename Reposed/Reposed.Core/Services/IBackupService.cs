@@ -44,5 +44,6 @@ namespace Reposed.Core
         /// <returns></returns>
         bool SetCredentials(IBackupCredentials credentials);
         bool SetGitPath(string gitPath);
+        void SetBackupRepos(System.Collections.Generic.List<BackupReposDto> backupRepos);
     }
 }

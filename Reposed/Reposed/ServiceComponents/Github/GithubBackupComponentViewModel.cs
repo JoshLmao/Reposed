@@ -36,18 +36,8 @@ namespace Reposed.ServiceComponents.Github
             }
         }
 
-        ObservableCollection<RepositoriesViewDto> m_repositories;
-        public ObservableCollection<RepositoriesViewDto> Repositories
-        {
-            get { return m_repositories; }
-            set
-            {
-                m_repositories = value;
-                NotifyOfPropertyChange(() => Repositories);
-            }
-        }
-
         GithubBackupService GithubService { get { return m_service as GithubBackupService; } }
+        bool m_hasInit = false;
 
         public GithubBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
         {
@@ -56,12 +46,12 @@ namespace Reposed.ServiceComponents.Github
 
         public void OnViewLoaded()
         {
-            //if (!m_hasInit)
-            //{
+            if (!m_hasInit)
+            {
                 UpdateUI();
 
-            //    m_hasInit = true;
-            //}
+                m_hasInit = true;
+            }
         }
 
         void UpdateUI()
@@ -81,6 +71,24 @@ namespace Reposed.ServiceComponents.Github
                     }
                 }
             }
+        }
+
+        public void OnRepoCheckedChanged(ActionExecutionContext e)
+        {
+            m_service.SetBackupRepos(Repositories.Select(x => new Models.BackupReposDto()
+            {
+                RepositoryName = x.RepoName,
+                ShouldBackup = x.ShouldBackup,
+            }).ToList());
+        }
+
+        public void OnRepoUncheckedChanged(ActionExecutionContext e)
+        {
+            m_service.SetBackupRepos(Repositories.Select(x => new Models.BackupReposDto()
+            {
+                RepositoryName = x.RepoName,
+                ShouldBackup = x.ShouldBackup,
+            }).ToList());
         }
     }
 }

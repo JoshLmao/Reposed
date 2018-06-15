@@ -30,12 +30,7 @@ namespace Reposed.BackupController
             get { return m_selectedBackupService; }
             set
             {
-                if(SelectedBackupService != null)
-                {
-                    SelectedBackupService.OnCanBackupChanged -= OnCanBackupChanged;
-                    SelectedBackupService.OnRepoBackedUp -= OnRepoBackedUp;
-                    //SelectedBackupService.OnIsAuthorizedChanged -= OnIsAuthorizedChanged;
-                }
+                OnSelectedBackupServicePreChanged();
 
                 m_selectedBackupService = value;
                 NotifyOfPropertyChange(() => SelectedBackupService);
@@ -44,17 +39,26 @@ namespace Reposed.BackupController
             }
         }
 
-        private void OnSelectedBackupServiceChanged()
+        DateTime m_backupStartTime;
+        public DateTime BackupStartTime
         {
-            if (SelectedBackupService != null)
+            get { return m_backupEndTime; }
+            set
             {
-                SelectedBackupService.OnCanBackupChanged += OnCanBackupChanged;
-                SelectedBackupService.OnRepoBackedUp += OnRepoBackedUp;
-                //SelectedBackupService.OnIsAuthorizedChanged += OnIsAuthorizedChanged;
+                m_backupEndTime = value;
+                NotifyOfPropertyChange(() => BackupStartTime);
             }
+        }
 
-            NotifyOfPropertyChange(() => CanBackup);
-            OnRepoBackedUp();
+        DateTime m_backupEndTime;
+        public DateTime BackupEndTime
+        {
+            get { return m_backupEndTime; }
+            set
+            {
+                m_backupEndTime = value;
+                NotifyOfPropertyChange(() => BackupEndTime);
+            }
         }
 
         public bool CanBackup
@@ -132,7 +136,9 @@ namespace Reposed.BackupController
 
         void StartBackup()
         {
+            BackupStartTime = DateTime.Now;
             SelectedBackupService.Backup(BackupPath);
+            BackupEndTime = DateTime.Now;
         }
 
         public void Handle(PreferencesUpdated message)
@@ -144,6 +150,29 @@ namespace Reposed.BackupController
         public void Handle(OnAccountSelected message)
         {
             SelectedBackupService = message.Service;
+        }
+
+        private void OnSelectedBackupServicePreChanged()
+        {
+            if (SelectedBackupService != null)
+            {
+                SelectedBackupService.OnCanBackupChanged -= OnCanBackupChanged;
+                SelectedBackupService.OnRepoBackedUp -= OnRepoBackedUp;
+                //SelectedBackupService.OnIsAuthorizedChanged -= OnIsAuthorizedChanged;
+            }
+        }
+
+        private void OnSelectedBackupServiceChanged()
+        {
+            if (SelectedBackupService != null)
+            {
+                SelectedBackupService.OnCanBackupChanged += OnCanBackupChanged;
+                SelectedBackupService.OnRepoBackedUp += OnRepoBackedUp;
+                //SelectedBackupService.OnIsAuthorizedChanged += OnIsAuthorizedChanged;
+            }
+
+            NotifyOfPropertyChange(() => CanBackup);
+            OnRepoBackedUp();
         }
 
         private void OnCanBackupChanged(bool canBackup)

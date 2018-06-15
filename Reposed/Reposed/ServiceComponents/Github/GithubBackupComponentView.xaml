@@ -32,14 +32,12 @@
         </Grid>
         <!--Repos-->
         <Grid Grid.Column="1" Grid.RowSpan="2">
-
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock Text="Repositories:" Margin="5,3" FontWeight="Bold"/>
-
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
                     <ItemsControl ItemsSource="{Binding Repositories}">
                         <ItemsControl.ItemsPanel>
@@ -50,7 +48,7 @@
                         <ItemsControl.ItemTemplate>
                             <ItemContainerTemplate>
                                 <Grid>
-                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,3">
+                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,3" cal:Message.Attach="[Event Checked] = [Action OnRepoCheckedChanged($executionContext)]; [Event Unchecked] = [Action OnRepoUncheckedChanged($executionContext)]">
                                         <TextBlock Text="{Binding RepoName}" Foreground="{DynamicResource PrimaryTextBrush}"/>
                                     </CheckBox>
                                 </Grid>
