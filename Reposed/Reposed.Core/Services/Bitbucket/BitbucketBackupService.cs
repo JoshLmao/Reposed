@@ -56,7 +56,7 @@ namespace Reposed.Core.Services.Bitbucket
         {
             if (!IsAuthorized)
             {
-                LOGGER.Error("Unable to backup Bitbucket API. m_bitbucketAPI is null");
+                LOGGER.Error("Unable to backup Bitbucket API");
                 return false;
             }
 
@@ -75,7 +75,7 @@ namespace Reposed.Core.Services.Bitbucket
 
                     currentRepoName = repo.name;
 
-                    if (BackupRepo(rootBackupDir, repo))
+                    if (BackupSingleRepository(rootBackupDir, repo.name, repo))
                     {
                         SucceededReposCount++;
                     }
@@ -97,31 +97,17 @@ namespace Reposed.Core.Services.Bitbucket
             return true;
         }
 
-        bool BackupRepo(string rootBackupDir, Repository repo)
+        protected override string GetGitCommand(object repo, string folderPath)
         {
-            System.Threading.Thread.Sleep(1000);
-            return true;
+            Repository repository = repo as Repository;
 
-            string currentRepoDir = $"{rootBackupDir}\\{repo.name}";
-            string command = GetGitCommand(repo, currentRepoDir);
-            PrepareRepoDirectory(currentRepoDir);
-
-            bool cmdSuccess = ExecuteGitCommand(command);
-            if (!cmdSuccess)
-                LOGGER.Error($"Error executing Git command on repository '{repo.name}'");
-
-            return cmdSuccess;
-        }
-
-        string GetGitCommand(Repository repo, string folderPath)
-        {
             string command = "";
             string gitCommand = "";
-            string repoUrl = m_bitbucketAPI.GetRepoUrl(repo.name, false);
+            string repoUrl = m_bitbucketAPI.GetRepoUrl(repository.name, false);
+            bool dirExists = System.IO.Directory.Exists(folderPath);
 
             //Check if we have credentials for ssh, else use https
-            bool dirExists = System.IO.Directory.Exists(folderPath);
-            if (repo.scm == "hg")
+            if (repository.scm == "hg")
             {
                 //need to test
                 if (dirExists)
@@ -131,7 +117,7 @@ namespace Reposed.Core.Services.Bitbucket
 
                 command = $"{gitCommand} {repoUrl} \"{folderPath}\"";
             }
-            else if (repo.scm == "git")
+            else if (repository.scm == "git")
             {
                 if (dirExists)
                     return $"remote update";

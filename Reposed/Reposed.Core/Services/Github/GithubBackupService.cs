@@ -1,4 +1,5 @@
 ﻿using NLog;
+using Octokit;
 using Reposed.Models;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,69 @@ namespace Reposed.Core.Services.Github
         public List<Octokit.Repository> GetAllRepositories()
         {
             return m_githubApiService?.GetAllRepositories();
+        }
+
+        public override bool Backup(string rootBackupDir)
+        {
+            if(!IsAuthorized)
+            {
+                LOGGER.Error("Unable to backup Github API");
+                return false;
+            }
+
+            CanBackup = false;
+            string currentRepoName = string.Empty;
+            try
+            {
+                List<Repository> repos = m_githubApiService.GetAllRepositories();
+                foreach(Repository repo in repos)
+                {
+                    BackupReposDto backupRepoConfig = m_backupRepos?.FirstOrDefault(x => x.RepositoryName == repo.Name);
+                    if (backupRepoConfig != null && !backupRepoConfig.ShouldBackup)
+                    {
+                        continue;
+                    }
+                    currentRepoName = repo.Name;
+
+                    if (BackupSingleRepository(rootBackupDir, repo.Name, repo))
+                    {
+                        SucceededReposCount++;
+                    }
+                    else
+                    {
+                        LOGGER.Error($"Unable to backup {repo.Name}");
+                    }
+
+                    CompletedReposCount++;
+                    OnRepoBackedUp?.Invoke();
+                }
+            }
+            catch(Exception e)
+            {
+                LOGGER.Fatal($"Unable to backup repository {currentRepoName}");
+            }
+
+            CanBackup = true;
+            return true;
+        }
+
+        protected override string GetGitCommand(object repo, string folderPath)
+        {
+            Octokit.Repository repository = repo as Octokit.Repository;
+
+            string command = string.Empty;
+            string gitParams = string.Empty;
+            string repoUrl = repository.CloneUrl;
+            bool dirExists = System.IO.Directory.Exists(folderPath);
+
+            if (dirExists)
+                gitParams = "remote update";
+            else
+                gitParams = "clone --mirror";
+
+            command = $"{gitParams} {repoUrl} \"{folderPath}\"";
+            
+            return command;
         }
     }
 }

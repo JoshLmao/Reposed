@@ -56,26 +56,10 @@ namespace Reposed.ServiceComponents.Bitbucket
 
         public BitbucketBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
         {
-            m_service = IoC.GetAll<IBackupService>().FirstOrDefault(x => x is BitbucketBackupService);
-            BitbucketService.OnIsAuthorizedChanged += OnBitbucketAuthorizationChanged;
+            GetService<BitbucketBackupService>();
         }
 
-        public void OnViewLoaded()
-        {
-            if (!m_hasInit)
-            {
-                UpdateUI();
-
-                m_hasInit = true;
-            }
-        }
-
-        public override void Handle(PreferencesUpdated message)
-        {
-            UpdateUI();
-        }
-
-        void UpdateUI()
+        protected override void UpdateUI()
         {
             if (BitbucketService != null)
             {
@@ -93,11 +77,6 @@ namespace Reposed.ServiceComponents.Bitbucket
                     }
                 }
             }
-        }
-
-        private void OnBitbucketAuthorizationChanged(bool isAuthorized)
-        {
-            UpdateUI();
         }
     }
 }

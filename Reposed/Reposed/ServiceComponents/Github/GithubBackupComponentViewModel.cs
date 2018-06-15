@@ -37,24 +37,13 @@ namespace Reposed.ServiceComponents.Github
         }
 
         GithubBackupService GithubService { get { return m_service as GithubBackupService; } }
-        bool m_hasInit = false;
 
         public GithubBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
         {
             m_service = IoC.GetAll<IBackupService>().FirstOrDefault(x => x is GithubBackupService);
         }
 
-        public void OnViewLoaded()
-        {
-            if (!m_hasInit)
-            {
-                UpdateUI();
-
-                m_hasInit = true;
-            }
-        }
-
-        void UpdateUI()
+        protected override void UpdateUI()
         {
             if (GithubService != null)
             {
@@ -71,24 +60,6 @@ namespace Reposed.ServiceComponents.Github
                     }
                 }
             }
-        }
-
-        public void OnRepoCheckedChanged(ActionExecutionContext e)
-        {
-            m_service.SetBackupRepos(Repositories.Select(x => new Models.BackupReposDto()
-            {
-                RepositoryName = x.RepoName,
-                ShouldBackup = x.ShouldBackup,
-            }).ToList());
-        }
-
-        public void OnRepoUncheckedChanged(ActionExecutionContext e)
-        {
-            m_service.SetBackupRepos(Repositories.Select(x => new Models.BackupReposDto()
-            {
-                RepositoryName = x.RepoName,
-                ShouldBackup = x.ShouldBackup,
-            }).ToList());
         }
     }
 }

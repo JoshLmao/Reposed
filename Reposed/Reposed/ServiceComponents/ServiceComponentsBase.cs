@@ -30,32 +30,60 @@ namespace Reposed.ServiceComponents
             }
         }
 
+        protected bool m_hasInitialized = false;
+
         public ServiceComponentsBase(IEventAggregator eventAggregator)
         {
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
         }
 
+        private void OnServiceAuthorizationChanged(bool isAuthorized)
+        {
+            UpdateUI();
+        }
+
         public virtual void Handle(PreferencesUpdated message)
         {
         }
 
+        public virtual void OnViewLoaded()
+        {
+            if (!m_hasInitialized)
+            {
+                UpdateUI();
+                m_hasInitialized = true;
+            }
+        }
+
         public virtual void OnRepoCheckedChanged(ActionExecutionContext e)
         {
-            m_service.SetBackupRepos(Repositories.Select(x => new Models.BackupReposDto()
-            {
-                RepositoryName = x.RepoName,
-                ShouldBackup = x.ShouldBackup,
-            }).ToList());
+            m_service.SetBackupRepos(ConvertUi());
         }
 
         public virtual void OnRepoUncheckedChanged(ActionExecutionContext e)
         {
-            m_service.SetBackupRepos(Repositories.Select(x => new Models.BackupReposDto()
+            m_service.SetBackupRepos(ConvertUi());
+        }
+
+        List<Models.BackupReposDto> ConvertUi()
+        {
+            return Repositories.Select(x => new Models.BackupReposDto()
             {
                 RepositoryName = x.RepoName,
                 ShouldBackup = x.ShouldBackup,
-            }).ToList());
+            }).ToList();
+        }
+
+        protected virtual void UpdateUI()
+        {
+
+        }
+
+        protected void GetService<T>() where T : IBackupService
+        {
+            m_service = IoC.GetAll<IBackupService>().FirstOrDefault(x => x is T);
+            m_service.OnIsAuthorizedChanged += OnServiceAuthorizationChanged;
         }
     }
 }
