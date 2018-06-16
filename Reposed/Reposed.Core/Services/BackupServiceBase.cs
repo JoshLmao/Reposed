@@ -1,4 +1,5 @@
 ﻿using NLog;
+using Reposed.Core.Utility;
 using Reposed.Models;
 using System;
 using System.Collections.Generic;
@@ -57,16 +58,6 @@ namespace Reposed.Core.Services
 
         }
 
-        public virtual bool Backup(string rootBackupDir)
-        {
-            return false;
-        }
-
-        public virtual bool SetCredentials(IBackupCredentials credentials)
-        {
-            return false;
-        }
-
         public bool SetGitPath(string gitPath)
         {
             if (File.Exists(gitPath))
@@ -102,16 +93,15 @@ namespace Reposed.Core.Services
         /// </summary>
         /// <param name="rootBackupDir">The root folder where all repos will be backed up to</param>
         /// <param name="repoName">The name of the repo</param>
-        /// <param name="repository">The rpeo object from the relevent API</param>
         /// <returns>If the backup was successful or not</returns>
-        protected virtual bool BackupSingleRepository(string rootBackupDir, string repoName, object repository)
+        protected virtual bool BackupSingleRepository(string rootBackupDir, string repoName)
         {
             //For testing
             System.Threading.Thread.Sleep(1000);
             return true;
 
             string currentRepoDir = $"{rootBackupDir}\\{repoName}";
-            string command = GetGitCommand(repository, currentRepoDir);
+            string command = GitHelper.GetCloneCommand(GetRepoCloneUrl(repoName), currentRepoDir);
             PrepareRepoDirectory(currentRepoDir);
 
             bool cmdSuccess = ExecuteGitCommand(command);
@@ -120,14 +110,6 @@ namespace Reposed.Core.Services
 
             return cmdSuccess;
         }
-
-        /// <summary>
-        /// Returns the correct Git command to execute to backup the repo locally.
-        /// </summary>
-        /// <param name="repo">The repository object with relevent information</param>
-        /// <param name="folderPath">The formatted full path where the repo will be backed up to</param>
-        /// <returns>The full Git command to execute</returns>
-        protected abstract string GetGitCommand(object repo, string folderPath);
 
         /// <summary>
         /// Executes a specific git command and closes
@@ -175,5 +157,16 @@ namespace Reposed.Core.Services
         {
             m_backupRepos = backupRepos;
         }
+
+        public abstract bool SetCredentials(IBackupCredentials credentials);
+
+        public abstract bool Backup(string rootBackupDir);
+
+        /// <summary>
+        /// Gets the clone url from the repo name
+        /// </summary>
+        /// <param name="repoName">The name of the repo</param>
+        /// <returns>The clone url to use</returns>
+        protected abstract string GetRepoCloneUrl(string repoName);
     }
 }

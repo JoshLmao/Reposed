@@ -33,5 +33,12 @@ namespace Reposed.Core.Services.Github
         {
             return new List<Repository>(m_client.Repository.GetAllForCurrent().Result);
         }
+
+        public string GetRepoUrl(string repoName)
+        {
+            List<Repository> repos = GetAllRepositories();
+            Repository foundRepo = repos.FirstOrDefault(x => x.Name == repoName);
+            return foundRepo != null ? foundRepo.CloneUrl : null;
+        }
     }
 }

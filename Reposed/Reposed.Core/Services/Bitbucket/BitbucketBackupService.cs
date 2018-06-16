@@ -75,7 +75,7 @@ namespace Reposed.Core.Services.Bitbucket
 
                     currentRepoName = repo.name;
 
-                    if (BackupSingleRepository(rootBackupDir, repo.name, repo))
+                    if (BackupSingleRepository(rootBackupDir, repo.name))
                     {
                         SucceededReposCount++;
                     }
@@ -97,37 +97,9 @@ namespace Reposed.Core.Services.Bitbucket
             return true;
         }
 
-        protected override string GetGitCommand(object repo, string folderPath)
+        protected override string GetRepoCloneUrl(string repoName)
         {
-            Repository repository = repo as Repository;
-
-            string command = "";
-            string gitCommand = "";
-            string repoUrl = m_bitbucketAPI.GetRepoUrl(repository.name, false);
-            bool dirExists = System.IO.Directory.Exists(folderPath);
-
-            //Check if we have credentials for ssh, else use https
-            if (repository.scm == "hg")
-            {
-                //need to test
-                if (dirExists)
-                    return "hg pull -u";
-                else
-                    gitCommand = "hg clone";
-
-                command = $"{gitCommand} {repoUrl} \"{folderPath}\"";
-            }
-            else if (repository.scm == "git")
-            {
-                if (dirExists)
-                    return $"remote update";
-                else
-                    gitCommand = "clone --mirror";
-
-                command = $"{gitCommand} {repoUrl} \"{folderPath}\"";
-            }
-
-            return command;
+            return m_bitbucketAPI.GetRepoUrl(repoName, false);
         }
 
         public List<Repository> GetAllRepositories()

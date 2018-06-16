@@ -71,7 +71,7 @@ namespace Reposed.Core.Services.Github
                     }
                     currentRepoName = repo.Name;
 
-                    if (BackupSingleRepository(rootBackupDir, repo.Name, repo))
+                    if (BackupSingleRepository(rootBackupDir, repo.Name))
                     {
                         SucceededReposCount++;
                     }
@@ -93,23 +93,9 @@ namespace Reposed.Core.Services.Github
             return true;
         }
 
-        protected override string GetGitCommand(object repo, string folderPath)
+        protected override string GetRepoCloneUrl(string repoName)
         {
-            Octokit.Repository repository = repo as Octokit.Repository;
-
-            string command = string.Empty;
-            string gitParams = string.Empty;
-            string repoUrl = repository.CloneUrl;
-            bool dirExists = System.IO.Directory.Exists(folderPath);
-
-            if (dirExists)
-                gitParams = "remote update";
-            else
-                gitParams = "clone --mirror";
-
-            command = $"{gitParams} {repoUrl} \"{folderPath}\"";
-            
-            return command;
+            return m_githubApiService.GetRepoUrl(repoName);
         }
     }
 }
