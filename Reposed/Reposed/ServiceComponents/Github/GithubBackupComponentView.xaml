@@ -16,18 +16,31 @@
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition />
+                <RowDefinition Height="auto"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <StackPanel >
-                <StackPanel Orientation="Horizontal" Margin="5,3">
-                    <TextBlock Text="Username:" Margin="5,3"/>
-                    <TextBlock Text="{Binding Username}"/>
+            <!--Title-->
+            <Grid Background="{DynamicResource PrimaryBackgroundBrush}" Height="50" Margin="5,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Path Data="{DynamicResource GitHubIcon}" Fill="{DynamicResource PrimaryTextBrush}" Stretch="UniformToFill" Margin="10"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="5,3">
+                    <TextBlock Text="GitHub" FontSize="25" FontWeight="DemiBold"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,3">
-                    <TextBlock Text="Token: " Margin="5,3"/>
-                    <TextBlock Text="{Binding TokenKey}" Margin="5,3"/>
-                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="Settings:" FontWeight="SemiBold" Margin="7,0" FontSize="15"/>
+                <DockPanel Margin="5,3">
+                    <TextBlock Text="Username:" Margin="5,3" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Username}" IsReadOnly="true"/>
+                </DockPanel>
+                <DockPanel Margin="5,3">
+                    <TextBlock Text="Token: " Margin="5,3" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding TokenKey}" Margin="5,3" IsReadOnly="true"/>
+                </DockPanel>
             </StackPanel>
         </Grid>
         <!--Repos-->
@@ -47,9 +60,15 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <ItemContainerTemplate>
-                                <Grid>
-                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,3" cal:Message.Attach="[Event Checked] = [Action OnRepoCheckedChanged($executionContext)]; [Event Unchecked] = [Action OnRepoUncheckedChanged($executionContext)]">
-                                        <TextBlock Text="{Binding RepoName}" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                <Grid Margin="5,3">
+                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,0" VerticalContentAlignment="Center"
+                                              cal:Message.Attach="[Event Checked] = [Action OnRepoCheckedChanged($executionContext)]; [Event Unchecked] = [Action OnRepoUncheckedChanged($executionContext)]">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding RepoName}" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="-4,0,0,0">
+                                                <TextBlock Text="{Binding Owner}" FontSize="9" Margin="5,0" Foreground="{DynamicResource PrimaryTextBrush}" />
+                                            </StackPanel>
+                                        </StackPanel>
                                     </CheckBox>
                                 </Grid>
                             </ItemContainerTemplate>

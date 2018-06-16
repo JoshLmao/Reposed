@@ -30,5 +30,27 @@ namespace Reposed.ServiceComponents.Shared.Models
                 NotifyOfPropertyChange(() => ShouldBackup);
             }
         }
+
+        string m_owner;
+        public string Owner
+        {
+            get { return m_owner; }
+            set
+            {
+                m_owner = value;
+                NotifyOfPropertyChange(() => Owner);
+            }
+        }
+
+        string m_picUrl;
+        public string PicUrl
+        {
+            get { return m_picUrl; }
+            set
+            {
+                m_picUrl = value;
+                NotifyOfPropertyChange(() => PicUrl);
+            }
+        }
     }
 }

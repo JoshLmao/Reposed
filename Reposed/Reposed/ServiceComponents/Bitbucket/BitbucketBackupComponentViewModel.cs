@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using Newtonsoft.Json.Linq;
 using Reposed.Core;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Events;
@@ -73,7 +74,16 @@ namespace Reposed.ServiceComponents.Bitbucket
                 {
                     foreach (SharpBucket.V2.Pocos.Repository repo in repos)
                     {
-                        Repositories.Add(new RepositoriesViewDto() { RepoName = repo.name });
+                        JObject obj = JObject.Parse(repo.owner);
+                        string ownerName = obj["username"].ToString();
+                        string profilePicUrl = obj["links"]["avatar"]["href"].ToString();
+
+                        Repositories.Add(new RepositoriesViewDto()
+                        {
+                            RepoName = repo.name,
+                            Owner = ownerName,
+                            PicUrl = profilePicUrl,
+                        });
                     }
                 }
             }

@@ -56,7 +56,12 @@ namespace Reposed.ServiceComponents.Github
                 {
                     foreach (Octokit.Repository repo in repos)
                     {
-                        Repositories.Add(new RepositoriesViewDto() { RepoName = repo.Name });
+                        Repositories.Add(new RepositoriesViewDto()
+                        {
+                            RepoName = repo.Name,
+                            Owner = repo.Owner.Login,
+                            PicUrl = repo.Owner.AvatarUrl,
+                        });
                     }
                 }
             }
