@@ -11,9 +11,15 @@ namespace Reposed.Converters
 {
     public class BooleanToVisibilityConverter : IValueConverter
     {
+        public bool IsInverted { get; set; }
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+            bool result = (bool)value;
+            if (result)
+                return IsInverted ? Visibility.Collapsed : Visibility.Visible;
+            else
+                return IsInverted ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

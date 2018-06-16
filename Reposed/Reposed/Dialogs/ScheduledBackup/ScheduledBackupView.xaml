@@ -8,6 +8,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Height="350" Width="250"
+        ResizeMode="NoResize"
         Background="{DynamicResource WindowBackgroundBrush}"
         TextElement.Foreground="{DynamicResource PrimaryTextBrush}"
         cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]">

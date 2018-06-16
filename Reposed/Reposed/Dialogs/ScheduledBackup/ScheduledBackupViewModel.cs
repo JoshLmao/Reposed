@@ -48,15 +48,13 @@ namespace Reposed.Dialogs.ScheduledBackup
 
         public void OnViewLoaded()
         {
-            NotifyOfPropertyChange(() => IsScheduledEnabled);
-            NotifyOfPropertyChange(() => SchedulerStatus);
+            Update();
         }
 
         public void OnSetScheduled()
         {
             m_backupService.Enable(BackupPeriodAmount, SelectedBackupPeriod);
-            NotifyOfPropertyChange(() => IsScheduledEnabled);
-            NotifyOfPropertyChange(() => SchedulerStatus);
+            Update();
 
             TryClose(true);
         }
@@ -69,6 +67,13 @@ namespace Reposed.Dialogs.ScheduledBackup
         public void OnCancelScheduleBackup()
         {
             m_backupService.Disable();
+            Update();
+        }
+
+        void Update()
+        {
+            NotifyOfPropertyChange(() => SchedulerStatus);
+            NotifyOfPropertyChange(() => IsScheduledEnabled);
         }
     }
 }

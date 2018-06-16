@@ -96,6 +96,17 @@ namespace Reposed.BackupController
             }
         }
 
+        bool m_isBackingUp = false;
+        public bool IsBackingUp
+        {
+            get { return m_isBackingUp; }
+            set
+            {
+                m_isBackingUp = value;
+                NotifyOfPropertyChange(() => IsBackingUp);
+            }
+        }
+
         public string BackupPath { get; set; }
 
         public string ProgressText
@@ -154,12 +165,7 @@ namespace Reposed.BackupController
 
             if (SelectedBackupService.IsAuthorized)
             {
-                ThreadStart start = new ThreadStart(StartBackup);
-                start += () =>
-                {
-                    //Callback once finished
-                    m_backupThread = null;
-                };
+                ThreadStart start = new ThreadStart(RunBackup);
                 m_backupThread = new Thread(start);
                 m_backupThread.Start();
             }
@@ -169,11 +175,15 @@ namespace Reposed.BackupController
             }
         }
 
-        void StartBackup()
+        private void RunBackup()
         {
+            IsBackingUp = true;
             LastBackupStartTime = DateTime.Now;
+
             SelectedBackupService.Backup(BackupPath);
+
             LastBackupEndTime = DateTime.Now;
+            IsBackingUp = false;
 
             EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupCompleted());
         }
@@ -244,12 +254,28 @@ namespace Reposed.BackupController
 
         public void Handle(OnBackupCompleted message)
         {
+            m_backupThread = null;
+
             if (m_scheduledBackupService.IsEnabled)
             {
                 m_scheduledBackupService.Resume();
             }
 
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
+        }
+
+        public void OnCancelBackup()
+        {
+            if(IsBackingUp)
+            {
+                m_backupThread.Abort();
+                m_backupThread = null;
+                IsBackingUp = false;
+
+                EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupCompleted());
+
+                LOGGER.Info("Cancelling current backup");
+            }
         }
     }
 }
