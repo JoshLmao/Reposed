@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Reposed.BackupController
 {
-    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>
+    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>, IHandle<OnBackupCompleted>
     {
         List<IBackupService> m_backupServices;
         public List<IBackupService> BackupServices
@@ -76,15 +76,9 @@ namespace Reposed.BackupController
             }
         }
 
-        DateTime m_nextScheduledBackupTime;
         public DateTime NextScheduledBackupTime
         {
-            get { return m_nextScheduledBackupTime; }
-            set
-            {
-                m_nextScheduledBackupTime = value;
-                NotifyOfPropertyChange(() => NextScheduledBackupTime);
-            }
+            get { return m_scheduledBackupService != null ? m_scheduledBackupService.NextScheduledBackupTime : DateTime.MinValue; }
         }
 
         public string TotalTimeToBackup { get { return LastBackupEndTime != DateTime.MinValue && LastBackupStartTime != DateTime.MinValue ? (LastBackupEndTime - LastBackupStartTime).ToString() : "?"; } }
@@ -181,10 +175,7 @@ namespace Reposed.BackupController
             SelectedBackupService.Backup(BackupPath);
             LastBackupEndTime = DateTime.Now;
 
-            if (m_scheduledBackupService.IsEnabled)
-            {
-                m_scheduledBackupService.Resume();
-            }
+            EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupCompleted());
         }
 
         public void Handle(PreferencesUpdated message)
@@ -235,7 +226,7 @@ namespace Reposed.BackupController
         {
             IoC.Get<IWindowManager>().ShowDialog(IoC.Get<Dialogs.ScheduledBackup.ScheduledBackupViewModel>());
 
-            NextScheduledBackupTime = m_scheduledBackupService.NextScheduledBackupTime;
+            NotifyOfPropertyChange(() => NextScheduledBackupTime);
             NotifyOfPropertyChange(() => IsScheduledEnabled);
             NotifyOfPropertyChange(() => CanBackup);
         }
@@ -243,11 +234,22 @@ namespace Reposed.BackupController
         public void Handle(RunScheduledBackup message)
         {
             OnBackupNow();
+            NotifyOfPropertyChange(() => NextScheduledBackupTime);
         }
 
         public void OnCancelScheduleBackup()
         {
             m_scheduledBackupService.Disable();
+        }
+
+        public void Handle(OnBackupCompleted message)
+        {
+            if (m_scheduledBackupService.IsEnabled)
+            {
+                m_scheduledBackupService.Resume();
+            }
+
+            NotifyOfPropertyChange(() => NextScheduledBackupTime);
         }
     }
 }

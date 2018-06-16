@@ -13,4 +13,8 @@ namespace Reposed.Core.Events
 
         }
     }
+
+    public class OnBackupCompleted
+    {
+    }
 }

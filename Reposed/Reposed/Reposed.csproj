@@ -86,6 +86,7 @@
       <DependentUpon>AccountsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Accounts\AccountsViewModel.cs" />
+    <Compile Include="BackupController\ScheduledBackupTimeConverter.cs" />
     <Compile Include="Converters\BooleanConverters.cs" />
     <Compile Include="Converters\DateTimeToFormatConverter.cs" />
     <Compile Include="Converters\ServiceToIconConverter.cs" />

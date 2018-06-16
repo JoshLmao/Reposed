@@ -14,6 +14,7 @@
     <UserControl.Resources>
         <converters:ServiceToIconConverter x:Key="s2ic"/>
         <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
+        <local:ScheduledBackupTimeConverter x:Key="scheduledBackupTimeConverter"/>
         <sys:Double x:Key="MinBackupButtonWidth">75</sys:Double>
         <converters:DateTimeToFormatConverter x:Key="dt2fc"/>
     </UserControl.Resources>
@@ -48,7 +49,7 @@
 
                 <StackPanel Visibility="{Binding IsScheduledEnabled, Converter={StaticResource b2vc}}" Grid.Column="1">
                     <TextBlock Text="Next Scheduled Backup:"/>
-                    <TextBlock Text="{Binding NextScheduledBackupTime}"/>
+                    <TextBlock Text="{Binding NextScheduledBackupTime, Converter={StaticResource scheduledBackupTimeConverter}}"/>
                 </StackPanel>
                 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
