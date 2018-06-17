@@ -107,6 +107,20 @@ namespace Reposed.BackupController
             }
         }
 
+        private string m_currentStatusText = "Idle";
+        public string CurrentStatusText
+        {
+            get { return m_currentStatusText; }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    m_currentStatusText = "Idle";
+                else
+                    m_currentStatusText = value;
+                NotifyOfPropertyChange(() => CurrentStatusText);
+            }
+        }
+
         public string BackupPath { get; set; }
 
         public string ProgressText
@@ -115,12 +129,15 @@ namespace Reposed.BackupController
         }
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
+        readonly IWindowManager WINDOW_MANAGER = null;
 
         private Thread m_backupThread = null;
+        private Thread m_backupCompleteMsgChangeThread = null;
         private ScheduledBackupService m_scheduledBackupService = null;
 
-        public BackupControllerViewModel(IEventAggregator eventAggregator, ScheduledBackupService scheduledBackupService)
+        public BackupControllerViewModel(IEventAggregator eventAggregator, IWindowManager windowManager, ScheduledBackupService scheduledBackupService)
         {
+            WINDOW_MANAGER = windowManager;
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
 
@@ -204,7 +221,8 @@ namespace Reposed.BackupController
             if (SelectedBackupService != null)
             {
                 SelectedBackupService.OnCanBackupChanged -= OnCanBackupChanged;
-                SelectedBackupService.OnRepoBackedUp -= OnRepoBackedUp;
+                SelectedBackupService.OnStartBackupRepo -= OnStartBackupRepo;
+                SelectedBackupService.OnFinishRepoBackedUp -= OnRepoBackedUp;
                 //SelectedBackupService.OnIsAuthorizedChanged -= OnIsAuthorizedChanged;
             }
         }
@@ -214,12 +232,19 @@ namespace Reposed.BackupController
             if (SelectedBackupService != null)
             {
                 SelectedBackupService.OnCanBackupChanged += OnCanBackupChanged;
-                SelectedBackupService.OnRepoBackedUp += OnRepoBackedUp;
+                SelectedBackupService.OnStartBackupRepo += OnStartBackupRepo;
+                SelectedBackupService.OnFinishRepoBackedUp += OnRepoBackedUp;
                 //SelectedBackupService.OnIsAuthorizedChanged += OnIsAuthorizedChanged;
             }
 
             NotifyOfPropertyChange(() => CanBackup);
-            OnRepoBackedUp();
+            NotifyOfPropertyChange(() => ProgressText);
+        }
+
+        private void OnStartBackupRepo(string repoName)
+        {
+            NotifyOfPropertyChange(() => ProgressText);
+            CurrentStatusText = $"Starting backup of '{repoName}'";
         }
 
         private void OnCanBackupChanged(bool canBackup)
@@ -227,14 +252,15 @@ namespace Reposed.BackupController
             NotifyOfPropertyChange(() => CanBackup);
         }
 
-        private void OnRepoBackedUp()
+        private void OnRepoBackedUp(string repoName)
         {
             NotifyOfPropertyChange(() => ProgressText);
+            CurrentStatusText = $"Finished backup of '{repoName}'";
         }
 
         public void OnConfigureAutoBackup()
         {
-            IoC.Get<IWindowManager>().ShowDialog(IoC.Get<Dialogs.ScheduledBackup.ScheduledBackupViewModel>());
+            WINDOW_MANAGER.ShowDialog(IoC.Get<Dialogs.ScheduledBackup.ScheduledBackupViewModel>());
 
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
             NotifyOfPropertyChange(() => IsScheduledEnabled);
@@ -261,7 +287,20 @@ namespace Reposed.BackupController
                 m_scheduledBackupService.Resume();
             }
 
+            CurrentStatusText = "Completed all backups";
+            ThreadStart tStart = new ThreadStart(ChangeToIdleDelay);
+            m_backupCompleteMsgChangeThread = new Thread(tStart);
+            m_backupCompleteMsgChangeThread.Start();
+
+            NotifyOfPropertyChange(() => ProgressText);
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
+        }
+
+        void ChangeToIdleDelay()
+        {
+            Thread.Sleep(10 * 1000);
+            CurrentStatusText = "";
+            m_backupCompleteMsgChangeThread = null;
         }
 
         public void OnCancelBackup()

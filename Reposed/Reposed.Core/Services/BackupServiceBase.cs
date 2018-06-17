@@ -41,11 +41,14 @@ namespace Reposed.Core.Services
         public int SucceededReposCount { get; protected set; }
         public int TotalReposCount { get; protected set; }
 
+        public string CurrentBackedUpRepo { get; protected set; }
+
         public string Username { get; protected set; }
 
         public event Action<bool> OnIsAuthorizedChanged;
         public event Action<bool> OnCanBackupChanged;
-        public abstract event Action OnRepoBackedUp;
+        public abstract event Action<string> OnStartBackupRepo;
+        public abstract event Action<string> OnFinishRepoBackedUp;
 
         protected List<BackupReposDto> m_backupRepos = null;
 
@@ -96,9 +99,12 @@ namespace Reposed.Core.Services
         /// <returns>If the backup was successful or not</returns>
         protected virtual bool BackupSingleRepository(string rootBackupDir, string repoName)
         {
-            //For testing
+            CurrentBackedUpRepo = repoName;
+
+            /*For testing*/
             System.Threading.Thread.Sleep(1000);
             return true;
+            /*For Testing*/
 
             string currentRepoDir = $"{rootBackupDir}\\{repoName}";
             string command = GitHelper.GetCloneCommand(GetRepoCloneUrl(repoName), currentRepoDir);
@@ -158,10 +164,18 @@ namespace Reposed.Core.Services
             m_backupRepos = backupRepos;
         }
 
+        protected void OnStartAllBackups()
+        {
+            TotalReposCount = 0;
+        }
+
+        protected void OnCompletedAllBackups()
+        {
+            CompletedReposCount = SucceededReposCount = 0;
+        }
+
         public abstract bool SetCredentials(IBackupCredentials credentials);
-
         public abstract bool Backup(string rootBackupDir);
-
         /// <summary>
         /// Gets the clone url from the repo name
         /// </summary>

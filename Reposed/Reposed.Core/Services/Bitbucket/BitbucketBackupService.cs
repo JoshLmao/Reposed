@@ -12,7 +12,8 @@ namespace Reposed.Core.Services.Bitbucket
     {
         public static string SERVICE_ID = "BITBUCKET";
 
-        public override event Action OnRepoBackedUp;
+        public override event Action<string> OnStartBackupRepo;
+        public override event Action<string> OnFinishRepoBackedUp;
 
         public override string ServiceId { get { return SERVICE_ID; } }
 
@@ -60,6 +61,8 @@ namespace Reposed.Core.Services.Bitbucket
                 return false;
             }
 
+            OnStartAllBackups();
+
             CanBackup = false;
             string currentRepoName = null;
             try
@@ -69,10 +72,9 @@ namespace Reposed.Core.Services.Bitbucket
                 {
                     BackupReposDto backupRepoConfig = m_backupRepos?.FirstOrDefault(x => x.RepositoryName == repo.name);
                     if (backupRepoConfig != null && !backupRepoConfig.ShouldBackup)
-                    {
                         continue;
-                    }
 
+                    OnStartBackupRepo?.Invoke(repo.name);
                     currentRepoName = repo.name;
 
                     if (BackupSingleRepository(rootBackupDir, repo.name))
@@ -85,13 +87,15 @@ namespace Reposed.Core.Services.Bitbucket
                     }
 
                     CompletedReposCount++;
-                    OnRepoBackedUp?.Invoke();
+                    OnFinishRepoBackedUp?.Invoke(repo.name);
                 }
             }
             catch (Exception e)
             {
                 LOGGER.Fatal($"Unable to backup repository {currentRepoName}");
             }
+
+            OnCompletedAllBackups();
 
             CanBackup = true;
             return true;

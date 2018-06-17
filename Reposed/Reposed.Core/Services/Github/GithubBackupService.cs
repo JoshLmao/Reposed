@@ -16,7 +16,8 @@ namespace Reposed.Core.Services.Github
 
         public string Token { get; private set; }
 
-        public override event Action OnRepoBackedUp;
+        public override event Action<string> OnStartBackupRepo;
+        public override event Action<string> OnFinishRepoBackedUp;
 
         GithubAPIService m_githubApiService = null;
 
@@ -69,6 +70,8 @@ namespace Reposed.Core.Services.Github
                     {
                         continue;
                     }
+
+                    OnStartBackupRepo?.Invoke(repo.Name);
                     currentRepoName = repo.Name;
 
                     if (BackupSingleRepository(rootBackupDir, repo.Name))
@@ -81,7 +84,7 @@ namespace Reposed.Core.Services.Github
                     }
 
                     CompletedReposCount++;
-                    OnRepoBackedUp?.Invoke();
+                    OnFinishRepoBackedUp?.Invoke(repo.Name);
                 }
             }
             catch(Exception e)

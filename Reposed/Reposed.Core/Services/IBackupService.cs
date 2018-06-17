@@ -16,15 +16,28 @@ namespace Reposed.Core
         /// Can this service run a backup?
         /// </summary>
         bool CanBackup { get; }
-
+        /// <summary>
+        /// The current amount of completed repositories backed up
+        /// </summary>
         int CompletedReposCount { get; }
+        /// <summary>
+        /// The current amount of repositories backed up successfully
+        /// </summary>
         int SucceededReposCount { get; }
+        /// <summary>
+        /// The total amount of repositories to back up
+        /// </summary>
         int TotalReposCount { get; }
+        /// <summary>
+        /// The name of the current repo being backed up
+        /// </summary>
+        string CurrentBackedUpRepo { get; }
 
         event System.Action<bool> OnCanBackupChanged;
         event System.Action<bool> OnIsAuthorizedChanged;
 
-        event System.Action OnRepoBackedUp;
+        event System.Action<string> OnStartBackupRepo;
+        event System.Action<string> OnFinishRepoBackedUp;
 
         /// <summary>
         /// Configures the service with the necessary params
