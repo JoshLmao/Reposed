@@ -20,6 +20,22 @@ namespace Reposed.Dialogs.ScheduledBackup
             get { return m_backupPeriodAmount; }
             set
             {
+                if(SelectedBackupPeriod == BackupPeriod.Minutes)
+                {
+                    if (value > 60)
+                        value = 60;
+                }
+                else if(SelectedBackupPeriod == BackupPeriod.Hours)
+                {
+                    if (value > 24)
+                        value = 24;
+                }
+                else if(SelectedBackupPeriod == BackupPeriod.Days)
+                {
+                    if (value > 30)
+                        value = 30;
+                }
+
                 m_backupPeriodAmount = value;
                 NotifyOfPropertyChange(() => BackupPeriodAmount);
             }
@@ -33,6 +49,9 @@ namespace Reposed.Dialogs.ScheduledBackup
             {
                 m_selectedBackupPeriod = value;
                 NotifyOfPropertyChange(() => SelectedBackupPeriod);
+
+                //Refresh property
+                BackupPeriodAmount = BackupPeriodAmount;
             }
         }
 
@@ -51,12 +70,10 @@ namespace Reposed.Dialogs.ScheduledBackup
             Update();
         }
 
-        public void OnSetScheduled()
+        public void OnEnableScheduledBackup()
         {
             m_backupService.Enable(BackupPeriodAmount, SelectedBackupPeriod);
             Update();
-
-            TryClose(true);
         }
 
         public void OnCancelScheduled()

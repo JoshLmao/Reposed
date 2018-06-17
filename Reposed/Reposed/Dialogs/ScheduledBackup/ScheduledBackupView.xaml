@@ -6,15 +6,19 @@
         xmlns:local="clr-namespace:Reposed.Dialogs.ScheduledBackup"
         xmlns:cal="http://www.caliburnproject.org"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:converters="clr-namespace:Reposed.Converters"
         mc:Ignorable="d"
-        Height="350" Width="250"
+        Height="250" Width="400"
         ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackgroundBrush}"
         TextElement.Foreground="{DynamicResource PrimaryTextBrush}"
         cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]">
     <Window.Resources>
         <sys:String x:Key="PeriodButtonName">Period</sys:String>
         <local:BackupPeriodConverter x:Key="backupPeriodConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
+        <converters:BooleanToVisibilityConverter x:Key="ib2vc" IsInverted="True"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -26,7 +30,7 @@
             <TextBlock Text="Backup Every:"/>
 
             <StackPanel Orientation="Horizontal" Margin="5,3">
-                <TextBox Width="30" Margin="5,0,0,0" Text="{Binding BackupPeriodAmount, Mode=TwoWay}"/>
+                <TextBox Width="30" Margin="5,0,0,0" Text="{Binding BackupPeriodAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <RadioButton GroupName="{StaticResource PeriodButtonName}" Margin="5,0" VerticalAlignment="Center" 
                              IsChecked="{Binding SelectedBackupPeriod, Converter={StaticResource backupPeriodConverter}, ConverterParameter=Days}">
                     <TextBlock Text="Days" Foreground="{DynamicResource PrimaryTextBrush}" />
@@ -40,8 +44,13 @@
                     <TextBlock Text="Minutes" Foreground="{DynamicResource PrimaryTextBrush}"/>
                 </RadioButton>
             </StackPanel>
-            <Button Margin="5,3" cal:Message.Attach="[Event Click] = [Action OnCancelScheduleBackup()]" IsEnabled="{Binding IsScheduledEnabled}">
-                <TextBlock Text="Cancel Sheduled Backup" Padding="5,3"/>
+            <Button Visibility="{Binding IsScheduledEnabled, Converter={StaticResource ib2vc}}" Margin="5,3"
+                    cal:Message.Attach="[Event Click] = [Action OnEnableScheduledBackup()]">
+                <TextBlock Text="Enable Scheduled Backup" Padding="5,3"/>
+            </Button>
+            <Button Visibility="{Binding IsScheduledEnabled, Converter={StaticResource b2vc}}" Margin="5,3"
+                    cal:Message.Attach="[Event Click] = [Action OnCancelScheduleBackup()]" >
+                <TextBlock Text="Disable Sheduled Backup" Padding="5,3"/>
             </Button>
 
             <StackPanel Orientation="Horizontal">
@@ -51,11 +60,8 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-            <Button Margin="5,3" cal:Message.Attach="[Event Click] = [Action OnSetScheduled()]">
-                <TextBlock Text="Apply" Padding="5,3"/>
-            </Button>
             <Button Margin="5,3" cal:Message.Attach="[Event Click] = [Action OnCancelScheduled()]">
-                <TextBlock Text="Cancel" Padding="5,3"/>
+                <TextBlock Text="Close" Padding="5,3"/>
             </Button>
         </StackPanel>
     </Grid>

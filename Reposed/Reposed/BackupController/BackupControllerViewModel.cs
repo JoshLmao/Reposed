@@ -108,14 +108,16 @@ namespace Reposed.BackupController
             }
         }
 
-        private string m_currentStatusText = "Idle";
+        private string m_currentStatusText;
         public string CurrentStatusText
         {
             get { return m_currentStatusText; }
             set
             {
                 if (string.IsNullOrEmpty(value))
-                    m_currentStatusText = "Idle";
+                {
+                    m_currentStatusText = m_scheduledBackupService.IsEnabled ? "Waiting for scheduled backup..." :  "Idle";
+                }
                 else
                     m_currentStatusText = value;
                 NotifyOfPropertyChange(() => CurrentStatusText);
@@ -149,6 +151,8 @@ namespace Reposed.BackupController
         {
             UpdateServices();
             NotifyOfPropertyChange(() => IsScheduledEnabled);
+            //Refresh status text
+            CurrentStatusText = "";
         }
 
         void UpdateServices()
@@ -156,7 +160,8 @@ namespace Reposed.BackupController
             if (BackupServices == null)
                 BackupServices = new List<IBackupService>();
 
-            BackupServices.Clear();
+            if(BackupServices?.Count > 0)
+                BackupServices.Clear();
 
             List<IBackupService> services = IoC.GetAll<IBackupService>().ToList();
             foreach (IBackupService service in services)
@@ -223,8 +228,6 @@ namespace Reposed.BackupController
             if (SelectedBackupService != null)
             {
                 SelectedBackupService.OnCanBackupChanged -= OnCanBackupChanged;
-                //SelectedBackupService.OnStartBackupRepo -= OnStartBackupRepo;
-                //SelectedBackupService.OnFinishRepoBackedUp -= OnRepoBackedUp;
                 //SelectedBackupService.OnIsAuthorizedChanged -= OnIsAuthorizedChanged;
             }
         }
@@ -234,8 +237,6 @@ namespace Reposed.BackupController
             if (SelectedBackupService != null)
             {
                 SelectedBackupService.OnCanBackupChanged += OnCanBackupChanged;
-                //SelectedBackupService.OnStartBackupRepo += OnStartBackupRepo;
-                //SelectedBackupService.OnFinishRepoBackedUp += OnRepoBackedUp;
                 //SelectedBackupService.OnIsAuthorizedChanged += OnIsAuthorizedChanged;
             }
 
@@ -259,6 +260,8 @@ namespace Reposed.BackupController
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
             NotifyOfPropertyChange(() => IsScheduledEnabled);
             NotifyOfPropertyChange(() => CanBackup);
+            //Refresh status text
+            CurrentStatusText = "";
         }
 
         public void Handle(RunScheduledBackup message)
