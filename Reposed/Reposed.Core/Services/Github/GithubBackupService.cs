@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Caliburn.Micro;
+using NLog;
 using Octokit;
 using Reposed.Models;
 using System;
@@ -16,12 +17,11 @@ namespace Reposed.Core.Services.Github
 
         public string Token { get; private set; }
 
-        public override event Action<string> OnStartBackupRepo;
-        public override event Action<string> OnFinishRepoBackedUp;
+        protected override string m_serviceNameFolder { get { return "Github"; } }
 
         GithubAPIService m_githubApiService = null;
 
-        public GithubBackupService() : base()
+        public GithubBackupService(IEventAggregator eventAggregator) : base(eventAggregator)
         {
 
         }
@@ -71,20 +71,20 @@ namespace Reposed.Core.Services.Github
                         continue;
                     }
 
-                    OnStartBackupRepo?.Invoke(repo.Name);
+                    OnRepoStartBackup(repo.Name);
                     currentRepoName = repo.Name;
 
                     if (BackupSingleRepository(rootBackupDir, repo.Name))
                     {
-                        SucceededReposCount++;
+                        OnRepoBackupSucceeded(repo.Name);
                     }
                     else
                     {
                         LOGGER.Error($"Unable to backup {repo.Name}");
+                        OnRepoBackupFailed(repo.Name);
                     }
 
                     CompletedReposCount++;
-                    OnFinishRepoBackedUp?.Invoke(repo.Name);
                 }
             }
             catch(Exception e)

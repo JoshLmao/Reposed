@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace Reposed.BackupController
 {
-    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>, IHandle<OnBackupCompleted>
+    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>, IHandle<OnBackupCompleted>,
+        IHandle<OnRepoBackupFailed>, IHandle<OnRepoBackupSucceeded>, IHandle<OnRepoStartBackup>
     {
         List<IBackupService> m_backupServices;
         public List<IBackupService> BackupServices
@@ -125,7 +126,7 @@ namespace Reposed.BackupController
 
         public string ProgressText
         {
-            get { return $"Progress: Completed = {SelectedBackupService?.CompletedReposCount}, Succeeded = {SelectedBackupService?.SucceededReposCount}, TotalRepos = {SelectedBackupService?.TotalReposCount}"; }
+            get { return $"Progress: Completed = {BackupServices?.Sum(x => x.CompletedReposCount)}, Succeeded = {BackupServices?.Sum(x => x.SucceededReposCount)}, TotalRepos = {BackupServices?.Sum(x => x.TotalReposCount)}"; }
         }
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
@@ -197,7 +198,8 @@ namespace Reposed.BackupController
             IsBackingUp = true;
             LastBackupStartTime = DateTime.Now;
 
-            SelectedBackupService.Backup(BackupPath);
+            foreach(IBackupService service in BackupServices)
+                service.Backup(BackupPath);
 
             LastBackupEndTime = DateTime.Now;
             IsBackingUp = false;
@@ -221,8 +223,8 @@ namespace Reposed.BackupController
             if (SelectedBackupService != null)
             {
                 SelectedBackupService.OnCanBackupChanged -= OnCanBackupChanged;
-                SelectedBackupService.OnStartBackupRepo -= OnStartBackupRepo;
-                SelectedBackupService.OnFinishRepoBackedUp -= OnRepoBackedUp;
+                //SelectedBackupService.OnStartBackupRepo -= OnStartBackupRepo;
+                //SelectedBackupService.OnFinishRepoBackedUp -= OnRepoBackedUp;
                 //SelectedBackupService.OnIsAuthorizedChanged -= OnIsAuthorizedChanged;
             }
         }
@@ -232,19 +234,13 @@ namespace Reposed.BackupController
             if (SelectedBackupService != null)
             {
                 SelectedBackupService.OnCanBackupChanged += OnCanBackupChanged;
-                SelectedBackupService.OnStartBackupRepo += OnStartBackupRepo;
-                SelectedBackupService.OnFinishRepoBackedUp += OnRepoBackedUp;
+                //SelectedBackupService.OnStartBackupRepo += OnStartBackupRepo;
+                //SelectedBackupService.OnFinishRepoBackedUp += OnRepoBackedUp;
                 //SelectedBackupService.OnIsAuthorizedChanged += OnIsAuthorizedChanged;
             }
 
             NotifyOfPropertyChange(() => CanBackup);
             NotifyOfPropertyChange(() => ProgressText);
-        }
-
-        private void OnStartBackupRepo(string repoName)
-        {
-            NotifyOfPropertyChange(() => ProgressText);
-            CurrentStatusText = $"Starting backup of '{repoName}'";
         }
 
         private void OnCanBackupChanged(bool canBackup)
@@ -254,8 +250,6 @@ namespace Reposed.BackupController
 
         private void OnRepoBackedUp(string repoName)
         {
-            NotifyOfPropertyChange(() => ProgressText);
-            CurrentStatusText = $"Finished backup of '{repoName}'";
         }
 
         public void OnConfigureAutoBackup()
@@ -287,16 +281,19 @@ namespace Reposed.BackupController
                 m_scheduledBackupService.Resume();
             }
 
-            CurrentStatusText = "Completed all backups";
-            ThreadStart tStart = new ThreadStart(ChangeToIdleDelay);
-            m_backupCompleteMsgChangeThread = new Thread(tStart);
-            m_backupCompleteMsgChangeThread.Start();
+            if(m_backupCompleteMsgChangeThread == null)
+            {
+                CurrentStatusText = "Completed all backups";
+                ThreadStart tStart = new ThreadStart(ChangeToIdleDelay);
+                m_backupCompleteMsgChangeThread = new Thread(tStart);
+                m_backupCompleteMsgChangeThread.Start();
+            }
 
             NotifyOfPropertyChange(() => ProgressText);
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
         }
 
-        void ChangeToIdleDelay()
+        private void ChangeToIdleDelay()
         {
             Thread.Sleep(10 * 1000);
             CurrentStatusText = "";
@@ -315,6 +312,24 @@ namespace Reposed.BackupController
 
                 LOGGER.Info("Cancelling current backup");
             }
+        }
+
+        public void Handle(OnRepoBackupSucceeded message)
+        {
+            NotifyOfPropertyChange(() => ProgressText);
+            CurrentStatusText = $"Finished backup of '{message.Repo}'";
+        }
+
+        public void Handle(OnRepoBackupFailed message)
+        {
+            NotifyOfPropertyChange(() => ProgressText);
+            CurrentStatusText = $"Failed backup of '{message.Repo}'";
+        }
+
+        public void Handle(OnRepoStartBackup message)
+        {
+            NotifyOfPropertyChange(() => ProgressText);
+            CurrentStatusText = $"Starting backup of '{message.Repo}'";
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using Reposed.Models;
+﻿using Caliburn.Micro;
+using Reposed.Models;
 using SharpBucket.V2.Pocos;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,9 +13,6 @@ namespace Reposed.Core.Services.Bitbucket
     public class BitbucketBackupService : BackupServiceBase
     {
         public static string SERVICE_ID = "BITBUCKET";
-
-        public override event Action<string> OnStartBackupRepo;
-        public override event Action<string> OnFinishRepoBackedUp;
 
         public override string ServiceId { get { return SERVICE_ID; } }
 
@@ -25,9 +24,11 @@ namespace Reposed.Core.Services.Bitbucket
 
         public List<BackupReposDto> ReposToBackup { get; set; }
 
+        protected override string m_serviceNameFolder { get { return "Bitbucket"; } }
+
         BitbucketAPIService m_bitbucketAPI = null;
 
-        public BitbucketBackupService() : base()
+        public BitbucketBackupService(IEventAggregator eventAggregator) : base(eventAggregator)
         {
         }
 
@@ -65,6 +66,7 @@ namespace Reposed.Core.Services.Bitbucket
 
             CanBackup = false;
             string currentRepoName = null;
+            string serviceSubFolderDir = Path.Combine(rootBackupDir, m_serviceNameFolder);
             try
             {
                 List<Repository> repos = m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username);
@@ -74,25 +76,25 @@ namespace Reposed.Core.Services.Bitbucket
                     if (backupRepoConfig != null && !backupRepoConfig.ShouldBackup)
                         continue;
 
-                    OnStartBackupRepo?.Invoke(repo.name);
+                    OnRepoStartBackup(repo.name);
                     currentRepoName = repo.name;
 
-                    if (BackupSingleRepository(rootBackupDir, repo.name))
+                    if (BackupSingleRepository(serviceSubFolderDir, repo.name))
                     {
-                        SucceededReposCount++;
+                        OnRepoBackupSucceeded(repo.name);
                     }
                     else
                     {
                         LOGGER.Error($"Unable to backup {repo.name}");
+                        OnRepoBackupFailed(repo.name);
                     }
 
                     CompletedReposCount++;
-                    OnFinishRepoBackedUp?.Invoke(repo.name);
                 }
             }
             catch (Exception e)
             {
-                LOGGER.Fatal($"Unable to backup repository {currentRepoName}");
+                LOGGER.Fatal($"Exception occured when trying to backup repository '{currentRepoName}'{Environment.NewLine}{e.ToString()}");
             }
 
             OnCompletedAllBackups();

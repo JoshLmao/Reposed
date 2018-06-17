@@ -1,4 +1,6 @@
-﻿using NLog;
+﻿using Caliburn.Micro;
+using NLog;
+using Reposed.Core.Events;
 using Reposed.Core.Utility;
 using Reposed.Models;
 using System;
@@ -47,18 +49,19 @@ namespace Reposed.Core.Services
 
         public event Action<bool> OnIsAuthorizedChanged;
         public event Action<bool> OnCanBackupChanged;
-        public abstract event Action<string> OnStartBackupRepo;
-        public abstract event Action<string> OnFinishRepoBackedUp;
 
-        protected List<BackupReposDto> m_backupRepos = null;
+        protected abstract string m_serviceNameFolder { get; }
 
         protected readonly Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-        string m_gitFilePath = null;
+        protected string m_gitFilePath = null;
+        protected List<BackupReposDto> m_backupRepos = null;
 
-        public BackupServiceBase()
+        protected readonly IEventAggregator EVENT_AGGREGATOR;
+
+        public BackupServiceBase(IEventAggregator eventAggregator)
         {
-
+            EVENT_AGGREGATOR = eventAggregator;
         }
 
         public bool SetGitPath(string gitPath)
@@ -172,6 +175,22 @@ namespace Reposed.Core.Services
         protected void OnCompletedAllBackups()
         {
             CompletedReposCount = SucceededReposCount = 0;
+        }
+
+        protected void OnRepoBackupSucceeded(string repoName)
+        {
+            EVENT_AGGREGATOR.PublishOnCurrentThread(new OnRepoBackupSucceeded(repoName, this));
+            SucceededReposCount++;
+        }
+
+        protected void OnRepoBackupFailed(string repoName)
+        {
+            EVENT_AGGREGATOR.PublishOnCurrentThread(new OnRepoBackupFailed(repoName, this));
+        }
+
+        protected void OnRepoStartBackup(string repoName)
+        {
+            EVENT_AGGREGATOR.PublishOnCurrentThread(new OnRepoStartBackup(repoName, this));
         }
 
         public abstract bool SetCredentials(IBackupCredentials credentials);

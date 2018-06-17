@@ -36,9 +36,6 @@ namespace Reposed.Core
         event System.Action<bool> OnCanBackupChanged;
         event System.Action<bool> OnIsAuthorizedChanged;
 
-        event System.Action<string> OnStartBackupRepo;
-        event System.Action<string> OnFinishRepoBackedUp;
-
         /// <summary>
         /// Configures the service with the necessary params
         /// </summary>
