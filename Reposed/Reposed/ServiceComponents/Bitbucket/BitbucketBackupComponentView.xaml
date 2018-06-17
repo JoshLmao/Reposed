@@ -9,29 +9,78 @@
              d:DesignHeight="300" d:DesignWidth="600"
             cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]" TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="150"/>
-        </Grid.ColumnDefinitions>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <!--Title-->
-            <Grid Background="{DynamicResource PrimaryBackgroundBrush}" Height="50" Margin="5,3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Path Data="{DynamicResource BitbucketIcon}" Fill="{DynamicResource PrimaryTextBrush}" Stretch="UniformToFill" Margin="10"/>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="5,3">
-                    <TextBlock Text="Bitbucket" FontSize="25" FontWeight="DemiBold"/>
-                </StackPanel>
-            </Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!--Title-->
+        <Grid Background="{DynamicResource PrimaryBackgroundBrush}" Height="50" Margin="5,3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Path Data="{DynamicResource BitbucketIcon}" Fill="{DynamicResource PrimaryTextBrush}" Stretch="UniformToFill" Margin="10"/>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="5,3">
+                <TextBlock Text="Bitbucket" FontSize="25" FontWeight="DemiBold"/>
+            </StackPanel>
+        </Grid>
 
-            <StackPanel Grid.Row="1">
-                <TextBlock Text="Settings:" FontWeight="SemiBold" Margin="7,0" FontSize="15"/>
+        <!--Main Content-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <!--Left Side-->
+            <Grid Background="{DynamicResource PrimaryBackgroundBrush}" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <!--Title-->
+                <TextBlock Text="Repositories:" Margin="5,3" FontWeight="Bold" FontSize="20"/>
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Repositories}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <ItemContainerTemplate>
+                                <Grid Margin="5,3">
+                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,0" VerticalContentAlignment="Center"
+                                            cal:Message.Attach="[Event Checked] = [Action OnRepoCheckedChanged($executionContext)]; [Event Unchecked] = [Action OnRepoUncheckedChanged($executionContext)]">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="{Binding RepoName}" FontSize="15" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
+
+                                            <Grid Grid.Row="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="-4,0,0,0">
+                                                    <TextBlock Text="{Binding Owner}" FontSize="9" Margin="5,0" Foreground="{DynamicResource PrimaryTextBrush}" />
+                                                </StackPanel>
+                                                <!--<Expander Grid.Column="1">
+                                                    <TextBlock Text="Test"/>
+                                                </Expander>-->
+                                            </Grid>
+                                        </Grid>
+                                    </CheckBox>
+                                </Grid>
+                            </ItemContainerTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+            <!--Right side-->
+            <StackPanel Grid.Column="1" Margin="5" Background="{DynamicResource PrimaryBackgroundBrush}">
+                <TextBlock Text="Settings:" FontWeight="SemiBold" Margin="7,0" FontSize="20"/>
                 <DockPanel Margin="5,3">
                     <TextBlock Text="Username:" Margin="5,3" FontWeight="SemiBold"/>
                     <TextBox Text="{Binding Username}" VerticalAlignment="Center" IsReadOnly="True"/>
@@ -45,42 +94,6 @@
                     <TextBox Text="{Binding OAuthPrivate}" VerticalAlignment="Center" IsReadOnly="True"/>
                 </DockPanel>
             </StackPanel>
-        </Grid>
-        <!--Repos-->
-        <Grid Grid.Column="1" Grid.RowSpan="2">
-
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <TextBlock Text="Repositories:" Margin="5,3" FontWeight="Bold"/>
-                
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
-                    <ItemsControl ItemsSource="{Binding Repositories}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <ItemContainerTemplate>
-                                <Grid Margin="5,3">
-                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,0" VerticalContentAlignment="Center"
-                                              cal:Message.Attach="[Event Checked] = [Action OnRepoCheckedChanged($executionContext)]; [Event Unchecked] = [Action OnRepoUncheckedChanged($executionContext)]">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding RepoName}" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
-                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="-4,0,0,0">
-                                                <TextBlock Text="{Binding Owner}" FontSize="9" Margin="5,0" Foreground="{DynamicResource PrimaryTextBrush}" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </CheckBox>
-                                </Grid>
-                            </ItemContainerTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </Grid>
         </Grid>
     </Grid>
 </UserControl>

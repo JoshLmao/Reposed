@@ -12,7 +12,7 @@
     <SolidColorBrush x:Key="HighlightedTextBrush" Color="{StaticResource HighlightedTextColor}"/>
 
     <!--Primary Background-->
-    <Color x:Key="PrimaryBackgroundColor">Orange</Color>
+    <Color x:Key="PrimaryBackgroundColor">#313744</Color>
     <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource PrimaryBackgroundColor}"/>
     <!--Secondary Background-->
     <Color x:Key="SecondaryBackgroundColor">Green</Color>
