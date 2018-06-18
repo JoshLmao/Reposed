@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using NLog;
 using Reposed.Core;
+using Reposed.Core.Dialogs;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Core.Services.Github;
 using Reposed.Core.Services.Gitlab;
@@ -74,6 +75,9 @@ namespace Reposed
             m_iocContainer.Singleton<IBackupService, GithubBackupService>();
             m_iocContainer.Singleton<IBackupService, GitlabBackupService>();
             m_iocContainer.Singleton<ScheduledBackupService>();
+
+            //UI Services
+            m_iocContainer.Singleton<IMessageBoxService, MessageBoxService>();
 
             //ViewModels
             m_iocContainer.PerRequest<ShellViewModel>();

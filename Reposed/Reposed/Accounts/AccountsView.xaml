@@ -25,7 +25,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type coreServices:BackupServiceBase}">
                     <Grid Margin="5">
-                        <Path Fill="White" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" Height="45"/>
+                        <Path Fill="White" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

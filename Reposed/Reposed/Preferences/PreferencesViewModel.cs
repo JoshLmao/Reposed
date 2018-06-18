@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Reposed.Core;
+using Reposed.Core.Dialogs;
 using Reposed.Events;
 using Reposed.MVVM;
 using Reposed.Utility;
@@ -95,13 +96,16 @@ namespace Reposed.Preferences
         #endregion
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
+        readonly IMessageBoxService MSG_BOX_SERVICE = null;
 
         Models.Preferences m_prefs = null;
 
-        public PreferencesViewModel(IEventAggregator eventAggregator)
+        public PreferencesViewModel(IEventAggregator eventAggregator, IMessageBoxService msgBoxService)
         {
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
+
+            MSG_BOX_SERVICE = msgBoxService;
         }
 
         public void LoadPreferences()
@@ -160,7 +164,16 @@ namespace Reposed.Preferences
 
         public void OnSelectGitPath()
         {
-            GitPath = ShowOpenFileDialog(".exe", "Select Git.exe");
+            string newPath = ShowOpenFileDialog(".exe", "Select Git.exe");
+            string fileName = Path.GetFileName(newPath);
+            if (File.Exists(newPath) && fileName.ToLower() == "git.exe")
+            {
+                GitPath = newPath;
+            }
+            else
+            {
+                MSG_BOX_SERVICE.Show($"Unable to set Git Path to {newPath}", "Error selecting directory", System.Windows.MessageBoxButton.OK);
+            }
         }
 
         public void OnSelectedBackupPath()
@@ -175,6 +188,7 @@ namespace Reposed.Preferences
                 DefaultExt = defaultExt,
                 Title = title,
                 Multiselect = false,
+                Filter = "Git .exe file (*.exe)|*.exe|All files (*.*)|*.*"
             };
 
             if (ofd.ShowDialog() == true)
