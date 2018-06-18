@@ -31,14 +31,31 @@ namespace Reposed.Core.Services.Github
 
         public List<Repository> GetAllRepositories()
         {
-            return new List<Repository>(m_client.Repository.GetAllForCurrent().Result);
+            if (IsAuthorized())
+                return new List<Repository>(m_client.Repository.GetAllForCurrent()?.Result);
+            else
+                return null;
         }
 
         public string GetRepoUrl(string repoName)
         {
             List<Repository> repos = GetAllRepositories();
             Repository foundRepo = repos.FirstOrDefault(x => x.Name == repoName);
-            return foundRepo != null ? foundRepo.CloneUrl : null;
+            return foundRepo?.CloneUrl;
+        }
+
+        public bool IsAuthorized()
+        {
+            //Needs to be a better way than this
+            try
+            {
+                var r = m_client.Repository.GetAllForCurrent()?.Result;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

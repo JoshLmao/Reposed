@@ -103,6 +103,7 @@ namespace Reposed.ServiceComponents
         {
             BACKUP_SETTINGS_SERVICE.Set(serviceId, serviceSettings);
             m_serviceSettings = serviceSettings;
+            m_service.SetCredentials(serviceSettings);
             UpdateUI();
         }
     }

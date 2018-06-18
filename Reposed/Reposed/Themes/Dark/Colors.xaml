@@ -10,6 +10,9 @@
     <!--Highlighted Text-->
     <Color x:Key="HighlightedTextColor">Gray</Color>
     <SolidColorBrush x:Key="HighlightedTextBrush" Color="{StaticResource HighlightedTextColor}"/>
+    <!--Error text color-->
+    <Color x:Key="ErrorTextColor">Crimson</Color>
+    <SolidColorBrush x:Key="ErrorTextBrush" Color="{StaticResource ErrorTextColor}"/>
 
     <!--Primary Background-->
     <Color x:Key="PrimaryBackgroundColor">#313744</Color>

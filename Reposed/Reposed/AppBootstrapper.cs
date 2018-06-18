@@ -98,8 +98,9 @@ namespace Reposed
         {
             Application.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-            //Load prefs after IoC init
+            //Load prefs before Shell displayed
             m_iocContainer.GetInstance<BackupSettingsService>().LoadFromFile();
+            m_iocContainer.GetInstance<Preferences.PreferencesViewModel>().LoadPreferences();
 
             //Display Shell
             DisplayRootViewFor<ShellViewModel>();

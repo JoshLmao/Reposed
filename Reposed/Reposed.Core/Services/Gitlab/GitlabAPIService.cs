@@ -11,7 +11,12 @@ namespace Reposed.Core.Services.Gitlab
 
         public List<object> GetAllRepositories()
         {
-            throw new NotImplementedException();
+            return null;
+        }
+
+        public bool IsAuthorized()
+        {
+            return false;
         }
     }
 }

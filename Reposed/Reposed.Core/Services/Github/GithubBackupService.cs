@@ -35,7 +35,8 @@ namespace Reposed.Core.Services.Github
 
                 m_githubApiService = new GithubAPIService(prefs.Username, prefs.PublicKey);
 
-                InitWithCredentials(m_githubApiService.GetAllRepositories().Count);
+                var allRepos = m_githubApiService.GetAllRepositories();
+                InitializeWithCredentials(allRepos != null ? allRepos.Count : 0);
                 return true;
             }
             else
@@ -99,6 +100,11 @@ namespace Reposed.Core.Services.Github
         protected override string GetRepoCloneUrl(string repoName)
         {
             return m_githubApiService.GetRepoUrl(repoName);
+        }
+
+        public override bool IsServiceAuthorized()
+        {
+            return m_githubApiService.IsAuthorized();
         }
     }
 }

@@ -126,29 +126,6 @@ namespace Reposed.Preferences
                     //Set VM properties from loaded prefs
                     GitPath = m_prefs.LocalGitPath;
                     LocalBackupPath = m_prefs.LocalBackupPath;
-
-                    Models.BitBucketSettings bbPrefs = m_prefs.BitbucketPrefs;
-                    if (bbPrefs != null)
-                    {
-                        BB_OAuthPublicKey = bbPrefs.PublicKey;
-                        BB_OAuthPrivateKey = bbPrefs.PrivateKey;
-                        BB_Username = bbPrefs.Username;
-                    }
-                    else
-                    {
-                        LOGGER.Info("No Bitbucket Preferences found");
-                    }
-
-                    Models.GithubSettings ghPrefs = m_prefs.GithubPrefs;
-                    if(ghPrefs != null)
-                    {
-                        GH_Username = ghPrefs.Username;
-                        GH_OAuthTokenKey = ghPrefs.PublicKey;
-                    }
-                    else
-                    {
-                        LOGGER.Info("No Github Preferences found");
-                    }
                 }
             }
             else

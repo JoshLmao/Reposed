@@ -154,12 +154,13 @@ namespace Reposed.Core.Services
             return gitProc.ExitCode == 0;
         }
 
-        protected void InitWithCredentials(int repoCount)
+        protected bool InitializeWithCredentials(int repoCount)
         {
-            IsAuthorized = CanBackup = true;
+            IsAuthorized = CanBackup = IsServiceAuthorized();
 
             TotalReposCount = repoCount;
             CompletedReposCount = SucceededReposCount = 0;
+            return IsAuthorized;
         }
 
         public virtual void SetBackupRepos(List<BackupReposDto> backupRepos)
@@ -201,5 +202,6 @@ namespace Reposed.Core.Services
         /// <param name="repoName">The name of the repo</param>
         /// <returns>The clone url to use</returns>
         protected abstract string GetRepoCloneUrl(string repoName);
+        public abstract bool IsServiceAuthorized();
     }
 }

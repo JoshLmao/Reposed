@@ -13,6 +13,7 @@
     <UserControl.Resources>
         <converters:ServiceToIconConverter x:Key="s2ic"/>
         <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
+        <converters:AuthorizedToColorConverter x:Key="a2cc"/>
     </UserControl.Resources>
     <ContentControl>
         <ListView ItemsSource="{Binding BackupAccounts}" SelectedItem="{Binding SelectedAccount}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Center"
@@ -25,7 +26,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type coreServices:BackupServiceBase}">
                     <Grid Margin="5">
-                        <Path Fill="White" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" />
+                        <Path Fill="{Binding IsAuthorized, Converter={StaticResource a2cc}}" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

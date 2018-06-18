@@ -41,7 +41,7 @@ namespace Reposed.Core.Services.Gitlab
 
                 m_gitlabService = new GitlabAPIService(Username, PublicKey, PrivateKey);
 
-                InitWithCredentials(m_gitlabService.GetAllRepositories().Count);
+                //InitWithCredentials(m_gitlabService.GetAllRepositories().Count);
 
                 return true;
             }
@@ -51,6 +51,11 @@ namespace Reposed.Core.Services.Gitlab
         protected override string GetRepoCloneUrl(string repoName)
         {
             throw new NotImplementedException();
+        }
+
+        public override bool IsServiceAuthorized()
+        {
+            return m_gitlabService.IsAuthorized();
         }
     }
 }

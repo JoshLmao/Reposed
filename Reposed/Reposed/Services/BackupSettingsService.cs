@@ -56,6 +56,14 @@ namespace Reposed.Services
             {
                 SetDefaultSettings();
             }
+
+            List<Core.IBackupService> services = IoC.GetAll<Core.IBackupService>().ToList();
+            foreach (Core.IBackupService service in services)
+            {
+                bool result = service.SetCredentials(BackupSettings.FirstOrDefault(x => x.ServiceId == service.ServiceId));
+                if (!result)
+                    throw new NotImplementedException($"Given incorrect settings type to service {service.ServiceId}");
+            }
         }
 
         private void SetDefaultSettings()

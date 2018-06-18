@@ -54,18 +54,30 @@ namespace Reposed.Accounts
 
         void UpdateAccounts()
         {
+            //Remember old for reselection
+            string oldSelectedId = SelectedAccount?.ServiceId;
+
             BackupAccounts.Clear();
 
             List<IBackupService> services = IoC.GetAll<IBackupService>().ToList();
             foreach (IBackupService service in services)
             {
                 BackupAccounts.Add(service);
+                service.OnIsAuthorizedChanged += OnAuthorizationChanged;
             }
 
-            if (SelectedAccount == null)
+            //Reselect old selected service
+            if (string.IsNullOrEmpty(oldSelectedId))
                 SelectedAccount = BackupAccounts.FirstOrDefault();
+            else
+                SelectedAccount = BackupAccounts.FirstOrDefault(x => x.ServiceId == oldSelectedId);
 
             NotifyOfPropertyChange(() => BackupAccounts);
+        }
+
+        private void OnAuthorizationChanged(bool isAuthorized)
+        {
+            UpdateAccounts();
         }
     }
 }

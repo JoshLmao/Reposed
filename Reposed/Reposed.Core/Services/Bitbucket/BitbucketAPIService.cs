@@ -13,8 +13,6 @@ namespace Reposed.Core.Services.Bitbucket
     {
         public string Username { get; private set; }
 
-        string m_teamName;
-
         SharpBucketV2 m_sharpBucket2 = null;
 
         public BitbucketAPIService(string username, string publicKey, string secretKey)
@@ -49,6 +47,11 @@ namespace Reposed.Core.Services.Bitbucket
                     return foundRepo.links.clone[0].href;
             else
                 return null;
+        }
+
+        public bool IsAuthorized()
+        {
+            return m_sharpBucket2?.UserEndPoint().GetUser() != null;
         }
     }
 }

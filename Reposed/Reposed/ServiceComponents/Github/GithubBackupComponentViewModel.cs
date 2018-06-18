@@ -38,6 +38,8 @@ namespace Reposed.ServiceComponents.Github
             }
         }
 
+        public bool IsInvalidCredentials { get { return GithubService != null ? !GithubService.IsAuthorized : false; } }
+
         GithubBackupService GithubService { get { return m_service as GithubBackupService; } }
 
         public GithubBackupComponentViewModel(IEventAggregator eventAggregator, BackupSettingsService settingsService) : base(eventAggregator, settingsService)
@@ -69,6 +71,7 @@ namespace Reposed.ServiceComponents.Github
                         });
                     }
                 }
+                NotifyOfPropertyChange(() => IsInvalidCredentials);
             }
         }
 

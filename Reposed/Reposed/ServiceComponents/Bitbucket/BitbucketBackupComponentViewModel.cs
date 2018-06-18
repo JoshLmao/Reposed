@@ -53,6 +53,8 @@ namespace Reposed.ServiceComponents.Bitbucket
             }
         }
 
+        public bool IsInvalidCredentials { get { return BitbucketService != null ? !BitbucketService.IsAuthorized : false; } }
+
         BitbucketBackupService BitbucketService { get { return m_service as BitbucketBackupService; } }
 
         public BitbucketBackupComponentViewModel(IEventAggregator eventAggregator, BackupSettingsService settingsService) : base(eventAggregator, settingsService)
@@ -89,6 +91,8 @@ namespace Reposed.ServiceComponents.Bitbucket
                         });
                     }
                 }
+
+                NotifyOfPropertyChange(() => IsInvalidCredentials);
             }
         }
 

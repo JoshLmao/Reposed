@@ -5,10 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reposed.ServiceComponents.Github"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:converters="clr-namespace:Reposed.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600"
              cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded()]"
              TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -81,17 +85,23 @@
             </Grid>
             <!--Right side-->
             <StackPanel Grid.Column="1" Margin="5" Background="{DynamicResource PrimaryBackgroundBrush}">
-                <TextBlock Text="Settings:" FontWeight="SemiBold" Margin="7,0" FontSize="20"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Settings:" FontWeight="SemiBold" Margin="7,0" FontSize="20"/>
+                    <TextBlock Text="Invalid Credentials" VerticalAlignment="Bottom" Visibility="{Binding IsInvalidCredentials, Converter={StaticResource b2vc}}" Foreground="{DynamicResource ErrorTextBrush}"/>
+                </StackPanel>
                 <DockPanel Margin="5,3">
                     <TextBlock Text="Username:" Margin="5,3" FontWeight="SemiBold"/>
                     <TextBox Text="{Binding Username}" VerticalAlignment="Center"/>
                 </DockPanel>
                 <DockPanel Margin="5,3">
                     <TextBlock Text="Token: " Margin="5,3" FontWeight="SemiBold"/>
+                    <TextBlock Margin="5,0" HorizontalAlignment="Center" DockPanel.Dock="Right" VerticalAlignment="Center">
+                        <Hyperlink NavigateUri="https://github.com/settings/tokens">Get Token</Hyperlink>
+                    </TextBlock>
                     <TextBox Text="{Binding TokenKey}" Margin="5,3" />
                 </DockPanel>
-                <StackPanel>
-                    <Button cal:Message.Attach="[Event Click] = [Action OnApplySettingChanges()]">
+                <StackPanel HorizontalAlignment="Center">
+                    <Button cal:Message.Attach="[Event Click] = [Action OnApplySettingChanges()]" Padding="20,5">
                         <TextBlock Text="Apply"/>
                     </Button>
                 </StackPanel>
