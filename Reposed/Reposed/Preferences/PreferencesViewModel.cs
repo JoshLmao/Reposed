@@ -251,12 +251,14 @@ namespace Reposed.Preferences
                 service.SetGitPath(m_prefs.LocalGitPath);
 
                 Models.IBackupCredentials creds = null;
-                if(service.ServiceId == Core.Services.Bitbucket.BitbucketBackupService.SERVICE_ID)
+                if (service.ServiceId == Core.Services.Bitbucket.BitbucketBackupService.SERVICE_ID)
                     creds = m_prefs.BitbucketPrefs;
-                else if(service.ServiceId == Core.Services.Github.GithubBackupService.SERVICE_ID)
+                else if (service.ServiceId == Core.Services.Github.GithubBackupService.SERVICE_ID)
                     creds = m_prefs.GithubPrefs;
+                else if (service.ServiceId == Core.Services.Gitlab.GitlabBackupService.SERVICE_ID)
+                    creds = m_prefs.GitLabSettings;
                 else
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("Not implemented service...");
 
                 service.SetCredentials(creds);
             }

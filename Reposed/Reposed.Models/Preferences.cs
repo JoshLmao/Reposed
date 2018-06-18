@@ -13,5 +13,6 @@ namespace Reposed.Models
 
         public BitBucketPrefs BitbucketPrefs { get; set; }
         public GithubPrefs GithubPrefs { get; set; }
+        public GitlabSettings GitLabSettings { get; set; }
     }
 }
