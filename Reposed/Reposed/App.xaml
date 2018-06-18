@@ -9,6 +9,7 @@
                     <local:AppBootstrapper x:Key="Bootstrapper"/>
                 </ResourceDictionary>
                 <ResourceDictionary Source="Themes/Dark/Colors.xaml"/>
+                <ResourceDictionary Source="Themes/ThirdPartyColors.xaml"/>
                 <ResourceDictionary Source="Resources/VectorIcons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

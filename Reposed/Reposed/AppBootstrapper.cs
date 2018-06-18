@@ -3,6 +3,7 @@ using NLog;
 using Reposed.Core;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Core.Services.Github;
+using Reposed.Core.Services.Gitlab;
 using Reposed.Services;
 using Reposed.Shell;
 using System;
@@ -71,6 +72,7 @@ namespace Reposed
             //Services
             m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
             m_iocContainer.Singleton<IBackupService, GithubBackupService>();
+            m_iocContainer.Singleton<IBackupService, GitlabBackupService>();
             m_iocContainer.Singleton<ScheduledBackupService>();
 
             //ViewModels
@@ -84,6 +86,7 @@ namespace Reposed
 
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Bitbucket.BitbucketBackupComponentViewModel>(BitbucketBackupService.SERVICE_ID);
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Github.GithubBackupComponentViewModel>(GithubBackupService.SERVICE_ID);
+            m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Gitlab.GitlabBackupComponentViewModel>(GitlabBackupService.SERVICE_ID);
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)

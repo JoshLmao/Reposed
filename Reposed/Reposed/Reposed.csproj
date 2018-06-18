@@ -120,6 +120,10 @@
       <DependentUpon>GithubBackupComponentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ServiceComponents\Github\GithubBackupComponentViewModel.cs" />
+    <Compile Include="ServiceComponents\Gitlab\GitlabBackupComponentView.xaml.cs">
+      <DependentUpon>GitlabBackupComponentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceComponents\Gitlab\GitlabBackupComponentViewModel.cs" />
     <Compile Include="ServiceComponents\IServiceComponent.cs" />
     <Compile Include="ServiceComponents\ServiceComponentsBase.cs" />
     <Compile Include="ServiceComponents\ServiceComponentsHolderViewModel.cs" />
@@ -169,6 +173,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ServiceComponents\Gitlab\GitlabBackupComponentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ServiceComponents\ServiceComponentsHolderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -178,6 +186,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Dark\Colors.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ThirdPartyColors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

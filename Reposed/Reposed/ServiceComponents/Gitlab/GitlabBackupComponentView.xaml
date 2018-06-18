@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="Reposed.ServiceComponents.Gitlab.GitlabBackupComponentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Reposed.ServiceComponents.Gitlab"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:converters="clr-namespace:Reposed.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!--Title-->
+        <Grid Background="{DynamicResource PrimaryBackgroundBrush}" Height="50" Margin="5,3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Path Data="{DynamicResource GitLabIcon}" Fill="{DynamicResource PrimaryTextBrush}" Stretch="Uniform" Margin="5">
+                <Path.LayoutTransform>
+                    <RotateTransform Angle="180"></RotateTransform>
+                </Path.LayoutTransform>
+            </Path>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="5,3">
+                <TextBlock Text="GitLab" FontSize="25" FontWeight="DemiBold"/>
+            </StackPanel>
+        </Grid>
+
+        <!--Main Content-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <!--Left Side-->
+            <Grid Background="{DynamicResource PrimaryBackgroundBrush}" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <!--Title-->
+                <TextBlock Text="Repositories:" Margin="5,3" FontWeight="Bold" FontSize="20"/>
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Repositories}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <ItemContainerTemplate>
+                                <Grid Margin="5,3">
+                                    <CheckBox IsChecked="{Binding ShouldBackup, Mode=TwoWay}" Padding="5,0" VerticalContentAlignment="Center"
+                                            cal:Message.Attach="[Event Checked] = [Action OnRepoCheckedChanged($executionContext)]; [Event Unchecked] = [Action OnRepoUncheckedChanged($executionContext)]">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="{Binding RepoName}" FontSize="15" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
+
+                                            <Grid Grid.Row="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="-4,0,0,0">
+                                                    <TextBlock Text="{Binding Owner}" FontSize="9" Margin="5,0" Foreground="{DynamicResource PrimaryTextBrush}" />
+                                                </StackPanel>
+                                                <!--<Expander Grid.Column="1">
+                                                    <TextBlock Text="Test"/>
+                                                </Expander>-->
+                                            </Grid>
+                                        </Grid>
+                                    </CheckBox>
+                                </Grid>
+                            </ItemContainerTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+            <!--Right side-->
+            <StackPanel Grid.Column="1" Margin="5" Background="{DynamicResource PrimaryBackgroundBrush}">
+                <TextBlock Text="Settings:" FontWeight="SemiBold" Margin="7,0" FontSize="20"/>
+                <DockPanel Margin="5,3">
+                    <TextBlock Text="Username:" Margin="5,3" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Username}" VerticalAlignment="Center" IsReadOnly="True"/>
+                </DockPanel>
+                <DockPanel Margin="5,3">
+                    <TextBlock Text="OAuth Public:" Margin="5,3" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding OAuthPublic}" VerticalAlignment="Center" IsReadOnly="True"/>
+                </DockPanel>
+                <DockPanel Margin="5,3">
+                    <TextBlock Text="OAuth Private:" Margin="5,3" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding OAuthPrivate}" VerticalAlignment="Center" IsReadOnly="True"/>
+                </DockPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

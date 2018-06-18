@@ -43,6 +43,7 @@
     <Compile Include="BackupReposDto.cs" />
     <Compile Include="BitBucketPrefs.cs" />
     <Compile Include="GithubPrefs.cs" />
+    <Compile Include="GitlabSettings.cs" />
     <Compile Include="IBackupCredentials.cs" />
     <Compile Include="Preferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
