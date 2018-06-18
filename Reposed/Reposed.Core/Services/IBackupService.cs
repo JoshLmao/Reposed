@@ -52,7 +52,7 @@ namespace Reposed.Core
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>
-        bool SetCredentials(IBackupCredentials credentials);
+        bool SetCredentials(IBackupSettings credentials);
         bool SetGitPath(string gitPath);
         void SetBackupRepos(System.Collections.Generic.List<BackupReposDto> backupRepos);
     }

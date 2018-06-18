@@ -1,8 +1,10 @@
 ﻿using Caliburn.Micro;
 using Reposed.Core;
 using Reposed.Events;
+using Reposed.Models;
 using Reposed.MVVM;
 using Reposed.ServiceComponents.Shared.Models;
+using Reposed.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,12 +32,17 @@ namespace Reposed.ServiceComponents
             }
         }
 
+        protected readonly BackupSettingsService BACKUP_SETTINGS_SERVICE = null;
+
+        protected IBackupSettings m_serviceSettings = null;
         protected bool m_hasInitialized = false;
 
-        public ServiceComponentsBase(IEventAggregator eventAggregator)
+        public ServiceComponentsBase(IEventAggregator eventAggregator, BackupSettingsService settingsService)
         {
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
+
+            BACKUP_SETTINGS_SERVICE = settingsService;
         }
 
         private void OnServiceAuthorizationChanged(bool isAuthorized)
@@ -66,9 +73,9 @@ namespace Reposed.ServiceComponents
             m_service.SetBackupRepos(ConvertUi());
         }
 
-        List<Models.BackupReposDto> ConvertUi()
+        List<BackupReposDto> ConvertUi()
         {
-            return Repositories?.Select(x => new Models.BackupReposDto()
+            return Repositories?.Select(x => new BackupReposDto()
             {
                 RepositoryName = x.RepoName,
                 ShouldBackup = x.ShouldBackup,
@@ -77,7 +84,6 @@ namespace Reposed.ServiceComponents
 
         protected virtual void UpdateUI()
         {
-
         }
 
         protected void GetService<T>() where T : IBackupService
@@ -86,6 +92,18 @@ namespace Reposed.ServiceComponents
             m_service.OnIsAuthorizedChanged += OnServiceAuthorizationChanged;
 
             m_service.SetBackupRepos(ConvertUi());
+        }
+
+        public virtual void OnApplySettingChanges()
+        {
+            
+        }
+
+        public void SetCredentials(string serviceId, IBackupSettings serviceSettings)
+        {
+            BACKUP_SETTINGS_SERVICE.Set(serviceId, serviceSettings);
+            m_serviceSettings = serviceSettings;
+            UpdateUI();
         }
     }
 }

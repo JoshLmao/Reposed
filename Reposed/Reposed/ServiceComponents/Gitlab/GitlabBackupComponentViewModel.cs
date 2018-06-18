@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using Reposed.Core.Services.Gitlab;
+using Reposed.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace Reposed.ServiceComponents.Gitlab
 
         GitlabBackupService GitlabService { get { return m_service as GitlabBackupService; } }
 
-        public GitlabBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
+        public GitlabBackupComponentViewModel(IEventAggregator eventAggregator, BackupSettingsService settingsService) : base(eventAggregator, settingsService)
         {
 
         }

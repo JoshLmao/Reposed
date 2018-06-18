@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using Reposed.Accounts;
 using Reposed.BackupController;
+using Reposed.Events;
 using Reposed.Menu;
 using Reposed.MVVM;
 using Reposed.ServiceComponents;
@@ -41,6 +42,11 @@ namespace Reposed.Shell
 
             ServiceComponentsHolderViewModel = serviceComponentsViewModel;
             ServiceComponentsHolderViewModel.ConductWith(this);
+        }
+
+        public void OnAppClosing()
+        {
+            EVENT_AGGREAGATOR.PublishOnCurrentThread(new OnApplicationClosing());
         }
     }
 }

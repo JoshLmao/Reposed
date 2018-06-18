@@ -14,6 +14,8 @@ namespace Reposed.Preferences
 {
     public class PreferencesViewModel : ViewModelBase
     {
+        public override string DisplayName { get { return "Preferences"; } set { } }
+
         string m_gitPath = null;
         public string GitPath
         {
@@ -125,7 +127,7 @@ namespace Reposed.Preferences
                     GitPath = m_prefs.LocalGitPath;
                     LocalBackupPath = m_prefs.LocalBackupPath;
 
-                    Models.BitBucketPrefs bbPrefs = m_prefs.BitbucketPrefs;
+                    Models.BitBucketSettings bbPrefs = m_prefs.BitbucketPrefs;
                     if (bbPrefs != null)
                     {
                         BB_OAuthPublicKey = bbPrefs.PublicKey;
@@ -137,7 +139,7 @@ namespace Reposed.Preferences
                         LOGGER.Info("No Bitbucket Preferences found");
                     }
 
-                    Models.GithubPrefs ghPrefs = m_prefs.GithubPrefs;
+                    Models.GithubSettings ghPrefs = m_prefs.GithubPrefs;
                     if(ghPrefs != null)
                     {
                         GH_Username = ghPrefs.Username;
@@ -147,8 +149,6 @@ namespace Reposed.Preferences
                     {
                         LOGGER.Info("No Github Preferences found");
                     }
-
-                    SetServiceData();
                 }
             }
             else
@@ -203,21 +203,6 @@ namespace Reposed.Preferences
             m_prefs.LocalGitPath = GitPath;
             m_prefs.LocalBackupPath = LocalBackupPath;
 
-            m_prefs.BitbucketPrefs = new Models.BitBucketPrefs()
-            {
-                Username = BB_Username,
-                PublicKey = BB_OAuthPublicKey,
-                PrivateKey = BB_OAuthPrivateKey,
-            };
-
-            m_prefs.GithubPrefs = new Models.GithubPrefs()
-            {
-                Username = GH_Username,
-                PublicKey = GH_OAuthTokenKey,
-            };
-
-            SetServiceData();
-
             EVENT_AGGREGATOR.PublishOnCurrentThread(new PreferencesUpdated(m_prefs));
 
             SaveToFile(m_prefs);
@@ -252,30 +237,6 @@ namespace Reposed.Preferences
         public Models.Preferences GetPreferences()
         {
             return m_prefs;
-        }
-
-        /// <summary>
-        /// Gets all IBackupService's and sets all needed data from prefs
-        /// </summary>
-        void SetServiceData()
-        {
-            IEnumerable<IBackupService> backups = IoC.GetAll<IBackupService>();
-            foreach (IBackupService service in backups)
-            {
-                service.SetGitPath(m_prefs.LocalGitPath);
-
-                Models.IBackupCredentials creds = null;
-                if (service.ServiceId == Core.Services.Bitbucket.BitbucketBackupService.SERVICE_ID)
-                    creds = m_prefs.BitbucketPrefs;
-                else if (service.ServiceId == Core.Services.Github.GithubBackupService.SERVICE_ID)
-                    creds = m_prefs.GithubPrefs;
-                else if (service.ServiceId == Core.Services.Gitlab.GitlabBackupService.SERVICE_ID)
-                    creds = m_prefs.GitLabSettings;
-                else
-                    throw new NotImplementedException("Not implemented service...");
-
-                service.SetCredentials(creds);
-            }
         }
     }
 }

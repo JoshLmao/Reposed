@@ -26,9 +26,9 @@ namespace Reposed.Core.Services.Github
 
         }
 
-        public override bool SetCredentials(IBackupCredentials credentials)
+        public override bool SetCredentials(IBackupSettings credentials)
         {
-            if (credentials is GithubPrefs prefs)
+            if (credentials is GithubSettings prefs)
             {
                 Username = prefs.Username;
                 Token = prefs.PublicKey;

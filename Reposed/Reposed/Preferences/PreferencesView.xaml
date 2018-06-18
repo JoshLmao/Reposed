@@ -6,14 +6,16 @@
         xmlns:local="clr-namespace:Reposed.Preferences"
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
-        Title="PreferencesView" Height="300" Width="300">
+        WindowStartupLocation="CenterOwner"
+        Height="300" Width="300"
+        Background="{DynamicResource WindowBackgroundBrush}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <TabControl>
-            <TabItem Header="Backup Settings">
+            <TabItem Header="Settings">
                 <Grid>
                     <StackPanel>
                         <DockPanel HorizontalAlignment="Stretch">
@@ -32,25 +34,6 @@
                         </DockPanel>
                     </StackPanel>
                 </Grid>
-            </TabItem>
-            <TabItem Header="Bitbucket Settings">
-                <StackPanel>
-                    <DockPanel Margin="5,3">
-                        <TextBlock Text="Username:" Margin="5,0"/>
-                        <TextBox Text="{Binding BB_Username, Mode=TwoWay}"/>
-                    </DockPanel>
-                    <TextBlock Text="OAuth Keys" Margin="10,5" FontWeight="Bold" ToolTip="OAuth keys created for the bitbuckey account to backup from (Bitbucket > Settings > OAuth)"/>
-                    <StackPanel>
-                        <DockPanel Margin="5,3">
-                            <TextBlock Text="Public Key:" Margin="5,0"/>
-                            <TextBox Text="{Binding BB_OAuthPublicKey, Mode=TwoWay}"/>
-                        </DockPanel>
-                        <DockPanel Margin="5,3">
-                            <TextBlock Text="Private Key:" Margin="5,0"/>
-                            <TextBox Text="{Binding BB_OAuthPrivateKey, Mode=TwoWay}"/>
-                        </DockPanel>
-                    </StackPanel>
-                </StackPanel>
             </TabItem>
             <TabItem Header="GitHub Settings">
                 <StackPanel>

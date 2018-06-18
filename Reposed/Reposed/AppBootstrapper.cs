@@ -75,6 +75,7 @@ namespace Reposed
             m_iocContainer.Singleton<IBackupService, GithubBackupService>();
             m_iocContainer.Singleton<IBackupService, GitlabBackupService>();
             m_iocContainer.Singleton<ScheduledBackupService>();
+            m_iocContainer.Singleton<BackupSettingsService>();
 
             //UI Services
             m_iocContainer.Singleton<IMessageBoxService, MessageBoxService>();
@@ -97,11 +98,11 @@ namespace Reposed
         {
             Application.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
+            //Load prefs after IoC init
+            m_iocContainer.GetInstance<BackupSettingsService>().LoadFromFile();
+
             //Display Shell
             DisplayRootViewFor<ShellViewModel>();
-
-            //Load prefs after IoC init
-            m_iocContainer.GetInstance<Preferences.PreferencesViewModel>().LoadPreferences();
         }
 
         protected override object GetInstance(Type service, string key)

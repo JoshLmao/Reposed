@@ -193,7 +193,7 @@ namespace Reposed.Core.Services
             EVENT_AGGREGATOR.PublishOnCurrentThread(new OnRepoStartBackup(repoName, this));
         }
 
-        public abstract bool SetCredentials(IBackupCredentials credentials);
+        public abstract bool SetCredentials(IBackupSettings credentials);
         public abstract bool Backup(string rootBackupDir);
         /// <summary>
         /// Gets the clone url from the repo name

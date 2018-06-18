@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="Dialogs\ScheduledBackup\ScheduledBackupViewModel.cs" />
     <Compile Include="Events\OnAccountSelected.cs" />
+    <Compile Include="Events\OnApplicationClosing.cs" />
     <Compile Include="Events\PreferencesUpdated.cs" />
     <Compile Include="Menu\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
@@ -131,6 +132,7 @@
       <DependentUpon>ServiceComponentsHolderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ServiceComponents\Shared\Models\RepositoriesViewDto.cs" />
+    <Compile Include="Services\BackupSettingsService.cs" />
     <Compile Include="Services\ScheduledBackupService.cs" />
     <Compile Include="Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>

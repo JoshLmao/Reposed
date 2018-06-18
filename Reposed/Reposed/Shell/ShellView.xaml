@@ -8,8 +8,10 @@
         xmlns:accounts="clr-namespace:Reposed.Accounts"
         xmlns:backupController="clr-namespace:Reposed.BackupController"
         xmlns:serviceComponents="clr-namespace:Reposed.ServiceComponents"
+        xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
-        d:DesignHeight="600" d:DesignWidth="1000">
+        d:DesignHeight="600" d:DesignWidth="1000"
+        cal:Message.Attach="[Event Closing] = [Action OnAppClosing()]">
     <Grid Background="{DynamicResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -32,11 +32,11 @@ namespace Reposed.Core.Services.Bitbucket
         {
         }
 
-        public override bool SetCredentials(IBackupCredentials credentials)
+        public override bool SetCredentials(IBackupSettings credentials)
         {
-            if (credentials is BitBucketPrefs)
+            if (credentials is BitBucketSettings)
             {
-                BitBucketPrefs bbPrefs = credentials as BitBucketPrefs;
+                BitBucketSettings bbPrefs = credentials as BitBucketSettings;
                 Username = bbPrefs.Username;
                 PublicKey = bbPrefs.PublicKey;
                 PrivateKey = bbPrefs.PrivateKey;

@@ -1,8 +1,10 @@
 ﻿using Caliburn.Micro;
 using Reposed.Core;
 using Reposed.Core.Services.Github;
+using Reposed.Models;
 using Reposed.MVVM;
 using Reposed.ServiceComponents.Shared.Models;
+using Reposed.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,20 +40,23 @@ namespace Reposed.ServiceComponents.Github
 
         GithubBackupService GithubService { get { return m_service as GithubBackupService; } }
 
-        public GithubBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
+        public GithubBackupComponentViewModel(IEventAggregator eventAggregator, BackupSettingsService settingsService) : base(eventAggregator, settingsService)
         {
             m_service = IoC.GetAll<IBackupService>().FirstOrDefault(x => x is GithubBackupService);
         }
 
         protected override void UpdateUI()
         {
-            if (GithubService != null)
+            if (BACKUP_SETTINGS_SERVICE != null)
             {
-                Username = GithubService.Username;
-                TokenKey = GithubService.Token;
+                m_serviceSettings = BACKUP_SETTINGS_SERVICE.Get(GithubBackupService.SERVICE_ID);
+                GithubSettings bbSettings = m_serviceSettings as GithubSettings;
+
+                Username = bbSettings.Username;
+                TokenKey = bbSettings.PublicKey;
 
                 Repositories = new ObservableCollection<RepositoriesViewDto>();
-                var repos = GithubService.GetAllRepositories();
+                List<Octokit.Repository> repos = GithubService.GetAllRepositories();
                 if (repos != null)
                 {
                     foreach (Octokit.Repository repo in repos)
@@ -65,6 +70,15 @@ namespace Reposed.ServiceComponents.Github
                     }
                 }
             }
+        }
+
+        public override void OnApplySettingChanges()
+        {
+            SetCredentials(GithubBackupService.SERVICE_ID, new GithubSettings(GithubBackupService.SERVICE_ID)
+            {
+                Username = Username,
+                PublicKey = TokenKey,
+            });
         }
     }
 }

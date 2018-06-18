@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Reposed.Models
 {
-    public interface IBackupCredentials
+    public interface IBackupSettings
     {
+        string ServiceId { get; set; }
+
         string Username { get; set; }
         string Password { get; set; }
 

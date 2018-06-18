@@ -11,8 +11,8 @@ namespace Reposed.Models
         public string LocalGitPath { get; set; }
         public string LocalBackupPath { get; set; }
 
-        public BitBucketPrefs BitbucketPrefs { get; set; }
-        public GithubPrefs GithubPrefs { get; set; }
+        public BitBucketSettings BitbucketPrefs { get; set; }
+        public GithubSettings GithubPrefs { get; set; }
         public GitlabSettings GitLabSettings { get; set; }
     }
 }

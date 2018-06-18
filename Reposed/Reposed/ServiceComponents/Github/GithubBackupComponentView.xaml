@@ -84,12 +84,17 @@
                 <TextBlock Text="Settings:" FontWeight="SemiBold" Margin="7,0" FontSize="20"/>
                 <DockPanel Margin="5,3">
                     <TextBlock Text="Username:" Margin="5,3" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Username}" VerticalAlignment="Center" IsReadOnly="True"/>
+                    <TextBox Text="{Binding Username}" VerticalAlignment="Center"/>
                 </DockPanel>
                 <DockPanel Margin="5,3">
                     <TextBlock Text="Token: " Margin="5,3" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding TokenKey}" Margin="5,3" IsReadOnly="true"/>
+                    <TextBox Text="{Binding TokenKey}" Margin="5,3" />
                 </DockPanel>
+                <StackPanel>
+                    <Button cal:Message.Attach="[Event Click] = [Action OnApplySettingChanges()]">
+                        <TextBlock Text="Apply"/>
+                    </Button>
+                </StackPanel>
             </StackPanel>
         </Grid>
     </Grid>

@@ -66,6 +66,8 @@
     <Compile Include="Dialogs\MessageBoxService.cs" />
     <Compile Include="Enums\BackupPeriod.cs" />
     <Compile Include="Events\BackupEvents.cs" />
+    <Compile Include="Json\BackupSettingsConverter.cs" />
+    <Compile Include="Json\CustomConverterBase.cs" />
     <Compile Include="Services\BackupServiceBase.cs" />
     <Compile Include="Services\Bitbucket\BitbucketAPIService.cs" />
     <Compile Include="Services\Bitbucket\BitbucketBackupService.cs" />

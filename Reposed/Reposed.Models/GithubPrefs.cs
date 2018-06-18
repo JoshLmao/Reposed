@@ -6,11 +6,18 @@ using System.Threading.Tasks;
 
 namespace Reposed.Models
 {
-    public class GithubPrefs : IBackupCredentials
+    public class GithubSettings : IBackupSettings
     {
+        public string ServiceId { get; set; }
+
         public string Username { get; set; }
         public string Password { get; set; }
 
         public string PublicKey { get; set; }
+
+        public GithubSettings(string serviceId)
+        {
+            ServiceId = serviceId;
+        }
     }
 }

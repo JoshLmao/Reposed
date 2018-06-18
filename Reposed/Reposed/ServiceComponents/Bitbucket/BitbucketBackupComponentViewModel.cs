@@ -3,8 +3,10 @@ using Newtonsoft.Json.Linq;
 using Reposed.Core;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Events;
+using Reposed.Models;
 using Reposed.MVVM;
 using Reposed.ServiceComponents.Shared.Models;
+using Reposed.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -53,23 +55,24 @@ namespace Reposed.ServiceComponents.Bitbucket
 
         BitbucketBackupService BitbucketService { get { return m_service as BitbucketBackupService; } }
 
-        bool m_hasInit = false;
-
-        public BitbucketBackupComponentViewModel(IEventAggregator eventAggregator) : base(eventAggregator)
+        public BitbucketBackupComponentViewModel(IEventAggregator eventAggregator, BackupSettingsService settingsService) : base(eventAggregator, settingsService)
         {
             GetService<BitbucketBackupService>();
         }
 
         protected override void UpdateUI()
         {
-            if (BitbucketService != null)
+            if (BACKUP_SETTINGS_SERVICE != null)
             {
-                Username = BitbucketService.Username;
-                OAuthPublic = BitbucketService.PublicKey;
-                OAuthPrivate = BitbucketService.PrivateKey;
+                m_serviceSettings = BACKUP_SETTINGS_SERVICE.Get(BitbucketBackupService.SERVICE_ID);
+                BitBucketSettings bbSettings = m_serviceSettings as BitBucketSettings;
+
+                Username = bbSettings.Username;
+                OAuthPublic = bbSettings.PublicKey;
+                OAuthPrivate = bbSettings.PrivateKey;
 
                 Repositories = new ObservableCollection<RepositoriesViewDto>();
-                var repos = BitbucketService.GetAllRepositories();
+                List<SharpBucket.V2.Pocos.Repository> repos = BitbucketService.GetAllRepositories();
                 if(repos != null)
                 {
                     foreach (SharpBucket.V2.Pocos.Repository repo in repos)
@@ -87,6 +90,16 @@ namespace Reposed.ServiceComponents.Bitbucket
                     }
                 }
             }
+        }
+
+        public override void OnApplySettingChanges()
+        {
+            SetCredentials(BitbucketBackupService.SERVICE_ID, new BitBucketSettings(BitbucketBackupService.SERVICE_ID)
+            {
+                Username = Username,
+                PublicKey = OAuthPublic,
+                PrivateKey = OAuthPrivate,
+            });
         }
     }
 }

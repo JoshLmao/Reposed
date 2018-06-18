@@ -10,6 +10,8 @@ namespace Reposed.Utility
     public class FilePathUtility
     {
         public static string LocalAppDataFolder { get { return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//JoshLmao//Repose//"; } }
+
         public static string PreferencesFilePath { get { return LocalAppDataFolder + "Prefs.json"; } }
+        public static string BackupSettingsFilePath { get { return LocalAppDataFolder + "BackupSettings.json"; } }
     }
 }

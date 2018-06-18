@@ -31,7 +31,7 @@ namespace Reposed.Core.Services.Gitlab
             throw new NotImplementedException();
         }
 
-        public override bool SetCredentials(IBackupCredentials credentials)
+        public override bool SetCredentials(IBackupSettings credentials)
         {
             if (credentials is GitlabSettings settings)
             {
