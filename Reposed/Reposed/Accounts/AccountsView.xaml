@@ -15,7 +15,8 @@
         <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
     </UserControl.Resources>
     <ContentControl>
-        <ListView ItemsSource="{Binding BackupAccounts}" SelectedItem="{Binding SelectedAccount}" Background="Transparent" BorderThickness="0">
+        <ListView ItemsSource="{Binding BackupAccounts}" SelectedItem="{Binding SelectedAccount}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Center"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical"/>
@@ -23,11 +24,9 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type coreServices:BackupServiceBase}">
-                    <DockPanel Margin="10">
-                        <Path Fill="White" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill"/>
-                        <Path Fill="White" Data="{StaticResource CheckIconPath}" Visibility="{Binding CanBackup, Converter={StaticResource b2vc}}"
-                              Height="10" DockPanel.Dock="Right" Stretch="Uniform" Margin="5,0,0,0"/>
-                    </DockPanel>
+                    <Grid Margin="5">
+                        <Path Fill="White" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" Height="45"/>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
