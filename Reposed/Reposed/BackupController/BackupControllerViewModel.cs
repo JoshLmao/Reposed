@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using Reposed.Core;
+using Reposed.Core.Dialogs;
 using Reposed.Core.Events;
 using Reposed.Events;
 using Reposed.MVVM;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Reposed.BackupController
 {
-    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>, IHandle<OnBackupCompleted>,
+    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>, IHandle<OnBackupFinished>,
         IHandle<OnRepoBackupFailed>, IHandle<OnRepoBackupSucceeded>, IHandle<OnRepoStartBackup>
     {
         List<IBackupService> m_backupServices;
@@ -124,7 +125,7 @@ namespace Reposed.BackupController
             }
         }
 
-        public string BackupPath { get; set; }
+        public string BackupPath { get { return m_prefs?.LocalBackupPath; } }
 
         public string ProgressText
         {
@@ -133,16 +134,19 @@ namespace Reposed.BackupController
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
         readonly IWindowManager WINDOW_MANAGER = null;
+        readonly IMessageBoxService MSG_BOX_SERVICE = null;
 
+        private Models.Preferences m_prefs = null;
         private Thread m_backupThread = null;
         private Thread m_backupCompleteMsgChangeThread = null;
         private ScheduledBackupService m_scheduledBackupService = null;
 
-        public BackupControllerViewModel(IEventAggregator eventAggregator, IWindowManager windowManager, ScheduledBackupService scheduledBackupService)
+        public BackupControllerViewModel(IEventAggregator eventAggregator, IWindowManager windowManager, IMessageBoxService msgBoxService, ScheduledBackupService scheduledBackupService)
         {
-            WINDOW_MANAGER = windowManager;
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
+            WINDOW_MANAGER = windowManager;
+            MSG_BOX_SERVICE = msgBoxService;
 
             m_scheduledBackupService = scheduledBackupService;
         }
@@ -174,28 +178,56 @@ namespace Reposed.BackupController
 
         public void OnBackupNow()
         {
+            if (PreBackupChecks(true))
+            {
+                if (SelectedBackupService.IsAuthorized)
+                {
+                    ThreadStart start = new ThreadStart(RunBackup);
+                    m_backupThread = new Thread(start);
+                    m_backupThread.Start();
+                }
+                else
+                {
+                    LOGGER.Error($"Unable to backup service. Isn't valid");
+                }
+            }
+        }
+
+        private bool PreBackupChecks(bool showMsgBoxDialog)
+        {
             if (SelectedBackupService == null)
             {
                 LOGGER.Error("Unable to backup. No selected backup service");
-                return;
+                return false;
             }
 
-            if(m_backupThread != null)
+            if (m_backupThread != null)
             {
+                if (showMsgBoxDialog)
+                    MSG_BOX_SERVICE.Show("A backup is already in progress, can't start another until the previous one is finished", "Backup in progress...");
+
                 LOGGER.Info("Backup in progress.");
-                return;
+                return false;
             }
 
-            if (SelectedBackupService.IsAuthorized)
+            if (string.IsNullOrEmpty(m_prefs?.LocalBackupPath))
             {
-                ThreadStart start = new ThreadStart(RunBackup);
-                m_backupThread = new Thread(start);
-                m_backupThread.Start();
+                if (showMsgBoxDialog)
+                    MSG_BOX_SERVICE.Show("The backup path hasn't been set", "Backup Path not set");
+
+                LOGGER.Error("Can't backup as backup path hasn't been set");
+                return false;
             }
-            else
+
+            if (string.IsNullOrEmpty(m_prefs?.LocalGitPath))
             {
-                LOGGER.Error($"Unable to backup service. Isn't valid");
+                if (showMsgBoxDialog)
+                    MSG_BOX_SERVICE.Show("The Git executable path hasn't been set", "Git path not set");
+
+                LOGGER.Error("Git path hasn't been set");
+                return false;
             }
+            return true;
         }
 
         private void RunBackup()
@@ -206,15 +238,12 @@ namespace Reposed.BackupController
             foreach(IBackupService service in BackupServices)
                 service.Backup(BackupPath);
 
-            LastBackupEndTime = DateTime.Now;
-            IsBackingUp = false;
-
-            EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupCompleted());
+            EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupFinished(true));
         }
 
         public void Handle(PreferencesUpdated message)
         {
-            BackupPath = message.Prefs.LocalBackupPath;
+            m_prefs = message.Prefs;
             NotifyOfPropertyChange(() => BackupPath);
         }
 
@@ -275,7 +304,7 @@ namespace Reposed.BackupController
             m_scheduledBackupService.Disable();
         }
 
-        public void Handle(OnBackupCompleted message)
+        public void Handle(OnBackupFinished message)
         {
             m_backupThread = null;
 
@@ -284,9 +313,12 @@ namespace Reposed.BackupController
                 m_scheduledBackupService.Resume();
             }
 
-            if(m_backupCompleteMsgChangeThread == null)
+            LastBackupEndTime = DateTime.Now;
+            IsBackingUp = false;
+
+            if (m_backupCompleteMsgChangeThread == null)
             {
-                CurrentStatusText = "Completed all backups";
+                CurrentStatusText = message.IsSuccessful ? "Completed all backups" : "Cancelled backup";
                 ThreadStart tStart = new ThreadStart(ChangeToIdleDelay);
                 m_backupCompleteMsgChangeThread = new Thread(tStart);
                 m_backupCompleteMsgChangeThread.Start();
@@ -309,11 +341,12 @@ namespace Reposed.BackupController
             {
                 m_backupThread.Abort();
                 m_backupThread = null;
-                IsBackingUp = false;
 
-                EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupCompleted());
+                SelectedBackupService.Abort();
 
-                LOGGER.Info("Cancelling current backup");
+                EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupFinished(false));
+
+                LOGGER.Info("Current backup cancelled by user");
             }
         }
 

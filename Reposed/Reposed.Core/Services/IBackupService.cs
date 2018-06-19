@@ -55,5 +55,9 @@ namespace Reposed.Core
         bool SetCredentials(IBackupSettings credentials);
         bool SetGitPath(string gitPath);
         void SetBackupRepos(System.Collections.Generic.List<BackupReposDto> backupRepos);
+        /// <summary>
+        /// Aborts the current service and resets
+        /// </summary>
+        void Abort();
     }
 }

@@ -100,10 +100,11 @@ namespace Reposed
 
             //Load prefs before Shell displayed
             m_iocContainer.GetInstance<BackupSettingsService>().LoadFromFile();
-            m_iocContainer.GetInstance<Preferences.PreferencesViewModel>().LoadPreferences();
 
             //Display Shell
             DisplayRootViewFor<ShellViewModel>();
+
+            m_iocContainer.GetInstance<Preferences.PreferencesViewModel>().LoadPreferences();
         }
 
         protected override object GetInstance(Type service, string key)

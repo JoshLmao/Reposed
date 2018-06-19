@@ -14,8 +14,13 @@ namespace Reposed.Core.Events
         }
     }
 
-    public class OnBackupCompleted
+    public class OnBackupFinished
     {
+        public bool IsSuccessful { get; set; }
+        public OnBackupFinished(bool isSuccessful)
+        {
+            IsSuccessful = isSuccessful;
+        }
     }
 
     public class OnRepoBackupSucceeded

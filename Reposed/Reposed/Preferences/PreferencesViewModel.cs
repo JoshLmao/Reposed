@@ -38,65 +38,6 @@ namespace Reposed.Preferences
             }
         }
 
-        #region BitbucketProperties
-        string m_bb_username;
-        public string BB_Username
-        {
-            get { return m_bb_username; }
-            set
-            {
-                m_bb_username = value;
-                NotifyOfPropertyChange(() => BB_Username);
-            }
-        }
-
-        string m_bb_OAuthPublicKey;
-        public string BB_OAuthPublicKey
-        {
-            get { return m_bb_OAuthPublicKey; }
-            set
-            {
-                m_bb_OAuthPublicKey = value;
-                NotifyOfPropertyChange(() => BB_OAuthPublicKey);
-            }
-        }
-
-        string m_bb_OAuthPrivateKey;
-        public string BB_OAuthPrivateKey
-        {
-            get { return m_bb_OAuthPrivateKey; }
-            set
-            {
-                m_bb_OAuthPrivateKey = value;
-                NotifyOfPropertyChange(() => BB_OAuthPrivateKey);
-            }
-        }
-        #endregion
-
-        #region GitHubProperties
-        string m_gh_username;
-        public string GH_Username
-        {
-            get { return m_gh_username; }
-            set
-            {
-                m_gh_username = value;
-                NotifyOfPropertyChange(() => GH_Username);
-            }
-        }
-
-        string m_gh_OAuthTokenKey;
-        public string GH_OAuthTokenKey 
-        {
-            get { return m_gh_OAuthTokenKey; }
-            set
-            {
-                m_gh_OAuthTokenKey = value;
-                NotifyOfPropertyChange(() => GH_OAuthTokenKey);
-            }
-        }
-        #endregion
-
         readonly IEventAggregator EVENT_AGGREGATOR = null;
         readonly IMessageBoxService MSG_BOX_SERVICE = null;
 

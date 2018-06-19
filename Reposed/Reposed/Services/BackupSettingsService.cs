@@ -98,6 +98,7 @@ namespace Reposed.Services
                     BackupSettings.Remove(existingSettings);
 
                 BackupSettings.Add(serviceSettings);
+                SaveToFile();
             }
             else
             {

@@ -12,15 +12,21 @@ namespace Reposed.Core.Services.Bitbucket
     public class BitbucketAPIService
     {
         public string Username { get; private set; }
+        public string PublicKey { get; private set; }
+        public string PrivateKey { get; private set; }
+
+        bool ValidSettings { get { return !string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(PublicKey) && !string.IsNullOrEmpty(PrivateKey); } }
 
         SharpBucketV2 m_sharpBucket2 = null;
 
         public BitbucketAPIService(string username, string publicKey, string secretKey)
         {
             Username = username;
+            PublicKey = publicKey;
+            PrivateKey = secretKey;
             
             m_sharpBucket2 = new SharpBucketV2();
-            m_sharpBucket2.OAuth2LeggedAuthentication(publicKey, secretKey);
+            m_sharpBucket2.OAuth2LeggedAuthentication(PublicKey, PrivateKey);
         }
 
         public List<Repository> GetAllRepos(string usernameOrTeamName)
@@ -51,7 +57,7 @@ namespace Reposed.Core.Services.Bitbucket
 
         public bool IsAuthorized()
         {
-            return m_sharpBucket2?.UserEndPoint().GetUser() != null;
+            return ValidSettings ? m_sharpBucket2?.UserEndPoint().GetUser() != null : false;
         }
     }
 }

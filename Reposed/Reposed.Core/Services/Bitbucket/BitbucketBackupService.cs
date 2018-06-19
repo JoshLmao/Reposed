@@ -42,8 +42,8 @@ namespace Reposed.Core.Services.Bitbucket
                 PrivateKey = bbPrefs.PrivateKey;
 
                 m_bitbucketAPI = new BitbucketAPIService(Username, PublicKey, PrivateKey);
-
-                InitializeWithCredentials(m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username).Count);
+                int count = m_bitbucketAPI.IsAuthorized() ? m_bitbucketAPI.GetAllRepos(m_bitbucketAPI.Username).Count : 0;
+                InitializeWithCredentials(count);
                 return true;
             }
             else

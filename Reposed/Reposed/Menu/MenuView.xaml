@@ -7,8 +7,8 @@
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignWidth="1000">
-    <Menu>
-        <MenuItem Header="File">
+    <Menu Background="{DynamicResource WindowBackgroundBrush}" TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
+        <MenuItem Header="Reposed">
             <Separator />
             <MenuItem Header="Close" cal:Message.Attach="[Event Click] = [Action OnCloseApplication()]"/>
         </MenuItem>

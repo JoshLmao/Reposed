@@ -80,6 +80,12 @@ namespace Reposed.Core.Services
             m_gitFilePath = gitFilePath;
         }
 
+        public void Abort()
+        {
+            if (!CanBackup)
+                CanBackup = true;
+        }
+
         /// <summary>
         /// Creates and sets the working directory to the current repo
         /// </summary>
