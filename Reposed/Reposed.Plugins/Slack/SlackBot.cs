@@ -10,11 +10,17 @@ namespace Reposed.Plugins.Slack
 {
     public class SlackBot
     {
+        public bool IsConnected { get { return /*m_client.IsConnected*/ true; } }
+
+        public bool HasValidChannel { get { return m_client != null && m_client.Channels != null /*&& m_client.IsConnected */? m_client.Channels.Exists(x => x.name.ToLower() == m_channelName.ToLower()) : false; } }
+
+        public event Action OnConnected;
+
         private string m_channelName = null;
         private string m_name = null;
         private string m_token = null;
 
-        private SlackSocketClient m_client = null;
+        private SlackClient m_client = null;
         private Channel m_messageChannel = null;
 
         readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
@@ -24,7 +30,7 @@ namespace Reposed.Plugins.Slack
             m_name = botName;
             m_token = token;
 
-            m_client = new SlackSocketClient(m_token);
+            m_client = new SlackClient(m_token);
             Connect();
         }
 
@@ -32,10 +38,13 @@ namespace Reposed.Plugins.Slack
         {
             m_channelName = channelName;
 
-            if (!m_client.IsConnected)
+            if (m_client == null || m_client != null && m_client.Channels == null)
+            {
+                Connect();
                 return;
+            }
 
-            Channel newChannel = m_client.Channels.Find(x => x.name == m_channelName);
+            Channel newChannel = m_client.Channels.Find(x => x.name.ToLower() == m_channelName.ToLower());
             if(newChannel == null)
             {
                 LOGGER.Error($"Can't find channel with name '{channelName}'");
@@ -49,7 +58,10 @@ namespace Reposed.Plugins.Slack
 
         public void Dispose()
         {
-
+            //if(m_client.IsConnected)
+            //    m_client.CloseSocket();
+            m_client.EmitLogin(null);
+            m_client = null;
         }
 
         public bool SendFormatMessage(string message, string hexColor, List<KeyValuePair<string, string>> infoFields)
@@ -60,8 +72,8 @@ namespace Reposed.Plugins.Slack
 
         bool SendMessage(string message, string hexColor, Attachment[] attachments)
         {
-            if (!m_client.IsConnected)
-                Connect();
+            //if (!m_client.IsConnected)
+            //    Connect();
 
             if (!string.IsNullOrEmpty(m_channelName))
             {
@@ -75,22 +87,30 @@ namespace Reposed.Plugins.Slack
             }
         }
 
-        bool Connect()
+        private bool Connect()
         {
-            m_client.Connect(x => OnClientConnected());
-
-            return m_client.IsConnected;
+            if (m_client != null)
+            {
+                m_client.Connect(x => OnClientConnected());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        void OnClientConnected()
+        private void OnClientConnected()
         {
             LOGGER.Info($"Successfully connected Slack bot");
+
+            OnConnected?.Invoke();
 
             if (!string.IsNullOrEmpty(m_channelName) && m_messageChannel == null)
                 SetChannel(m_channelName);
         }
 
-        Attachment[] GetAttachments(string message, string hexColor, List<KeyValuePair<string, string>> infoFields)
+        private Attachment[] GetAttachments(string message, string hexColor, List<KeyValuePair<string, string>> infoFields)
         {
             Field[] fields = infoFields.Select(x => new Field()
             {

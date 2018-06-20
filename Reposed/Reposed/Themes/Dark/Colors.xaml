@@ -25,4 +25,10 @@
     <Color x:Key="PrimaryButtonColor">Orange</Color>
     <SolidColorBrush x:Key="PrimaryButtonBrush" Color="{StaticResource PrimaryButtonColor}"/>
 
+    <!--Positive-->
+    <Color x:Key="PositiveColor">Green</Color>
+    <SolidColorBrush x:Key="PositiveBrush" Color="{StaticResource PositiveColor}"/>
+    <!--Negative-->
+    <Color x:Key="NegativeColor">Red</Color>
+    <SolidColorBrush x:Key="NegativeBrush" Color="{StaticResource NegativeColor}"/>
 </ResourceDictionary>

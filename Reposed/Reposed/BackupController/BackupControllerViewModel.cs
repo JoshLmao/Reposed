@@ -328,7 +328,7 @@ namespace Reposed.BackupController
             }
 
             LastBackupEndTime = DateTime.Now;
-            TotalBackupTime = LastBackupStartTime - LastBackupEndTime;
+            TotalBackupTime = LastBackupEndTime - LastBackupStartTime;
             IsBackingUp = false;
 
             if (m_backupCompleteMsgChangeThread == null)

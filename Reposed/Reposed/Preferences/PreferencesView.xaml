@@ -5,10 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reposed.Preferences"
         xmlns:cal="http://www.caliburnproject.org"
+        xmlns:converters="clr-namespace:Reposed.Converters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         Height="300" Width="300"
+        ResizeMode="NoResize"
         Background="{DynamicResource WindowBackgroundBrush}">
+    <Window.Resources>
+        <converters:BooleanToBrushConverter x:Key="b2bc" TrueBrush="{StaticResource PositiveBrush}" FalseBrush="{StaticResource NegativeBrush}"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -37,19 +42,23 @@
             </TabItem>
             <TabItem Header="Slack Bot">
                 <StackPanel>
-                    <TextBlock Text="A Bot that automatically sends a message to a Slack channel whenever a backup is done with analytics" TextWrapping="WrapWithOverflow" Margin="5,3"/>
-
+                    <TextBlock Text="Automatically send a message to a Slack channel whenever a backup is done with analytics" TextWrapping="WrapWithOverflow" Margin="5,3"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Bot State:" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding SlackBotActiveText, FallbackValue=StateText}" Padding="5"/>
+                    </StackPanel>
                     <DockPanel Margin="5,3">
                         <TextBlock Text="Name:" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding Name, FallbackValue=Name}" Margin="5,0"/>
+                        <TextBox Text="{Binding Name, FallbackValue=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0"/>
                     </DockPanel>
                     <DockPanel Margin="5,3">
                         <TextBlock Text="Token:" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding AuthToken, FallbackValue=Token}" Margin="5,0"/>
+                        <TextBox Text="{Binding Token, FallbackValue=Token, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0"/>
                     </DockPanel>
                     <DockPanel Margin="5,3">
                         <TextBlock Text="Channel:" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding ChannelName, FallbackValue=ChannelName}" Margin="5,0"/>
+                        <Rectangle Fill="{Binding IsSlackBotChannelValid, Converter={StaticResource b2bc}, FallbackValue=Gray}" DockPanel.Dock="Right" Width="5" ToolTip="Indicates if the channel has been found"/>
+                        <TextBox Text="{Binding ChannelName, FallbackValue=ChannelName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0"/>
                     </DockPanel>
                     <TextBlock Margin="5,0">
                         <Hyperlink NavigateUri="https://api.slack.com/custom-integrations/legacy-tokens">Get Token</Hyperlink>

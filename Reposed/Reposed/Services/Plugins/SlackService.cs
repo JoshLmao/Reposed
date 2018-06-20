@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Reposed.Services.Plugins
@@ -16,10 +17,17 @@ namespace Reposed.Services.Plugins
             public TimeSpan TotalBackupTime { get; set; }
         }
 
-        SlackBot m_bot = null;
+        public bool IsConnected { get { return m_bot.IsConnected; } }
+        public bool HasValidChannel { get { return m_bot.HasValidChannel; } }
 
         public string SuccessfulHexColor { get; set; } = "00FF13";
         public string FailedHexColor { get; set; } = "FF0000";
+
+        public event Action<bool> OnBotConnectionChanged;
+        public event Action<bool, string> OnBotChannelChanged;
+
+        SlackBot m_bot = null;
+        Thread m_channelThread = null;
 
         public SlackService()
         {
@@ -28,8 +36,38 @@ namespace Reposed.Services.Plugins
 
         public void Set(Models.Plugins.SlackBotInfo info)
         {
+            if(m_bot != null)
+            {
+                m_bot.Dispose();
+                m_bot.OnConnected -= OnBotConnectedToSlack;
+                OnBotConnectionChanged?.Invoke(false);
+            }
+
             m_bot = new SlackBot(info.Token, info.Name);
-            m_bot.SetChannel(info.Channel);
+            m_bot.OnConnected += OnBotConnectedToSlack;
+
+            //Force the client to constantly check for the channel & force connect
+            //ToDo: Make this async and improve
+            if (m_channelThread != null)
+                m_channelThread.Abort();
+            m_channelThread = new Thread(() => FindChannel(info.Channel));
+            m_channelThread.Start();
+
+            OnBotChannelChanged?.Invoke(m_bot.HasValidChannel, info.Channel);
+        }
+
+        private void FindChannel(string channelName)
+        {
+            while(!m_bot.HasValidChannel)
+            {
+                m_bot.SetChannel(channelName);
+                Thread.Sleep(500);
+            }
+        }
+
+        private void OnBotConnectedToSlack()
+        {
+            OnBotConnectionChanged?.Invoke(true);
         }
 
         public void SendMessage(string message, string hexColor, List<KeyValuePair<string, string>> fieldsInfo)

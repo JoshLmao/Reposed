@@ -47,16 +47,18 @@ namespace Reposed.Preferences
             {
                 m_prefs.SlackBotInfo.Name = value;
                 NotifyOfPropertyChange(() => Name);
+                SetSlackBotFromSettings();
             }
         }
 
-        public string AuthToken
+        public string Token
         {
             get { return m_prefs?.SlackBotInfo?.Token; }
             set
             {
                 m_prefs.SlackBotInfo.Token = value;
-                NotifyOfPropertyChange(() => AuthToken);
+                NotifyOfPropertyChange(() => Token);
+                SetSlackBotFromSettings();
             }
         }
 
@@ -67,9 +69,29 @@ namespace Reposed.Preferences
             {
                 m_prefs.SlackBotInfo.Channel = value;
                 NotifyOfPropertyChange(() => ChannelName);
+                SetSlackBotFromSettings();
             }
         }
         #endregion
+
+        bool m_isSlackBotActive;
+        public bool IsSlackBotActive
+        {
+            get { return m_isSlackBotActive; }
+            set
+            {
+                m_isSlackBotActive = value;
+                NotifyOfPropertyChange(() => IsSlackBotActive);
+                NotifyOfPropertyChange(() => SlackBotActiveText);
+            }
+        }
+
+        public bool IsSlackBotChannelValid
+        {
+            get { return SLACK_SERVICE != null ? SLACK_SERVICE.HasValidChannel : false; }
+        }
+
+        public string SlackBotActiveText { get { return IsSlackBotActive ? "Active" : "Disabled"; } }
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
         readonly IMessageBoxService MSG_BOX_SERVICE = null;
@@ -84,6 +106,8 @@ namespace Reposed.Preferences
 
             MSG_BOX_SERVICE = msgBoxService;
             SLACK_SERVICE = slackService;
+            SLACK_SERVICE.OnBotConnectionChanged += OnSlackBotConnected;
+            SLACK_SERVICE.OnBotChannelChanged += OnSlackBotChannelChanged;
         }
 
         public void LoadPreferences()
@@ -166,15 +190,8 @@ namespace Reposed.Preferences
 
             EVENT_AGGREGATOR.PublishOnCurrentThread(new PreferencesUpdated(m_prefs));
 
-            if(SLACK_SERVICE != null)
-            {
-                SLACK_SERVICE.Set(new Models.Plugins.SlackBotInfo()
-                {
-                    Name = Name,
-                    Token = AuthToken,
-                    Channel = ChannelName,
-                });
-            }
+            if(SLACK_SERVICE != null && !SLACK_SERVICE.IsConnected)
+                SetSlackBotFromSettings();
 
             SaveToFile(m_prefs);
             TryClose(true);
@@ -211,6 +228,37 @@ namespace Reposed.Preferences
         public Models.Preferences GetPreferences()
         {
             return m_prefs;
+        }
+
+        void SetSlackBotFromSettings()
+        {
+            if (SLACK_SERVICE != null)
+            {
+                //We need these properties, no need to update if they aren't there/valid
+                //if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Token) || string.IsNullOrEmpty(ChannelName))
+                //    return;
+
+                IsSlackBotActive = false;
+                SLACK_SERVICE.Set(new Models.Plugins.SlackBotInfo()
+                {
+                    Name = Name,
+                    Token = Token,
+                    Channel = ChannelName,
+                });
+
+                IsSlackBotActive = SLACK_SERVICE.IsConnected;
+            }
+        }
+
+        private void OnSlackBotConnected(bool connected)
+        {
+            IsSlackBotActive = connected;
+            NotifyOfPropertyChange(() => IsSlackBotChannelValid);
+        }
+
+        private void OnSlackBotChannelChanged(bool validChannel, string channelName)
+        {
+            NotifyOfPropertyChange(() => IsSlackBotChannelValid);
         }
     }
 }
