@@ -45,9 +45,9 @@
     <Compile Include="GithubSettings.cs" />
     <Compile Include="GitlabSettings.cs" />
     <Compile Include="IBackupCredentials.cs" />
+    <Compile Include="Plugins\SlackBotInfo.cs" />
     <Compile Include="Preferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

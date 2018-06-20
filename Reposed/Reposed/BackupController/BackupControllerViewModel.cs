@@ -5,6 +5,7 @@ using Reposed.Core.Events;
 using Reposed.Events;
 using Reposed.MVVM;
 using Reposed.Services;
+using Reposed.Services.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,6 +65,17 @@ namespace Reposed.BackupController
                 m_lastBackupEndTime = value;
                 NotifyOfPropertyChange(() => LastBackupEndTime);
                 NotifyOfPropertyChange(() => TotalTimeToBackup);
+            }
+        }
+
+        TimeSpan m_totalBackupTime;
+        public TimeSpan TotalBackupTime
+        {
+            get { return m_totalBackupTime; }
+            set
+            {
+                m_totalBackupTime = value;
+                NotifyOfPropertyChange(() => TotalBackupTime);
             }
         }
 
@@ -135,18 +147,20 @@ namespace Reposed.BackupController
         readonly IEventAggregator EVENT_AGGREGATOR = null;
         readonly IWindowManager WINDOW_MANAGER = null;
         readonly IMessageBoxService MSG_BOX_SERVICE = null;
+        readonly SlackService SLACK_SERVICE = null;
 
         private Models.Preferences m_prefs = null;
         private Thread m_backupThread = null;
         private Thread m_backupCompleteMsgChangeThread = null;
         private ScheduledBackupService m_scheduledBackupService = null;
 
-        public BackupControllerViewModel(IEventAggregator eventAggregator, IWindowManager windowManager, IMessageBoxService msgBoxService, ScheduledBackupService scheduledBackupService)
+        public BackupControllerViewModel(IEventAggregator eventAggregator, IWindowManager windowManager, IMessageBoxService msgBoxService, ScheduledBackupService scheduledBackupService, SlackService slackService)
         {
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
             WINDOW_MANAGER = windowManager;
             MSG_BOX_SERVICE = msgBoxService;
+            SLACK_SERVICE = slackService;
 
             m_scheduledBackupService = scheduledBackupService;
         }
@@ -314,6 +328,7 @@ namespace Reposed.BackupController
             }
 
             LastBackupEndTime = DateTime.Now;
+            TotalBackupTime = LastBackupStartTime - LastBackupEndTime;
             IsBackingUp = false;
 
             if (m_backupCompleteMsgChangeThread == null)
@@ -326,6 +341,15 @@ namespace Reposed.BackupController
 
             NotifyOfPropertyChange(() => ProgressText);
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
+
+            if(SLACK_SERVICE != null)
+            {
+                SLACK_SERVICE.SendBackupMessage(new SlackService.BackupInfo()
+                {
+                    IsSuccessful = message.IsSuccessful,
+                    TotalBackupTime = TotalBackupTime,
+                });
+            }
         }
 
         private void ChangeToIdleDelay()

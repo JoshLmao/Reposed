@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reposed.Models.Plugins;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace Reposed.Models
     {
         public string LocalGitPath { get; set; }
         public string LocalBackupPath { get; set; }
+        public SlackBotInfo SlackBotInfo {get;set;}
     }
 }

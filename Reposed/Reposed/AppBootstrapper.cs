@@ -6,6 +6,7 @@ using Reposed.Core.Services.Bitbucket;
 using Reposed.Core.Services.Github;
 using Reposed.Core.Services.Gitlab;
 using Reposed.Services;
+using Reposed.Services.Plugins;
 using Reposed.Shell;
 using System;
 using System.Collections.Generic;
@@ -76,6 +77,9 @@ namespace Reposed
             m_iocContainer.Singleton<IBackupService, GitlabBackupService>();
             m_iocContainer.Singleton<ScheduledBackupService>();
             m_iocContainer.Singleton<BackupSettingsService>();
+
+            //Plugin Services
+            m_iocContainer.Singleton<SlackService>();
 
             //UI Services
             m_iocContainer.Singleton<IMessageBoxService, MessageBoxService>();

@@ -12,24 +12,29 @@ namespace Reposed.Plugins.Slack
     {
         private string m_channelName = null;
         private string m_name = null;
-        private string m_authToken = null;
+        private string m_token = null;
 
         private SlackSocketClient m_client = null;
         private Channel m_messageChannel = null;
 
         readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-        public SlackBot(string authToken, string botName)
+        public SlackBot(string token, string botName)
         {
             m_name = botName;
-            m_authToken = authToken;
+            m_token = token;
 
-            m_client = new SlackSocketClient(m_authToken);
-            Init();
+            m_client = new SlackSocketClient(m_token);
+            Connect();
         }
 
         public void SetChannel(string channelName)
         {
+            m_channelName = channelName;
+
+            if (!m_client.IsConnected)
+                return;
+
             Channel newChannel = m_client.Channels.Find(x => x.name == m_channelName);
             if(newChannel == null)
             {
@@ -37,7 +42,6 @@ namespace Reposed.Plugins.Slack
             }
             else
             {
-                m_channelName = channelName;
                 m_messageChannel = newChannel;
                 LOGGER.Info($"Slack bot channel set to {m_channelName}");
             }
@@ -57,9 +61,9 @@ namespace Reposed.Plugins.Slack
         bool SendMessage(string message, string hexColor, Attachment[] attachments)
         {
             if (!m_client.IsConnected)
-                Init();
+                Connect();
 
-            if (m_channelName != null)
+            if (!string.IsNullOrEmpty(m_channelName))
             {
                 m_client.PostMessage((msg) => { }, m_messageChannel.id, message, m_name, null, true, attachments, false, null, null, false, null);
                 return true;
@@ -71,19 +75,19 @@ namespace Reposed.Plugins.Slack
             }
         }
 
-        bool Init()
+        bool Connect()
         {
             m_client.Connect(x => OnClientConnected());
 
-            while (!m_client.IsConnected)
-                Thread.Sleep(1000);
-
-            return true;
+            return m_client.IsConnected;
         }
 
         void OnClientConnected()
         {
             LOGGER.Info($"Successfully connected Slack bot");
+
+            if (!string.IsNullOrEmpty(m_channelName) && m_messageChannel == null)
+                SetChannel(m_channelName);
         }
 
         Attachment[] GetAttachments(string message, string hexColor, List<KeyValuePair<string, string>> infoFields)

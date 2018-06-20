@@ -35,6 +35,27 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+            <TabItem Header="Slack Bot">
+                <StackPanel>
+                    <TextBlock Text="A Bot that automatically sends a message to a Slack channel whenever a backup is done with analytics" TextWrapping="WrapWithOverflow" Margin="5,3"/>
+
+                    <DockPanel Margin="5,3">
+                        <TextBlock Text="Name:" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding Name, FallbackValue=Name}" Margin="5,0"/>
+                    </DockPanel>
+                    <DockPanel Margin="5,3">
+                        <TextBlock Text="Token:" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding AuthToken, FallbackValue=Token}" Margin="5,0"/>
+                    </DockPanel>
+                    <DockPanel Margin="5,3">
+                        <TextBlock Text="Channel:" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding ChannelName, FallbackValue=ChannelName}" Margin="5,0"/>
+                    </DockPanel>
+                    <TextBlock Margin="5,0">
+                        <Hyperlink NavigateUri="https://api.slack.com/custom-integrations/legacy-tokens">Get Token</Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
             <Button Margin="5,3" cal:Message.Attach="[Event Click] = [Action OnApply()]">

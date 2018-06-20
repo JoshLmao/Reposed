@@ -134,6 +134,7 @@
     </Compile>
     <Compile Include="ServiceComponents\Shared\Models\RepositoriesViewDto.cs" />
     <Compile Include="Services\BackupSettingsService.cs" />
+    <Compile Include="Services\Plugins\SlackService.cs" />
     <Compile Include="Services\ScheduledBackupService.cs" />
     <Compile Include="Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
@@ -239,6 +240,10 @@
     <ProjectReference Include="..\Reposed.Models\Reposed.Models.csproj">
       <Project>{a4cf8c11-251a-4e83-80bf-6c9855467ef8}</Project>
       <Name>Reposed.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reposed.Plugins\Reposed.Plugins.csproj">
+      <Project>{A2A356AE-462C-420B-A825-6C11B982B477}</Project>
+      <Name>Reposed.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

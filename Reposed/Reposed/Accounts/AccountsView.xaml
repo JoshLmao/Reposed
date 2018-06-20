@@ -16,20 +16,26 @@
         <converters:AuthorizedToColorConverter x:Key="a2cc"/>
     </UserControl.Resources>
     <ContentControl>
-        <ListView ItemsSource="{Binding BackupAccounts}" SelectedItem="{Binding SelectedAccount}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Center"
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <ListView ItemsSource="{Binding BackupAccounts}" SelectedItem="{Binding SelectedAccount}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Center"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemTemplate>
-                <DataTemplate DataType="{x:Type coreServices:BackupServiceBase}">
-                    <Grid Margin="5">
-                        <Path Fill="{Binding IsAuthorized, Converter={StaticResource a2cc}}" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" />
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type coreServices:BackupServiceBase}">
+                        <Grid Margin="5">
+                            <Path Fill="{Binding IsAuthorized, Converter={StaticResource a2cc}}" Data="{Binding Converter={StaticResource s2ic}}" Stretch="UniformToFill" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
     </ContentControl>
 </UserControl>

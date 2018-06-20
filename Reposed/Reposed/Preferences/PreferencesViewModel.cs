@@ -5,6 +5,7 @@ using Reposed.Core;
 using Reposed.Core.Dialogs;
 using Reposed.Events;
 using Reposed.MVVM;
+using Reposed.Services.Plugins;
 using Reposed.Utility;
 using System;
 using System.Collections.Generic;
@@ -38,17 +39,51 @@ namespace Reposed.Preferences
             }
         }
 
+        #region SlackBot Info Properties
+        public string Name
+        {
+            get { return m_prefs?.SlackBotInfo?.Name; }
+            set
+            {
+                m_prefs.SlackBotInfo.Name = value;
+                NotifyOfPropertyChange(() => Name);
+            }
+        }
+
+        public string AuthToken
+        {
+            get { return m_prefs?.SlackBotInfo?.Token; }
+            set
+            {
+                m_prefs.SlackBotInfo.Token = value;
+                NotifyOfPropertyChange(() => AuthToken);
+            }
+        }
+
+        public string ChannelName
+        {
+            get { return m_prefs?.SlackBotInfo?.Channel; }
+            set
+            {
+                m_prefs.SlackBotInfo.Channel = value;
+                NotifyOfPropertyChange(() => ChannelName);
+            }
+        }
+        #endregion
+
         readonly IEventAggregator EVENT_AGGREGATOR = null;
         readonly IMessageBoxService MSG_BOX_SERVICE = null;
+        readonly SlackService SLACK_SERVICE = null;
 
         Models.Preferences m_prefs = null;
 
-        public PreferencesViewModel(IEventAggregator eventAggregator, IMessageBoxService msgBoxService)
+        public PreferencesViewModel(IEventAggregator eventAggregator, IMessageBoxService msgBoxService, SlackService slackService)
         {
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
 
             MSG_BOX_SERVICE = msgBoxService;
+            SLACK_SERVICE = slackService;
         }
 
         public void LoadPreferences()
@@ -67,6 +102,14 @@ namespace Reposed.Preferences
                     //Set VM properties from loaded prefs
                     GitPath = m_prefs.LocalGitPath;
                     LocalBackupPath = m_prefs.LocalBackupPath;
+                    if (m_prefs.SlackBotInfo == null)
+                    {
+                        m_prefs.SlackBotInfo = new Models.Plugins.SlackBotInfo();
+                    }
+                    else
+                    {
+                        SLACK_SERVICE.Set(m_prefs.SlackBotInfo);
+                    }
                 }
             }
             else
@@ -123,6 +166,16 @@ namespace Reposed.Preferences
 
             EVENT_AGGREGATOR.PublishOnCurrentThread(new PreferencesUpdated(m_prefs));
 
+            if(SLACK_SERVICE != null)
+            {
+                SLACK_SERVICE.Set(new Models.Plugins.SlackBotInfo()
+                {
+                    Name = Name,
+                    Token = AuthToken,
+                    Channel = ChannelName,
+                });
+            }
+
             SaveToFile(m_prefs);
             TryClose(true);
         }
@@ -136,7 +189,10 @@ namespace Reposed.Preferences
         {
             return new Models.Preferences()
             {
+                SlackBotInfo = new Models.Plugins.SlackBotInfo()
+                {
 
+                }
             };
         }
 

@@ -55,5 +55,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Reposed.Core\Reposed.Core.csproj">
+      <Project>{68dfc7a5-3248-440a-9b1d-f10fe3bfc39c}</Project>
+      <Name>Reposed.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

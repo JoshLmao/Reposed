@@ -28,7 +28,7 @@ namespace Reposed.Core.Services.Gitlab
 
         public override bool Backup(string rootBackupDir)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override bool SetCredentials(IBackupSettings credentials)

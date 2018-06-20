@@ -68,6 +68,8 @@
     <Compile Include="Events\BackupEvents.cs" />
     <Compile Include="Json\BackupSettingsConverter.cs" />
     <Compile Include="Json\CustomConverterBase.cs" />
+    <Compile Include="Plugins\IPluginService.cs" />
+    <Compile Include="Plugins\IPluginSettings.cs" />
     <Compile Include="Services\BackupServiceBase.cs" />
     <Compile Include="Services\Bitbucket\BitbucketAPIService.cs" />
     <Compile Include="Services\Bitbucket\BitbucketBackupService.cs" />
