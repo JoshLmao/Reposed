@@ -8,7 +8,7 @@
         xmlns:converters="clr-namespace:Reposed.Converters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
-        Height="300" Width="300"
+        Height="325" Width="300"
         ResizeMode="NoResize"
         Background="{DynamicResource WindowBackgroundBrush}">
     <Window.Resources>
@@ -43,7 +43,9 @@
             <TabItem Header="Slack Bot">
                 <Grid Name="c_slackGrid">
                     <StackPanel>
-                        <TextBlock Text="Automatically send a message to a Slack channel whenever a backup is done with analytics" TextWrapping="WrapWithOverflow" Margin="5,3"/>
+                        <TextBlock Text="Automatically send a message to a Slack channel whenever a backup is done with analytics" TextWrapping="WrapWithOverflow" Margin="5,3,5,0"/>
+                        <TextBlock Text="Also reports any problems with the program like crashes, etc" TextWrapping="WrapWithOverflow" Margin="5,0,5,3"/>
+                        <Separator Margin="5,3"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="Bot State:" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding SlackBotActiveText, FallbackValue=StateText}" Padding="5"/>

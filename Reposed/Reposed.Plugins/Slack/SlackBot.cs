@@ -12,7 +12,7 @@ namespace Reposed.Plugins.Slack
     {
         public bool IsConnected { get; private set; }
 
-        public bool HasValidChannel { get { return m_client != null && m_client.Channels != null /*&& m_client.IsConnected */? m_client.Channels.Exists(x => x.name.ToLower() == m_channelName.ToLower()) : false; } }
+        public bool HasValidChannel { get { return m_messageChannel != null; } }
 
         public event Action OnConnected;
 
@@ -25,6 +25,7 @@ namespace Reposed.Plugins.Slack
         private object m_connectedLock = new object();
 
         readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+        readonly string BOT_ICON_URL = "";
 
         public SlackBot(string token, string botName)
         {
@@ -69,18 +70,15 @@ namespace Reposed.Plugins.Slack
 
         public bool SendFormatMessage(string message, string hexColor, List<KeyValuePair<string, string>> infoFields)
         {
-            Attachment[] attc = GetAttachments(message, hexColor, infoFields);
+            Attachment[] attc = GetAttachments(hexColor, infoFields);
             return SendMessage(message, hexColor, attc);
         }
 
         bool SendMessage(string message, string hexColor, Attachment[] attachments)
         {
-            //if (!m_client.IsConnected)
-            //    Connect();
-
-            if (!string.IsNullOrEmpty(m_channelName))
+            if (m_messageChannel != null)
             {
-                m_client.PostMessage((msg) => { }, m_messageChannel.id, message, m_name, null, true, attachments, false, null, null, false, null);
+                m_client.PostMessage((msg) => { }, m_messageChannel.id, message, m_name, null, true, attachments, false, BOT_ICON_URL, null, false, null);
                 return true;
             }
             else
@@ -114,13 +112,13 @@ namespace Reposed.Plugins.Slack
                 IsConnected = true;
                 OnConnected?.Invoke();
             }
-
-            //if (!string.IsNullOrEmpty(m_channelName) && m_messageChannel == null)
-            //SetChannel(m_channelName);
         }
 
-        private Attachment[] GetAttachments(string message, string hexColor, List<KeyValuePair<string, string>> infoFields)
+        private Attachment[] GetAttachments(string hexColor, List<KeyValuePair<string, string>> infoFields)
         {
+            if (infoFields == null)
+                return null;
+
             Field[] fields = infoFields.Select(x => new Field()
             {
                 title = x.Key,

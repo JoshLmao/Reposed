@@ -5,6 +5,7 @@ using Reposed.Core.Dialogs;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Core.Services.Github;
 using Reposed.Core.Services.Gitlab;
+using Reposed.Events;
 using Reposed.Services;
 using Reposed.Services.Plugins;
 using Reposed.Shell;
@@ -21,6 +22,7 @@ namespace Reposed
         readonly Logger LOGGER = null;
 
         SimpleContainer m_iocContainer;
+        bool m_hasLoggedExceptionInfo = false;
 
         public AppBootstrapper()
         {
@@ -43,17 +45,33 @@ namespace Reposed
         void OnTaskUnobserveredTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
             LOGGER.Fatal(e.Exception);
+            OnProgramUnexpectedClose(e.Exception);
         }
 
         void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             LOGGER.Fatal(e.ExceptionObject);
+            OnProgramUnexpectedClose(e.ExceptionObject as Exception);
         }
 
         protected override void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             base.OnUnhandledException(sender, e);
             LOGGER.Fatal(e.Exception);
+
+            OnProgramUnexpectedClose(e.Exception);
+        }
+
+        void OnProgramUnexpectedClose(Exception e = null)
+        {
+            if (!m_hasLoggedExceptionInfo)
+            {
+                m_iocContainer.GetInstance<IEventAggregator>().PublishOnCurrentThread(new OnApplicationClosing(true)
+                {
+                    Exception = e,
+                });
+                m_hasLoggedExceptionInfo = true;
+            }
         }
 
         protected override void PrepareApplication()
@@ -74,7 +92,7 @@ namespace Reposed
             //Services
             m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
             m_iocContainer.Singleton<IBackupService, GithubBackupService>();
-            m_iocContainer.Singleton<IBackupService, GitlabBackupService>();
+            //m_iocContainer.Singleton<IBackupService, GitlabBackupService>();
             m_iocContainer.Singleton<ScheduledBackupService>();
             m_iocContainer.Singleton<BackupSettingsService>();
 

@@ -1,4 +1,6 @@
-﻿using Reposed.Core.Plugins;
+﻿using Caliburn.Micro;
+using Reposed.Core.Plugins;
+using Reposed.Events;
 using Reposed.Plugins.Slack;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Reposed.Services.Plugins
 {
-    public class SlackService : IPluginService
+    public class SlackService : IPluginService, IHandle<OnApplicationClosing>
     {
         public class BackupInfo
         {
@@ -17,8 +19,8 @@ namespace Reposed.Services.Plugins
             public TimeSpan TotalBackupTime { get; set; }
         }
 
-        public bool IsConnected { get { return m_bot.IsConnected; } }
-        public bool HasValidChannel { get { return m_bot.HasValidChannel; } }
+        public bool IsConnected { get { return m_bot != null ? m_bot.IsConnected : false; } }
+        public bool HasValidChannel { get { return m_bot != null ? m_bot.HasValidChannel : false; } }
         public bool IsEnabled { get { return IsConnected && HasValidChannel; } }
 
         public string SuccessfulHexColor { get; set; } = "00FF13";
@@ -30,9 +32,12 @@ namespace Reposed.Services.Plugins
         SlackBot m_bot = null;
         Thread m_channelThread = null;
 
-        public SlackService()
-        {
+        readonly IEventAggregator EVENT_AGGREGATOR = null;
 
+        public SlackService(IEventAggregator eventAggregator)
+        {
+            EVENT_AGGREGATOR = eventAggregator;
+            EVENT_AGGREGATOR.Subscribe(this);
         }
 
         public void Set(Models.Plugins.SlackBotInfo info)
@@ -59,8 +64,8 @@ namespace Reposed.Services.Plugins
         {
             while(!m_bot.HasValidChannel)
             {
-                m_bot.SetChannel(channelName);
                 Thread.Sleep(5 * 1000);
+                m_bot.SetChannel(channelName);
             }
 
             OnBotChannelChanged?.Invoke(m_bot.HasValidChannel, channelName);
@@ -104,6 +109,22 @@ namespace Reposed.Services.Plugins
             }
 
             SendMessage(msg, hexColor, fields);
+        }
+
+        public void Handle(OnApplicationClosing message)
+        {
+            if (message.IsUnexpected)
+            {
+                List<KeyValuePair<string, string>> details = new List<KeyValuePair<string, string>>()
+                {
+                    new KeyValuePair<string, string>("Close time", DateTime.Now.ToString()),
+                };
+
+                if (message.Exception != null)
+                    details.Add(new KeyValuePair<string, string>("Exception", message.Exception.ToString()));
+
+                SendMessage("Reposed shut down unexpectedly", FailedHexColor, details);
+            }
         }
     }
 }

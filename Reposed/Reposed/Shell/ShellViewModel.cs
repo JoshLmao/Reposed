@@ -46,7 +46,7 @@ namespace Reposed.Shell
 
         public void OnAppClosing()
         {
-            EVENT_AGGREAGATOR.PublishOnCurrentThread(new OnApplicationClosing());
+            EVENT_AGGREAGATOR.PublishOnCurrentThread(new OnApplicationClosing(false));
         }
     }
 }

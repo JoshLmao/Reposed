@@ -8,6 +8,11 @@ namespace Reposed.Events
 {
     public class OnApplicationClosing
     {
-
+        public Exception Exception { get; set; }
+        public bool IsUnexpected { get; set; }
+        public OnApplicationClosing(bool isUnexpectedShutdown)
+        {
+            IsUnexpected = isUnexpectedShutdown;
+        }
     }
 }

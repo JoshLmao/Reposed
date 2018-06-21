@@ -10,12 +10,7 @@ namespace Reposed.Menu
         bool m_isSlackBotActive;
         public bool IsSlackBotActive
         {
-            get { return m_isSlackBotActive; }
-            set
-            {
-                m_isSlackBotActive = value;
-                NotifyOfPropertyChange(() => IsSlackBotActive);
-            }
+            get { return SLACK_BOT_SERVICE.IsConnected && SLACK_BOT_SERVICE.IsEnabled; }
         }
 
         readonly IWindowManager WINDOW_MANAGER;
@@ -26,11 +21,17 @@ namespace Reposed.Menu
             WINDOW_MANAGER = windowManager;
             SLACK_BOT_SERVICE = slackService;
             SLACK_BOT_SERVICE.OnBotConnectionChanged += OnSlackBotStatusChanged;
+            SLACK_BOT_SERVICE.OnBotChannelChanged += OnSlackBotChannelChanged;
+        }
+
+        private void OnSlackBotChannelChanged(bool isValidChannel, string channelName)
+        {
+            NotifyOfPropertyChange(() => IsSlackBotActive);
         }
 
         private void OnSlackBotStatusChanged(bool isConnected)
         {
-            IsSlackBotActive = isConnected && SLACK_BOT_SERVICE.IsEnabled;
+            NotifyOfPropertyChange(() => IsSlackBotActive);
         }
 
         public void OnOpenPreferences()
