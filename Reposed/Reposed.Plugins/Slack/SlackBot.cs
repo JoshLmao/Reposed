@@ -10,7 +10,7 @@ namespace Reposed.Plugins.Slack
 {
     public class SlackBot
     {
-        public bool IsConnected { get { return /*m_client.IsConnected*/ true; } }
+        public bool IsConnected { get; private set; }
 
         public bool HasValidChannel { get { return m_client != null && m_client.Channels != null /*&& m_client.IsConnected */? m_client.Channels.Exists(x => x.name.ToLower() == m_channelName.ToLower()) : false; } }
 
@@ -22,6 +22,7 @@ namespace Reposed.Plugins.Slack
 
         private SlackClient m_client = null;
         private Channel m_messageChannel = null;
+        private object m_connectedLock = new object();
 
         readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
@@ -40,7 +41,6 @@ namespace Reposed.Plugins.Slack
 
             if (m_client == null || m_client != null && m_client.Channels == null)
             {
-                Connect();
                 return;
             }
 
@@ -61,6 +61,9 @@ namespace Reposed.Plugins.Slack
             //if(m_client.IsConnected)
             //    m_client.CloseSocket();
             m_client.EmitLogin(null);
+            if (IsConnected)
+                IsConnected = false;
+
             m_client = null;
         }
 
@@ -102,12 +105,18 @@ namespace Reposed.Plugins.Slack
 
         private void OnClientConnected()
         {
-            LOGGER.Info($"Successfully connected Slack bot");
+            if (IsConnected)
+                return;
 
-            OnConnected?.Invoke();
+            lock (m_connectedLock)
+            {
+                LOGGER.Info($"Successfully connected Slack bot");
+                IsConnected = true;
+                OnConnected?.Invoke();
+            }
 
-            if (!string.IsNullOrEmpty(m_channelName) && m_messageChannel == null)
-                SetChannel(m_channelName);
+            //if (!string.IsNullOrEmpty(m_channelName) && m_messageChannel == null)
+            //SetChannel(m_channelName);
         }
 
         private Attachment[] GetAttachments(string message, string hexColor, List<KeyValuePair<string, string>> infoFields)

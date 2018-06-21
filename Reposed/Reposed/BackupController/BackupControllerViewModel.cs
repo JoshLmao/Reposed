@@ -342,7 +342,7 @@ namespace Reposed.BackupController
             NotifyOfPropertyChange(() => ProgressText);
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
 
-            if(SLACK_SERVICE != null)
+            if(SLACK_SERVICE != null && SLACK_SERVICE.IsEnabled)
             {
                 SLACK_SERVICE.SendBackupMessage(new SlackService.BackupInfo()
                 {

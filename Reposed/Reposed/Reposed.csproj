@@ -90,6 +90,7 @@
     <Compile Include="Converters\AuthorizedToColorConverter.cs" />
     <Compile Include="Converters\BooleanConverters.cs" />
     <Compile Include="Converters\DateTimeToFormatConverter.cs" />
+    <Compile Include="Converters\PluginToIconConverter.cs" />
     <Compile Include="Converters\ServiceToIconConverter.cs" />
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="BackupController\BackupControllerView.xaml.cs">

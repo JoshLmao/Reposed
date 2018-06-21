@@ -19,6 +19,7 @@ namespace Reposed.Services.Plugins
 
         public bool IsConnected { get { return m_bot.IsConnected; } }
         public bool HasValidChannel { get { return m_bot.HasValidChannel; } }
+        public bool IsEnabled { get { return IsConnected && HasValidChannel; } }
 
         public string SuccessfulHexColor { get; set; } = "00FF13";
         public string FailedHexColor { get; set; } = "FF0000";
@@ -52,8 +53,6 @@ namespace Reposed.Services.Plugins
                 m_channelThread.Abort();
             m_channelThread = new Thread(() => FindChannel(info.Channel));
             m_channelThread.Start();
-
-            OnBotChannelChanged?.Invoke(m_bot.HasValidChannel, info.Channel);
         }
 
         private void FindChannel(string channelName)
@@ -61,8 +60,10 @@ namespace Reposed.Services.Plugins
             while(!m_bot.HasValidChannel)
             {
                 m_bot.SetChannel(channelName);
-                Thread.Sleep(500);
+                Thread.Sleep(5 * 1000);
             }
+
+            OnBotChannelChanged?.Invoke(m_bot.HasValidChannel, channelName);
         }
 
         private void OnBotConnectedToSlack()

@@ -74,24 +74,13 @@ namespace Reposed.Preferences
         }
         #endregion
 
-        bool m_isSlackBotActive;
-        public bool IsSlackBotActive
-        {
-            get { return m_isSlackBotActive; }
-            set
-            {
-                m_isSlackBotActive = value;
-                NotifyOfPropertyChange(() => IsSlackBotActive);
-                NotifyOfPropertyChange(() => SlackBotActiveText);
-            }
-        }
+        public bool IsSlackBotActive { get { return SLACK_SERVICE.IsEnabled; } }
+        public string SlackBotActiveText { get { return IsSlackBotActive ? "Active" : "Disabled"; } }
 
         public bool IsSlackBotChannelValid
         {
             get { return SLACK_SERVICE != null ? SLACK_SERVICE.HasValidChannel : false; }
         }
-
-        public string SlackBotActiveText { get { return IsSlackBotActive ? "Active" : "Disabled"; } }
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
         readonly IMessageBoxService MSG_BOX_SERVICE = null;
@@ -238,7 +227,6 @@ namespace Reposed.Preferences
                 //if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Token) || string.IsNullOrEmpty(ChannelName))
                 //    return;
 
-                IsSlackBotActive = false;
                 SLACK_SERVICE.Set(new Models.Plugins.SlackBotInfo()
                 {
                     Name = Name,
@@ -246,19 +234,22 @@ namespace Reposed.Preferences
                     Channel = ChannelName,
                 });
 
-                IsSlackBotActive = SLACK_SERVICE.IsConnected;
+                NotifyOfPropertyChange(() => IsSlackBotActive);
             }
         }
 
         private void OnSlackBotConnected(bool connected)
         {
-            IsSlackBotActive = connected;
+            NotifyOfPropertyChange(() => IsSlackBotActive);
             NotifyOfPropertyChange(() => IsSlackBotChannelValid);
+            NotifyOfPropertyChange(() => SlackBotActiveText);
         }
 
         private void OnSlackBotChannelChanged(bool validChannel, string channelName)
         {
+            NotifyOfPropertyChange(() => IsSlackBotActive);
             NotifyOfPropertyChange(() => IsSlackBotChannelValid);
+            NotifyOfPropertyChange(() => SlackBotActiveText);
         }
     }
 }

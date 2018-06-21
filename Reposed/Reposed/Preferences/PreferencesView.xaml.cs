@@ -22,6 +22,24 @@ namespace Reposed.Preferences
         public PreferencesView()
         {
             InitializeComponent();
+            Loaded += OnViewLoaded;
+            Unloaded += OnViewUnloaded;
+        }
+
+        private void OnViewLoaded(object sender, RoutedEventArgs e)
+        {
+            c_slackGrid.MouseDown += OnGridMouseDown;
+        }
+
+        private void OnViewUnloaded(object sender, RoutedEventArgs e)
+        {
+            c_slackGrid.MouseDown -= OnGridMouseDown;
+        }
+
+        private void OnGridMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            c_slackGrid.Focus();
+            Keyboard.ClearFocus();
         }
     }
 }

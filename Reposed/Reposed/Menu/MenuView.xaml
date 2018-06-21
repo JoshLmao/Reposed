@@ -5,16 +5,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reposed.Menu"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:converters="clr-namespace:Reposed.Converters"
              mc:Ignorable="d" 
              d:DesignWidth="1000">
-    <Menu Background="{DynamicResource WindowBackgroundBrush}" TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
-        <MenuItem Header="Reposed">
-            <Separator />
-            <MenuItem Header="Close" cal:Message.Attach="[Event Click] = [Action OnCloseApplication()]"/>
-        </MenuItem>
-        <MenuItem Header="Tools">
-            <MenuItem Header="Preferences" cal:Message.Attach="[Event Click] = [Action OnOpenPreferences()]">
-            </MenuItem>   
-        </MenuItem>
-    </Menu>
+    <UserControl.Resources>
+        <converters:PluginToIconConverter x:Key="p2ic"/>
+        <converters:BooleanToVisibilityConverter x:Key="b2vc"/>
+    </UserControl.Resources>
+    <DockPanel Background="{DynamicResource WindowBackgroundBrush}" TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
+        <Path Data="{DynamicResource SlackIcon}" Fill="{DynamicResource PrimaryTextBrush}" Visibility="{Binding IsSlackBotActive, Converter={StaticResource b2vc}}"
+              DockPanel.Dock="Right" Stretch="Uniform" Height="15" Margin="5,0" ToolTip="Slack bot is active"/>
+        <Menu Background="Transparent" TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
+            <MenuItem Header="Reposed">
+                <Separator />
+                <MenuItem Header="Close" cal:Message.Attach="[Event Click] = [Action OnCloseApplication()]"/>
+            </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="Preferences" cal:Message.Attach="[Event Click] = [Action OnOpenPreferences()]">
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+    </DockPanel>
 </UserControl>
