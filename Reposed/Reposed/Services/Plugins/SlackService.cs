@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using Reposed.Core.Events;
 using Reposed.Core.Plugins;
 using Reposed.Events;
 using Reposed.Plugins.Slack;
@@ -11,12 +12,14 @@ using System.Threading.Tasks;
 
 namespace Reposed.Services.Plugins
 {
-    public class SlackService : IPluginService, IHandle<OnApplicationClosing>
+    public class SlackService : IPluginService, IHandle<OnApplicationClosing>, IHandle<RunScheduledBackup>
     {
         public class BackupInfo
         {
             public bool IsSuccessful { get; set; }
             public TimeSpan TotalBackupTime { get; set; }
+            public double DirectorySizeGB { get; set; }
+            public List<string> SuccessfulBackupServices { get; set; }
         }
 
         public bool IsConnected { get { return m_bot != null ? m_bot.IsConnected : false; } }
@@ -88,12 +91,16 @@ namespace Reposed.Services.Plugins
             List<KeyValuePair<string, string>> fields = null;
             if (info.IsSuccessful)
             {
-                msg = $"Successfully backed up repositories";
+                List<string> formatted = info.SuccessfulBackupServices.Select(x => x.ToLower()).ToList();
+
+                msg = $"Successfully backed up repositories, using {info.DirectorySizeGB}GB of space";
                 hexColor = SuccessfulHexColor;
                 fields = new List<KeyValuePair<string, string>>()
                 {
                     new KeyValuePair<string, string>("Status", "Successful"),
                     new KeyValuePair<string, string>("Total Time", info.TotalBackupTime.ToString()),
+                    new KeyValuePair<string, string>("Directory Size", $"{info.DirectorySizeGB}GB"),
+                    new KeyValuePair<string, string>("Successful Services", String.Join(", ", formatted)),
                 };
             }
             else
@@ -104,6 +111,7 @@ namespace Reposed.Services.Plugins
                 {
                     new KeyValuePair<string, string>("Status", "Failed"),
                     new KeyValuePair<string, string>("Total Time", info.TotalBackupTime.ToString()),
+                    new KeyValuePair<string, string>("Directory Size", $"{info.DirectorySizeGB}GB"),
                     //new KeyValuePair<string, string>("Reason", "ToDo"),
                 };
             }
@@ -125,6 +133,11 @@ namespace Reposed.Services.Plugins
 
                 SendMessage("Reposed shut down unexpectedly", FailedHexColor, details);
             }
+        }
+
+        public void Handle(RunScheduledBackup message)
+        {
+            
         }
     }
 }

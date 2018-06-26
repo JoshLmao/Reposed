@@ -8,6 +8,7 @@ using Reposed.Services;
 using Reposed.Services.Plugins;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -249,10 +250,15 @@ namespace Reposed.BackupController
             IsBackingUp = true;
             LastBackupStartTime = DateTime.Now;
 
-            foreach(IBackupService service in BackupServices)
-                service.Backup(BackupPath);
+            List<IBackupService> successfulServices = new List<IBackupService>();
+            foreach (IBackupService service in BackupServices)
+            {
+                bool result = service.Backup(BackupPath);
+                if (result)
+                    successfulServices.Add(service);
+            }
 
-            EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupFinished(true));
+            EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupFinished(true) { SuccessfulBackupServices = successfulServices });
         }
 
         public void Handle(PreferencesUpdated message)
@@ -342,12 +348,16 @@ namespace Reposed.BackupController
             NotifyOfPropertyChange(() => ProgressText);
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
 
-            if(SLACK_SERVICE != null && SLACK_SERVICE.IsEnabled)
+            long dirSizeBytes = Directory.GetFiles(BackupPath, "*", SearchOption.AllDirectories).Sum(t => (new FileInfo(t).Length));
+
+            if (SLACK_SERVICE != null && SLACK_SERVICE.IsEnabled)
             {
                 SLACK_SERVICE.SendBackupMessage(new SlackService.BackupInfo()
                 {
                     IsSuccessful = message.IsSuccessful,
                     TotalBackupTime = TotalBackupTime,
+                    DirectorySizeGB = BytesToGBs(dirSizeBytes, 2),
+                    SuccessfulBackupServices = message.SuccessfulBackupServices.Select(x => x.ServiceId).ToList(),
                 });
             }
         }
@@ -390,6 +400,14 @@ namespace Reposed.BackupController
         {
             NotifyOfPropertyChange(() => ProgressText);
             CurrentStatusText = $"Starting backup of '{message.Repo}'";
+        }
+
+        double BytesToGBs(long bytes, int decimalPlaces)
+        {
+            var kiloBytes = bytes / 1024.0;
+            var megaBytes = kiloBytes / 1024.0;
+            double gigaBytes = megaBytes / 1024.0;
+            return Math.Round(gigaBytes, decimalPlaces);
         }
     }
 }

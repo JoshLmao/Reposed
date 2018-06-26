@@ -17,6 +17,7 @@ namespace Reposed.Core.Events
     public class OnBackupFinished
     {
         public bool IsSuccessful { get; set; }
+        public List<IBackupService> SuccessfulBackupServices { get; set; }
         public OnBackupFinished(bool isSuccessful)
         {
             IsSuccessful = isSuccessful;
