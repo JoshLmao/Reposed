@@ -11,6 +11,7 @@
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
         d:DesignHeight="600" d:DesignWidth="1000"
+        Icon="pack://application:,,,/Resources/Icon/reposed_logo.png"
         cal:Message.Attach="[Event Closing] = [Action OnAppClosing()]">
     <Grid Background="{DynamicResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
