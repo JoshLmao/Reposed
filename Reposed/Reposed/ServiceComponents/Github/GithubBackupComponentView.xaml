@@ -91,7 +91,7 @@
                 </StackPanel>
                 <DockPanel Margin="5,3">
                     <TextBlock Text="Username:" Margin="5,3" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Username}" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding Username}" VerticalAlignment="Center" />
                 </DockPanel>
                 <DockPanel Margin="5,3">
                     <TextBlock Text="Token: " Margin="5,3" FontWeight="SemiBold"/>

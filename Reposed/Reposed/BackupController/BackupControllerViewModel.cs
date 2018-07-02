@@ -36,12 +36,8 @@ namespace Reposed.BackupController
             get { return m_selectedBackupService; }
             set
             {
-                OnSelectedBackupServicePreChanged();
-
                 m_selectedBackupService = value;
                 NotifyOfPropertyChange(() => SelectedBackupService);
-
-                OnSelectedBackupServiceChanged();
             }
         }
 
@@ -116,9 +112,11 @@ namespace Reposed.BackupController
             {
                 if (m_scheduledBackupService.IsEnabled)
                     return false;
-                if (SelectedBackupService != null)
-                    return SelectedBackupService.CanBackup;
-                return false;
+
+                if (BackupServices != null)
+                    return BackupServices.Any(x => x.CanBackup);
+                else
+                    return false;
             }
         }
 
@@ -140,9 +138,7 @@ namespace Reposed.BackupController
             set
             {
                 if (string.IsNullOrEmpty(value))
-                {
                     m_currentStatusText = m_scheduledBackupService.IsEnabled ? "Waiting for scheduled backup..." :  "Idle";
-                }
                 else
                     m_currentStatusText = value;
                 NotifyOfPropertyChange(() => CurrentStatusText);
@@ -150,11 +146,6 @@ namespace Reposed.BackupController
         }
 
         public string BackupPath { get { return m_prefs?.LocalBackupPath; } }
-
-        public string ProgressText
-        {
-            get { return $"Progress: Completed = {BackupServices?.Sum(x => x.CompletedReposCount)}, Succeeded = {BackupServices?.Sum(x => x.SucceededReposCount)}, TotalRepos = {BackupServices?.Sum(x => x.TotalReposCount)}"; }
-        }
 
         readonly IEventAggregator EVENT_AGGREGATOR = null;
         readonly IWindowManager WINDOW_MANAGER = null;
@@ -165,6 +156,10 @@ namespace Reposed.BackupController
         private Thread m_backupThread = null;
         private Thread m_backupCompleteMsgChangeThread = null;
         private ScheduledBackupService m_scheduledBackupService = null;
+        /// <summary>
+        /// The current service being backup up if in progress
+        /// </summary>
+        private IBackupService m_currentBackupService = null;
 
         public BackupControllerViewModel(IEventAggregator eventAggregator, IWindowManager windowManager, IMessageBoxService msgBoxService, ScheduledBackupService scheduledBackupService, SlackService slackService)
         {
@@ -200,32 +195,26 @@ namespace Reposed.BackupController
             }
 
             SelectedBackupService = BackupServices.FirstOrDefault();
+            NotifyOfPropertyChange(() => CanBackup);
         }
 
         public void OnBackupNow()
         {
             if (PreBackupChecks(true))
             {
-                if (SelectedBackupService.IsAuthorized)
-                {
-                    ThreadStart start = new ThreadStart(RunBackup);
-                    m_backupThread = new Thread(start);
-                    m_backupThread.Start();
-                }
-                else
-                {
-                    LOGGER.Error($"Unable to backup service. Isn't valid");
-                }
+                ThreadStart start = new ThreadStart(RunBackup);
+                m_backupThread = new Thread(start);
+                m_backupThread.Start();
             }
         }
 
         private bool PreBackupChecks(bool showMsgBoxDialog)
         {
-            if (SelectedBackupService == null)
-            {
-                LOGGER.Error("Unable to backup. No selected backup service");
-                return false;
-            }
+            //if (SelectedBackupService == null)
+            //{
+            //    LOGGER.Error("Unable to backup. No selected backup service");
+            //    return false;
+            //}
 
             if (m_backupThread != null)
             {
@@ -267,6 +256,13 @@ namespace Reposed.BackupController
             List<IBackupService> successfulServices = new List<IBackupService>();
             foreach (IBackupService service in BackupServices)
             {
+                m_currentBackupService = service;
+                if (!m_currentBackupService.IsAuthorized)
+                {
+                    LOGGER.Info($"{service.ServiceId} isn't authorized to backup");
+                    continue;
+                }
+
                 bool result = service.Backup(BackupPath);
                 if (result)
                     successfulServices.Add(service);
@@ -284,32 +280,6 @@ namespace Reposed.BackupController
         public void Handle(OnAccountSelected message)
         {
             SelectedBackupService = message.Service;
-        }
-
-        private void OnSelectedBackupServicePreChanged()
-        {
-            if (SelectedBackupService != null)
-            {
-                SelectedBackupService.OnCanBackupChanged -= OnCanBackupChanged;
-                //SelectedBackupService.OnIsAuthorizedChanged -= OnIsAuthorizedChanged;
-            }
-        }
-
-        private void OnSelectedBackupServiceChanged()
-        {
-            if (SelectedBackupService != null)
-            {
-                SelectedBackupService.OnCanBackupChanged += OnCanBackupChanged;
-                //SelectedBackupService.OnIsAuthorizedChanged += OnIsAuthorizedChanged;
-            }
-
-            NotifyOfPropertyChange(() => CanBackup);
-            NotifyOfPropertyChange(() => ProgressText);
-        }
-
-        private void OnCanBackupChanged(bool canBackup)
-        {
-            NotifyOfPropertyChange(() => CanBackup);
         }
 
         public void OnConfigureAutoBackup()
@@ -355,7 +325,6 @@ namespace Reposed.BackupController
                 m_backupCompleteMsgChangeThread.Start();
             }
 
-            NotifyOfPropertyChange(() => ProgressText);
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
 
             long dirSizeBytes = Directory.GetFiles(BackupPath, "*", SearchOption.AllDirectories).Sum(t => (new FileInfo(t).Length));
@@ -367,16 +336,9 @@ namespace Reposed.BackupController
                     IsSuccessful = message.IsSuccessful,
                     TotalBackupTime = TotalBackupTime,
                     DirectorySizeGB = BytesToGBs(dirSizeBytes, 2),
-                    SuccessfulBackupServices = message.SuccessfulBackupServices.Select(x => x.ServiceId).ToList(),
+                    SuccessfulBackupServices = message.SuccessfulBackupServices?.Select(x => x.ServiceId).ToList(),
                 });
             }
-        }
-
-        private void ChangeToIdleDelay()
-        {
-            Thread.Sleep(10 * 1000);
-            CurrentStatusText = "";
-            m_backupCompleteMsgChangeThread = null;
         }
 
         public void OnCancelBackup()
@@ -386,7 +348,13 @@ namespace Reposed.BackupController
                 m_backupThread.Abort();
                 m_backupThread = null;
 
-                SelectedBackupService.Abort();
+                if(m_currentBackupService != null)
+                    m_currentBackupService.Abort();
+                m_currentBackupService = null;
+
+                //Reset progress bar to default
+                CurrentBackupProgressValue = 0;
+                MaxBackupProgressValue = 1;
 
                 EVENT_AGGREGATOR.PublishOnCurrentThread(new OnBackupFinished(false));
 
@@ -396,24 +364,27 @@ namespace Reposed.BackupController
 
         public void Handle(OnRepoBackupSucceeded message)
         {
-            NotifyOfPropertyChange(() => ProgressText);
             CurrentStatusText = $"Finished backup of '{message.Repo}'";
-
             CurrentBackupProgressValue++;
         }
 
         public void Handle(OnRepoBackupFailed message)
         {
-            NotifyOfPropertyChange(() => ProgressText);
             CurrentStatusText = $"Failed backup of '{message.Repo}'";
-
             CurrentBackupProgressValue++;
         }
 
         public void Handle(OnRepoStartBackup message)
         {
-            NotifyOfPropertyChange(() => ProgressText);
             CurrentStatusText = $"Starting backup of '{message.Repo}'";
+        }
+
+        private void ChangeToIdleDelay()
+        {
+            Thread.Sleep(10 * 1000);
+            CurrentStatusText = "";
+            m_backupCompleteMsgChangeThread = null;
+            CurrentBackupProgressValue = 0;
         }
 
         private double BytesToGBs(long bytes, int decimalPlaces)

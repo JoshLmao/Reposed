@@ -20,7 +20,7 @@
         <converters:DateTimeToFormatConverter x:Key="dt2fc"/>
     </UserControl.Resources>
     <ContentControl>
-        <Grid>
+        <Grid Background="{DynamicResource PrimaryBackgroundBrush}" Margin="5,3">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="auto"/>
@@ -32,8 +32,7 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Margin="5,0">
-                    <TextBlock Grid.Column="1" Text="{Binding ProgressText, FallbackValue=Progress, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Margin="5,0" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Last Backup Start Time:"/>
                         <TextBlock Text="{Binding LastBackupStartTime, Converter={StaticResource dt2fc}}" Margin="5,0"/>
@@ -54,15 +53,15 @@
                 </StackPanel>
                 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Padding="5,3" Margin="5,3" MinWidth="{StaticResource MinBackupButtonWidth}" IsEnabled="{Binding CanBackup, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsBackingUp, Converter={StaticResource ib2vc}}"
+                    <Button Padding="5,3" Margin="5,7" MinWidth="{StaticResource MinBackupButtonWidth}" IsEnabled="{Binding CanBackup, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsBackingUp, Converter={StaticResource ib2vc}}"
                             cal:Message.Attach="[Event Click] = [Action OnBackupNow()]">
                         <TextBlock Text="Backup Now"/>
                     </Button>
-                    <Button Padding="5,3" Margin="5,3" MinWidth="{StaticResource MinBackupButtonWidth}" Visibility="{Binding IsBackingUp, Converter={StaticResource b2vc}}"
+                    <Button Padding="5,3" Margin="5,7" MinWidth="{StaticResource MinBackupButtonWidth}" Visibility="{Binding IsBackingUp, Converter={StaticResource b2vc}}"
                             cal:Message.Attach="[Event Click] = [Action OnCancelBackup()]">
                         <TextBlock Text="Cancel Backup" />
                     </Button>
-                    <Button Padding="5,3" MinWidth="{StaticResource MinBackupButtonWidth}" Margin="5,3"
+                    <Button Padding="5,3" Margin="5,7" MinWidth="{StaticResource MinBackupButtonWidth}"
                             cal:Message.Attach="[Event Click] = [Action OnConfigureAutoBackup()]">
                         <TextBlock Text="Configure Auto Backup"/>
                     </Button>

@@ -18,7 +18,7 @@
     <Color x:Key="PrimaryBackgroundColor">#313744</Color>
     <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource PrimaryBackgroundColor}"/>
     <!--Secondary Background-->
-    <Color x:Key="SecondaryBackgroundColor">Green</Color>
+    <Color x:Key="SecondaryBackgroundColor">#FF424D66</Color>
     <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="{StaticResource SecondaryBackgroundColor}" />
 
     <!--Primary Button-->

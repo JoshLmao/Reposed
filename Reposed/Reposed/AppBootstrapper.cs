@@ -103,6 +103,7 @@ namespace Reposed
             m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
             m_iocContainer.Singleton<IBackupService, GithubBackupService>();
             //m_iocContainer.Singleton<IBackupService, GitlabBackupService>();
+
             m_iocContainer.Singleton<ScheduledBackupService>();
             m_iocContainer.Singleton<BackupSettingsService>();
 
