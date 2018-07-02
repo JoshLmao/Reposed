@@ -80,14 +80,25 @@ namespace Reposed.BackupController
             }
         }
 
-        int m_backupProgressPercentageValue;
-        public int BackupProgressPercentageValue
+        int m_currentBackupProgressValue = 0;
+        public int CurrentBackupProgressValue
         {
-            get { return m_backupProgressPercentageValue; }
+            get { return m_currentBackupProgressValue; }
             set
             {
-                m_backupProgressPercentageValue = value;
-                NotifyOfPropertyChange(() => BackupProgressPercentageValue);
+                m_currentBackupProgressValue = value;
+                NotifyOfPropertyChange(() => CurrentBackupProgressValue);
+            }
+        }
+
+        int m_maxBackupProgressValue = 1;
+        public int MaxBackupProgressValue
+        {
+            get { return m_maxBackupProgressValue; }
+            set
+            {
+                m_maxBackupProgressValue = value;
+                NotifyOfPropertyChange(() => MaxBackupProgressValue);
             }
         }
 
@@ -250,6 +261,9 @@ namespace Reposed.BackupController
             IsBackingUp = true;
             LastBackupStartTime = DateTime.Now;
 
+            MaxBackupProgressValue = BackupServices.Sum(x => x.TotalReposCount);
+            CurrentBackupProgressValue = 0;
+
             List<IBackupService> successfulServices = new List<IBackupService>();
             foreach (IBackupService service in BackupServices)
             {
@@ -296,10 +310,6 @@ namespace Reposed.BackupController
         private void OnCanBackupChanged(bool canBackup)
         {
             NotifyOfPropertyChange(() => CanBackup);
-        }
-
-        private void OnRepoBackedUp(string repoName)
-        {
         }
 
         public void OnConfigureAutoBackup()
@@ -388,12 +398,16 @@ namespace Reposed.BackupController
         {
             NotifyOfPropertyChange(() => ProgressText);
             CurrentStatusText = $"Finished backup of '{message.Repo}'";
+
+            CurrentBackupProgressValue++;
         }
 
         public void Handle(OnRepoBackupFailed message)
         {
             NotifyOfPropertyChange(() => ProgressText);
             CurrentStatusText = $"Failed backup of '{message.Repo}'";
+
+            CurrentBackupProgressValue++;
         }
 
         public void Handle(OnRepoStartBackup message)
@@ -402,10 +416,10 @@ namespace Reposed.BackupController
             CurrentStatusText = $"Starting backup of '{message.Repo}'";
         }
 
-        double BytesToGBs(long bytes, int decimalPlaces)
+        private double BytesToGBs(long bytes, int decimalPlaces)
         {
-            var kiloBytes = bytes / 1024.0;
-            var megaBytes = kiloBytes / 1024.0;
+            double kiloBytes = bytes / 1024.0;
+            double megaBytes = kiloBytes / 1024.0;
             double gigaBytes = megaBytes / 1024.0;
             return Math.Round(gigaBytes, decimalPlaces);
         }

@@ -78,7 +78,7 @@
                     <TextBlock Text="{Binding CurrentStatusText, FallbackValue=StatusText}" Margin="5,0" DockPanel.Dock="Left"/>
                     <TextBlock Text="{Binding BackupPath, FallbackValue=FallbackBackupPath}" Opacity="0.5" FontSize="10" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
                 </DockPanel>
-                <ProgressBar Height="10" Grid.Row="1" Value="{Binding BackupProgressPercentageValue}" Maximum="100"/>
+                <ProgressBar Height="10" Grid.Row="1" Value="{Binding CurrentBackupProgressValue}" Maximum="{Binding MaxBackupProgressValue}"/>
             </Grid>
         </Grid>
     </ContentControl>
