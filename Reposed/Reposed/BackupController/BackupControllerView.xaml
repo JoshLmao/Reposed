@@ -8,7 +8,7 @@
              xmlns:converters="clr-namespace:Reposed.Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="75" d:DesignWidth="1000"
+             d:DesignHeight="95" d:DesignWidth="1000"
              cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded($executionContext)]" 
              TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
     <UserControl.Resources>

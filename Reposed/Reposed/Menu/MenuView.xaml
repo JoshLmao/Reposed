@@ -18,10 +18,10 @@
         <Menu Background="Transparent" TextElement.Foreground="{DynamicResource PrimaryTextBrush}">
             <MenuItem Header="Reposed">
                 <Separator />
-                <MenuItem Header="Close" cal:Message.Attach="[Event Click] = [Action OnCloseApplication()]"/>
+                <MenuItem Header="Close" cal:Message.Attach="[Event Click] = [Action OnCloseApplication()]" Foreground="Black"/>
             </MenuItem>
             <MenuItem Header="Tools">
-                <MenuItem Header="Preferences" cal:Message.Attach="[Event Click] = [Action OnOpenPreferences()]">
+                <MenuItem Header="Preferences" cal:Message.Attach="[Event Click] = [Action OnOpenPreferences()]" Foreground="Black">
                 </MenuItem>
             </MenuItem>
         </Menu>

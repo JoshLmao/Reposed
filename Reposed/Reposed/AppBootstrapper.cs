@@ -23,11 +23,14 @@ namespace Reposed
 
         SimpleContainer m_iocContainer;
         bool m_hasLoggedExceptionInfo = false;
+        DateTime m_startTime = DateTime.MinValue;
 
         public AppBootstrapper()
         {
             LOGGER = NLog.LogManager.GetCurrentClassLogger();
             LOGGER.Info("Application Started");
+
+            m_startTime = DateTime.Now;
 
             System.Windows.Application.Current.DispatcherUnhandledException += OnUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
@@ -79,6 +82,13 @@ namespace Reposed
             //ToDo: splash screen
 
             base.PrepareApplication();
+        }
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            base.OnExit(sender, e);
+
+            LOGGER.Info($"Reposed closed after {DateTime.Now - m_startTime}");
         }
 
         protected override void Configure()

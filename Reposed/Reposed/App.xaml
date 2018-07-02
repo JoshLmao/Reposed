@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="Themes/Dark/Colors.xaml"/>
                 <ResourceDictionary Source="Themes/ThirdPartyColors.xaml"/>
                 <ResourceDictionary Source="Resources/VectorIcons.xaml"/>
+                <ResourceDictionary Source="Resources/Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

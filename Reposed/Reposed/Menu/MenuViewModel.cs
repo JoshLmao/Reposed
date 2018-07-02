@@ -7,7 +7,6 @@ namespace Reposed.Menu
 {
     public class MenuViewModel : ViewModelBase
     {
-        bool m_isSlackBotActive;
         public bool IsSlackBotActive
         {
             get { return SLACK_BOT_SERVICE.IsConnected && SLACK_BOT_SERVICE.IsEnabled; }
