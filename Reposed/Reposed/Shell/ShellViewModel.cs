@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using Reposed.Accounts;
 using Reposed.BackupController;
+using Reposed.Core.Dialogs;
 using Reposed.Events;
 using Reposed.Menu;
 using Reposed.MVVM;
@@ -24,12 +25,14 @@ namespace Reposed.Shell
 
         readonly IWindowManager WINDOW_MANAGER = null;
         readonly IEventAggregator EVENT_AGGREAGATOR = null;
+        readonly IMessageBoxService MSG_BOX_SERVICE = null;
 
-        public ShellViewModel(IWindowManager windowManager, IEventAggregator eventAggregator, MenuViewModel menuViewModel, AccountsViewModel accountsViewModel, BackupControllerViewModel backupControllerViewModel,
+        public ShellViewModel(IWindowManager windowManager, IEventAggregator eventAggregator, IMessageBoxService msgBoxService, MenuViewModel menuViewModel, AccountsViewModel accountsViewModel, BackupControllerViewModel backupControllerViewModel,
             ServiceComponentsHolderViewModel serviceComponentsViewModel)
         {
             WINDOW_MANAGER = windowManager;
             EVENT_AGGREAGATOR = eventAggregator;
+            MSG_BOX_SERVICE = msgBoxService;
 
             MenuViewModel = menuViewModel;
             MenuViewModel.ConductWith(this);
@@ -44,9 +47,35 @@ namespace Reposed.Shell
             ServiceComponentsHolderViewModel.ConductWith(this);
         }
 
-        public void OnAppClosing()
+        public void OnAppClosing(ActionExecutionContext e)
         {
-            EVENT_AGGREAGATOR.PublishOnCurrentThread(new OnApplicationClosing(false));
+            if (CanCloseApp())
+            {
+                EVENT_AGGREAGATOR.PublishOnCurrentThread(new OnApplicationClosing(false));
+            }
+            else
+            {
+                (e.EventArgs as System.ComponentModel.CancelEventArgs).Cancel = true;
+            }
+        }
+
+        public bool CanCloseApp()
+        {
+            if (BackupControllerViewModel.IsBackingUp)
+            {
+                System.Windows.MessageBoxResult rst = MSG_BOX_SERVICE.Show("Are you sure you want to close? A backup is currently in progress", "Backup in progress...", System.Windows.MessageBoxButton.YesNo);
+                if (rst == System.Windows.MessageBoxResult.No)
+                    return false;
+            }
+
+            if (BackupControllerViewModel.IsScheduledEnabled)
+            {
+                System.Windows.MessageBoxResult rst = MSG_BOX_SERVICE.Show("Are you sure you want to close? Scheduled backup is enabled and will be cancelled", "Scheduled Backup enabled", System.Windows.MessageBoxButton.YesNo);
+                if (rst == System.Windows.MessageBoxResult.No)
+                    return false;
+            }
+
+            return true;
         }
     }
 }

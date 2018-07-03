@@ -12,7 +12,7 @@
         mc:Ignorable="d"
         d:DesignHeight="600" d:DesignWidth="1000"
         Icon="pack://application:,,,/Resources/Icon/reposed_logo.png"
-        cal:Message.Attach="[Event Closing] = [Action OnAppClosing()]">
+        cal:Message.Attach="[Event Closing] = [Action OnAppClosing($executionContext)]">
     <Grid Background="{DynamicResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
