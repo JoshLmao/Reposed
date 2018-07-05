@@ -33,7 +33,6 @@ namespace Reposed.Core
         /// </summary>
         string CurrentBackedUpRepo { get; }
 
-        event System.Action<bool> OnCanBackupChanged;
         event System.Action<bool> OnIsAuthorizedChanged;
 
         /// <summary>

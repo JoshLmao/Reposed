@@ -100,6 +100,7 @@ namespace Reposed
             m_iocContainer.Singleton<IEventAggregator, EventAggregator>();
 
             //Services
+            m_iocContainer.Singleton<IBackupService, ServiceComponents.BackupInformation.BackupInformationService>();
             m_iocContainer.Singleton<IBackupService, BitbucketBackupService>();
             m_iocContainer.Singleton<IBackupService, GithubBackupService>();
             //m_iocContainer.Singleton<IBackupService, GitlabBackupService>();
@@ -125,6 +126,7 @@ namespace Reposed
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Bitbucket.BitbucketBackupComponentViewModel>(BitbucketBackupService.SERVICE_ID);
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Github.GithubBackupComponentViewModel>(GithubBackupService.SERVICE_ID);
             m_iocContainer.Singleton<ServiceComponents.IServiceComponent, ServiceComponents.Gitlab.GitlabBackupComponentViewModel>(GitlabBackupService.SERVICE_ID);
+            m_iocContainer.Singleton<ServiceComponents.IServiceComponent, BackupInformation.BackupInformationViewModel>(ServiceComponents.BackupInformation.BackupInformationService.SERVICE_ID);
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)

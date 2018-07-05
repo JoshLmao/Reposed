@@ -87,6 +87,10 @@
     </Compile>
     <Compile Include="Accounts\AccountsViewModel.cs" />
     <Compile Include="BackupController\ScheduledBackupTimeConverter.cs" />
+    <Compile Include="BackupInformation\BackupInformationView.xaml.cs">
+      <DependentUpon>BackupInformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BackupInformation\BackupInformationViewModel.cs" />
     <Compile Include="Converters\AuthorizedToColorConverter.cs" />
     <Compile Include="Converters\BooleanConverters.cs" />
     <Compile Include="Converters\DateTimeToFormatConverter.cs" />
@@ -115,6 +119,7 @@
       <DependentUpon>PreferencesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Preferences\PreferencesViewModel.cs" />
+    <Compile Include="ServiceComponents\BackupInformation\BackupInformationService.cs" />
     <Compile Include="ServiceComponents\Bitbucket\BitbucketBackupComponentView.xaml.cs">
       <DependentUpon>BitbucketBackupComponentView.xaml</DependentUpon>
     </Compile>
@@ -151,6 +156,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BackupController\BackupControllerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BackupInformation\BackupInformationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

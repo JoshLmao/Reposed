@@ -97,6 +97,8 @@ namespace Reposed.Preferences
             SLACK_SERVICE = slackService;
             SLACK_SERVICE.OnBotConnectionChanged += OnSlackBotConnected;
             SLACK_SERVICE.OnBotChannelChanged += OnSlackBotChannelChanged;
+
+            LoadPreferences();
         }
 
         public void LoadPreferences()

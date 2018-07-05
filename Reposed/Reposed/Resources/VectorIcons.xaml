@@ -26,4 +26,6 @@
     <StreamGeometry x:Key="PluginsIcon">M16,7V3H14V7H10V3H8V7H8C7,7 6,8 6,9V14.5L9.5,18V21H14.5V18L18,14.5V9C18,8 17,7 16,7Z</StreamGeometry>
     <!--Output Log Icon - http://modernuiicons.com/ "appbar.book"-->
     <StreamGeometry x:Key="OutputLogIcon">F1 M 22,19L 24,19L 24,57L 22,57L 22,19 Z M 26,57L 26,19.0001L 53.9999,19.0001L 53.9999,57L 26,57 Z M 30,24L 30,27L 50,27L 50,24L 30,24 Z M 30,32L 30,35L 33,35L 33,32L 30,32 Z M 36,32L 36,35L 49,35L 49,32L 36,32 Z M 30,40L 30,43L 33,43L 33,40L 30,40 Z M 36,40L 36,43L 48,43L 48,40L 36,40 Z M 30,48L 30,51L 33,51L 33,48L 30,48 Z M 36,48L 36,51L 50,51L 50,48L 36,48 Z </StreamGeometry>
+    <!--Backup Info Icon - http://modernuiicons.com/ "appbar.folder"-->
+    <StreamGeometry x:Key="BackupInformationIcon">F1 M 21,30.0001L 55.9999,30.0001L 55.9999,50L 21,50L 21,30.0001 Z M 52,28L 37,28C 38,25 39.4999,24.0001 39.4999,24.0001L 50.75,24C 51.3023,24 52,24.6977 52,25.25L 52,28 Z </StreamGeometry>
 </ResourceDictionary>

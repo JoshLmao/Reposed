@@ -2,6 +2,7 @@
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Core.Services.Github;
 using Reposed.Core.Services.Gitlab;
+using Reposed.ServiceComponents.BackupInformation;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,6 +26,8 @@ namespace Reposed.Converters
                     return Application.Current.FindResource("GitHubIcon");
                 else if (value is GitlabBackupService)
                     return Application.Current.FindResource("GitLabIcon");
+                else if (value is BackupInformationService)
+                    return Application.Current.FindResource("BackupInformationIcon");
                 else
                     throw new NotImplementedException("Add icon!!");
             }

@@ -35,7 +35,6 @@ namespace Reposed.Core.Services
             protected set
             {
                 m_canBackup = value;
-                OnCanBackupChanged?.Invoke(CanBackup);
             }
         }
 
@@ -48,7 +47,6 @@ namespace Reposed.Core.Services
         public string Username { get; protected set; }
 
         public event Action<bool> OnIsAuthorizedChanged;
-        public event Action<bool> OnCanBackupChanged;
 
         protected abstract string m_serviceNameFolder { get; }
 
