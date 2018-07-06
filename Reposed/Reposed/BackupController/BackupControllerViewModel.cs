@@ -6,6 +6,7 @@ using Reposed.Events;
 using Reposed.MVVM;
 using Reposed.Services;
 using Reposed.Services.Plugins;
+using Reposed.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -327,8 +328,7 @@ namespace Reposed.BackupController
 
             NotifyOfPropertyChange(() => NextScheduledBackupTime);
 
-            long dirSizeBytes = Directory.GetFiles(BackupPath, "*", SearchOption.AllDirectories).Sum(t => (new FileInfo(t).Length));
-
+            long dirSizeBytes = DirectoryUtility.GetDirectoryWithChildrenSize(BackupPath);
             if (SLACK_SERVICE != null && SLACK_SERVICE.IsEnabled)
             {
                 SLACK_SERVICE.SendBackupMessage(new SlackService.BackupInfo()

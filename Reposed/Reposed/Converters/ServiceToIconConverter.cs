@@ -1,14 +1,10 @@
-﻿using Reposed.Core;
+﻿using Reposed.BackupInformation;
+using Reposed.Core;
 using Reposed.Core.Services.Bitbucket;
 using Reposed.Core.Services.Github;
 using Reposed.Core.Services.Gitlab;
-using Reposed.ServiceComponents.BackupInformation;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 

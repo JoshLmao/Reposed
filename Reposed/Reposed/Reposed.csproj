@@ -119,7 +119,7 @@
       <DependentUpon>PreferencesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Preferences\PreferencesViewModel.cs" />
-    <Compile Include="ServiceComponents\BackupInformation\BackupInformationService.cs" />
+    <Compile Include="BackupInformation\BackupInformationService.cs" />
     <Compile Include="ServiceComponents\Bitbucket\BitbucketBackupComponentView.xaml.cs">
       <DependentUpon>BitbucketBackupComponentView.xaml</DependentUpon>
     </Compile>
@@ -150,6 +150,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utility\DirectoryUtility.cs" />
     <Compile Include="Utility\FilePathUtility.cs" />
     <Page Include="Accounts\AccountsView.xaml">
       <SubType>Designer</SubType>
