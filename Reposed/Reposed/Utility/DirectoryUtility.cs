@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,6 +29,14 @@ namespace Reposed.Utility
         public static double BytesToGB(long bytes)
         {
             return bytes / 1024.0 / 1024.0 / 1024.0;
+        }
+
+        public static void OpenFolderInExplorer(string filePath)
+        {
+            if (Directory.Exists(filePath))
+            {
+                Process.Start(filePath);
+            }
         }
     }
 }

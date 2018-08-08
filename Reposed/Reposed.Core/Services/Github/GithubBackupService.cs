@@ -4,6 +4,7 @@ using Octokit;
 using Reposed.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,6 +62,7 @@ namespace Reposed.Core.Services.Github
 
             CanBackup = false;
             string currentRepoName = string.Empty;
+            string serviceSubFolderDir = Path.Combine(rootBackupDir, m_serviceNameFolder);
             try
             {
                 List<Repository> repos = m_githubApiService.GetAllRepositories();
@@ -75,7 +77,7 @@ namespace Reposed.Core.Services.Github
                     OnRepoStartBackup(repo.Name);
                     currentRepoName = repo.Name;
 
-                    if (BackupSingleRepository(rootBackupDir, repo.Name))
+                    if (BackupSingleRepository(serviceSubFolderDir, repo.Name))
                     {
                         OnRepoBackupSucceeded(repo.Name);
                     }

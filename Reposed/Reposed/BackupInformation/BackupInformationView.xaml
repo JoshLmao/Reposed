@@ -5,10 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reposed.BackupInformation"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:conv="clr-namespace:Reposed.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              TextElement.Foreground="{DynamicResource PrimaryTextBrush}"
              cal:Message.Attach="[Event Loaded] = [Action OnViewLoaded($executionContext)]">
+    <UserControl.Resources>
+        <conv:BooleanToVisibilityConverter x:Key="ib2vc" IsInverted="True"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -34,16 +38,20 @@
             </Grid.ColumnDefinitions>
             <!--Left Side-->
             <Grid Background="{DynamicResource PrimaryBackgroundBrush}" Margin="5">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding HasFolders, Converter={StaticResource ib2vc}}">
+                    <TextBlock Text="No Folders Available"/>
+                </Grid>
+                
                 <ListView ItemsSource="{Binding FoldersInformation}" Foreground="{DynamicResource PrimaryTextBrush}"
-                          Background="Transparent" BorderBrush="Transparent">
+                          Background="Transparent" BorderBrush="Transparent" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Visible">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Vertical"/>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type local:FolderInfo}">
-                            <GroupBox Margin="5" HorizontalAlignment="Stretch">
+                            <GroupBox Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <GroupBox.Header>
                                     <TextBlock Text="{Binding Name}" FontSize="20"/>
                                 </GroupBox.Header>
@@ -52,15 +60,22 @@
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding FullPath}"/>
-                                    </StackPanel>
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" cal:Message.Attach="[Event Click] = [Action OnOpenFolder($dataContext)]">
+                                            <TextBlock Text="Open Folder" FontSize="10" Margin="5,0"/>
+                                        </Button>
+                                        <TextBlock Text="{Binding FullPath}" Margin="5,0"/>
+                                    </DockPanel>
                                     
-                                    <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                    <StackPanel Orientation="Vertical" Grid.Row="1">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="Folder Size:" Margin="5,0"/>
                                             <TextBlock Text="{Binding SizeGB}"/>
                                             <TextBlock Text="GB"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Has LFS:" Margin="5,0"/>
+                                            <TextBlock Text="{Binding HasLFS}"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>

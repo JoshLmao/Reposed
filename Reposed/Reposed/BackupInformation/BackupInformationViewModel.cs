@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using Reposed.Core.Events;
 using Reposed.MVVM;
 using Reposed.ServiceComponents;
 using Reposed.Utility;
@@ -21,7 +22,7 @@ namespace Reposed.BackupInformation
         public bool HasLFS { get; set; }
     }
 
-    public class BackupInformationViewModel : ViewModelBase, IServiceComponent
+    public class BackupInformationViewModel : ViewModelBase, IServiceComponent, IHandle<OnRepoBackupSucceeded>, IHandle<OnRepoBackupFailed>
     {
         public static string SERVICE_ID { get { return "BackupInfo"; } }
 
@@ -33,6 +34,7 @@ namespace Reposed.BackupInformation
             {
                 m_foldersInformation = value;
                 NotifyOfPropertyChange(() => FoldersInformation);
+                NotifyOfPropertyChange(() => HasFolders);
             }
         }
 
@@ -69,16 +71,25 @@ namespace Reposed.BackupInformation
             }
         }
 
-        public BackupInformationViewModel()
+        public bool HasFolders { get { return FoldersInformation != null && FoldersInformation.Count > 0; } }
+
+        readonly IEventAggregator EVENT_AGGREGATOR;
+
+        public BackupInformationViewModel(IEventAggregator eventAggregator)
         {
-            
+            EVENT_AGGREGATOR = eventAggregator;
+            EVENT_AGGREGATOR.Subscribe(this);
         }
 
         public override void OnViewLoaded(ActionExecutionContext e)
         {
             base.OnViewLoaded(e);
+            UpdateInfo();
+        }
 
-            var prefsVM = IoC.Get<Preferences.PreferencesViewModel>();
+        void UpdateInfo()
+        {
+            Preferences.PreferencesViewModel prefsVM = IoC.Get<Preferences.PreferencesViewModel>();
             CurrentGitPath = prefsVM.GitPath;
             LocalBackupPath = prefsVM.LocalBackupPath;
 
@@ -86,13 +97,21 @@ namespace Reposed.BackupInformation
 
             DirectorySize = Math.Round(DirectoryUtility.BytesToGB(dirSizeBytes), 2);
 
-            FoldersInformation = GetFoldersInfo(LocalBackupPath);
+            List<FolderInfo> folderInfos = new List<FolderInfo>();
+            IEnumerable<Core.IBackupService> s = IoC.GetAll<Core.IBackupService>();
+            foreach (Core.IBackupService service in s)
+            {
+                string subFolder = Path.Combine(LocalBackupPath, service.ServiceId);
+                List<FolderInfo> infos = GetFoldersInfo(subFolder);
+                if(infos != null)
+                    folderInfos.AddRange(infos);
+            }
+            FoldersInformation = folderInfos;
         }
 
         public void OnOpenBackupPathFolder()
         {
-            if (System.IO.Directory.Exists(LocalBackupPath))
-                System.Diagnostics.Process.Start(LocalBackupPath);
+            DirectoryUtility.OpenFolderInExplorer(LocalBackupPath);
         }
 
         List<FolderInfo> GetFoldersInfo(string path)
@@ -115,6 +134,21 @@ namespace Reposed.BackupInformation
             }
 
             return foldersInfo;
+        }
+
+        public void OnOpenFolder(FolderInfo dataContext)
+        {
+            DirectoryUtility.OpenFolderInExplorer(dataContext.FullPath);
+        }
+
+        public void Handle(OnRepoBackupSucceeded message)
+        {
+            UpdateInfo();
+        }
+
+        public void Handle(OnRepoBackupFailed message)
+        {
+            UpdateInfo();
         }
     }
 }
