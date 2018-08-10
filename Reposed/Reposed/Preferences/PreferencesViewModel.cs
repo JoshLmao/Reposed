@@ -176,6 +176,8 @@ namespace Reposed.Preferences
 
         public void OnApply()
         {
+            CheckMoveLocalBackupDirectory(m_prefs.LocalBackupPath, LocalBackupPath);
+
             m_prefs.LocalGitPath = GitPath;
             m_prefs.LocalBackupPath = LocalBackupPath;
 
@@ -252,6 +254,34 @@ namespace Reposed.Preferences
             NotifyOfPropertyChange(() => IsSlackBotActive);
             NotifyOfPropertyChange(() => IsSlackBotChannelValid);
             NotifyOfPropertyChange(() => SlackBotActiveText);
+        }
+
+        private bool CheckMoveLocalBackupDirectory(string oldDir, string newDir)
+        {
+            if (string.IsNullOrEmpty(oldDir) || string.IsNullOrEmpty(newDir))
+                return false;
+
+            if (oldDir != newDir)
+            {
+                //var files = Directory.GetFiles(oldDir);
+                System.Windows.MessageBoxResult result = MSG_BOX_SERVICE.Show("The backup path contains repositories that have been backed up before. Do you want to move them to the new location?",
+                    "Backed Up Repos In Old Path",
+                    System.Windows.MessageBoxButton.YesNo);
+
+                if(result == System.Windows.MessageBoxResult.Yes)
+                {
+                    if (!Directory.Exists(LocalBackupPath))
+                        Directory.CreateDirectory(LocalBackupPath);
+
+                    Directory.Move(m_prefs.LocalBackupPath, LocalBackupPath);
+
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
         }
     }
 }

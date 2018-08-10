@@ -60,12 +60,11 @@
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-                                    <DockPanel>
-                                        <Button DockPanel.Dock="Right" cal:Message.Attach="[Event Click] = [Action OnOpenFolder($dataContext)]">
-                                            <TextBlock Text="Open Folder" FontSize="10" Margin="5,0"/>
-                                        </Button>
-                                        <TextBlock Text="{Binding FullPath}" Margin="5,0"/>
-                                    </DockPanel>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding FullPath}" Margin="5,0"/>
                                     
                                     <StackPanel Orientation="Vertical" Grid.Row="1">
                                         <StackPanel Orientation="Horizontal">
@@ -77,6 +76,15 @@
                                             <TextBlock Text="Has LFS:" Margin="5,0"/>
                                             <TextBlock Text="{Binding HasLFS}"/>
                                         </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Grid.RowSpan="2">
+                                        <Button DockPanel.Dock="Right" cal:Message.Attach="[Event Click] = [Action OnOpenFolder($dataContext)]">
+                                            <TextBlock Text="Open Folder" FontSize="10" Margin="5,0"/>
+                                        </Button>
+                                        <Button DockPanel.Dock="Right" cal:Message.Attach="[Event Click] = [Action OnDeleteFolder($dataContext)]">
+                                            <TextBlock Text="Remove" FontSize="10" Margin="5,0"/>
+                                        </Button>
                                     </StackPanel>
                                 </Grid>
                             </GroupBox>
@@ -99,7 +107,7 @@
                         <TextBox Text="{Binding LocalBackupPath}" IsReadOnly="True" Margin="5,0"/>
                     </DockPanel>
                     <StackPanel Orientation="Horizontal" Margin="5,3">
-                        <TextBlock Text="Folder Size:" VerticalAlignment="Center"/>
+                        <TextBlock Text="Total Folder Size:" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding DirectorySize, FallbackValue=0}" Margin="5,0,0,0"/>
                         <TextBlock Text="GB" DockPanel.Dock="Right"/>
                     </StackPanel>

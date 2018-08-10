@@ -17,7 +17,8 @@ using System.Threading.Tasks;
 
 namespace Reposed.BackupController
 {
-    public class BackupControllerViewModel : ViewModelBase, IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>, IHandle<OnBackupFinished>,
+    public class BackupControllerViewModel : ViewModelBase,
+        IHandle<PreferencesUpdated>, IHandle<OnAccountSelected>, IHandle<RunScheduledBackup>, IHandle<OnBackupFinished>,
         IHandle<OnRepoBackupFailed>, IHandle<OnRepoBackupSucceeded>, IHandle<OnRepoStartBackup>
     {
         List<IBackupService> m_backupServices;

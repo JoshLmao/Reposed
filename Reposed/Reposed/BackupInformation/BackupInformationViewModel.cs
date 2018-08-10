@@ -1,5 +1,7 @@
 ﻿using Caliburn.Micro;
+using Reposed.Core.Dialogs;
 using Reposed.Core.Events;
+using Reposed.Events;
 using Reposed.MVVM;
 using Reposed.ServiceComponents;
 using Reposed.Utility;
@@ -22,7 +24,7 @@ namespace Reposed.BackupInformation
         public bool HasLFS { get; set; }
     }
 
-    public class BackupInformationViewModel : ViewModelBase, IServiceComponent, IHandle<OnRepoBackupSucceeded>, IHandle<OnRepoBackupFailed>
+    public class BackupInformationViewModel : ViewModelBase, IServiceComponent, IHandle<OnRepoBackupSucceeded>, IHandle<OnRepoBackupFailed>, IHandle<PreferencesUpdated>
     {
         public static string SERVICE_ID { get { return "BackupInfo"; } }
 
@@ -74,11 +76,16 @@ namespace Reposed.BackupInformation
         public bool HasFolders { get { return FoldersInformation != null && FoldersInformation.Count > 0; } }
 
         readonly IEventAggregator EVENT_AGGREGATOR;
+        readonly IMessageBoxService MSG_BOX_SERVICE;
+        readonly BackupController.BackupControllerViewModel BACKUP_CONTROLLER;
 
-        public BackupInformationViewModel(IEventAggregator eventAggregator)
+        public BackupInformationViewModel(IEventAggregator eventAggregator, IMessageBoxService messageBoxService, BackupController.BackupControllerViewModel backupController)
         {
             EVENT_AGGREGATOR = eventAggregator;
             EVENT_AGGREGATOR.Subscribe(this);
+
+            MSG_BOX_SERVICE = messageBoxService;
+            BACKUP_CONTROLLER = backupController;
         }
 
         public override void OnViewLoaded(ActionExecutionContext e)
@@ -141,6 +148,27 @@ namespace Reposed.BackupInformation
             DirectoryUtility.OpenFolderInExplorer(dataContext.FullPath);
         }
 
+        public void OnDeleteFolder(FolderInfo dataContext)
+        {
+            if (BACKUP_CONTROLLER.IsBackingUp)
+                return;
+
+            System.Windows.MessageBoxResult result = MSG_BOX_SERVICE.Show("Are you sure you want to delete this backed up repository?", $"Delete repository '{dataContext.Name}'", System.Windows.MessageBoxButton.YesNo);
+            if(result == System.Windows.MessageBoxResult.Yes)
+            {
+                try
+                {
+                    Directory.Delete(dataContext.FullPath, true);
+                }
+                catch (Exception e)
+                {
+                    LOGGER.Error($"Unable to delete repo folder {dataContext.FullPath} - {e.Message}");
+                }
+
+                UpdateInfo();
+            }
+        }
+
         public void Handle(OnRepoBackupSucceeded message)
         {
             UpdateInfo();
@@ -149,6 +177,12 @@ namespace Reposed.BackupInformation
         public void Handle(OnRepoBackupFailed message)
         {
             UpdateInfo();
+        }
+
+        public void Handle(PreferencesUpdated message)
+        {
+            CurrentGitPath = message.Prefs.LocalGitPath;
+            LocalBackupPath = message.Prefs.LocalBackupPath;
         }
     }
 }
