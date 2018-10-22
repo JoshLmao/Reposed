@@ -109,8 +109,8 @@ namespace Reposed.Core.Services
             CurrentBackedUpRepo = repoName;
 
             /*For testing*/
-            System.Threading.Thread.Sleep(1000);
-            return true;
+            //System.Threading.Thread.Sleep(1000);
+            //return true;
             /*For Testing*/
 
             string currentRepoDir = $"{rootBackupDir}\\{repoName}";

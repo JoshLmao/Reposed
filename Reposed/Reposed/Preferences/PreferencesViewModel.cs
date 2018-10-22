@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using Reposed.Core;
 using Reposed.Core.Dialogs;
@@ -154,7 +155,11 @@ namespace Reposed.Preferences
 
         public void OnSelectedBackupPath()
         {
-            LocalBackupPath = Path.GetDirectoryName(ShowOpenFileDialog("", "Select Root Folder (Select a file inside the folder for now)"));
+            string newPath = ShowFolderSelectDialog("", "Select Root Folder (Select a file inside the folder for now)");
+            if (Directory.Exists(newPath))
+            {
+                LocalBackupPath = newPath;
+            }
         }
 
         string ShowOpenFileDialog(string defaultExt, string title)
@@ -172,6 +177,16 @@ namespace Reposed.Preferences
                 return ofd.FileName;
             }
             return null;
+        }
+
+        private string ShowFolderSelectDialog(string defaultExt, string title)
+        {
+            CommonOpenFileDialog cfd = new CommonOpenFileDialog()
+            {
+                IsFolderPicker = true,
+            };
+            CommonFileDialogResult result = cfd.ShowDialog();
+            return cfd.FileName;
         }
 
         public void OnApply()
@@ -273,7 +288,24 @@ namespace Reposed.Preferences
                     if (!Directory.Exists(LocalBackupPath))
                         Directory.CreateDirectory(LocalBackupPath);
 
-                    Directory.Move(m_prefs.LocalBackupPath, LocalBackupPath);
+                    //Directory.Move fails if a file with the same name exists in both directories. For now, make sure newDir has nothing inside
+                    string[] files = Directory.GetFiles(newDir);
+                    if (files.Length >= 1)
+                    {
+                        MSG_BOX_SERVICE.Show("Make sure the new directory has no files inside before moving repos", "New Directory contains files", System.Windows.MessageBoxButton.OK);
+                        return false;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Directory.Move(m_prefs.LocalBackupPath, LocalBackupPath);
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
 
                     return true;
                 }
